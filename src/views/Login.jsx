@@ -12,6 +12,8 @@ import FindIdDialog from '../components/login/findId';
 import FindPWDialog from '../components/login/findPw';
 import { Box, Container, makeStyles, Paper } from '@material-ui/core';
 import Grid from '@material-ui/core/Grid';
+import FillLogo from '@components/FillLogo';
+import Neumorphism from '@components/Neumorphism';
 
 export default function Login() {
   const [userID, setUserID] = useRecoilState(userIDState);
@@ -119,6 +121,10 @@ export default function Login() {
           {loading ? <Loading /> : null}
           <FindIdDialog onClose={dialogOnClose} open={findOpen.id}/>
           <FindPWDialog onClose={dialogOnClose} open={findOpen.pw}/>
+          <Neumorphism styles={{width: 165, height: 165, radius: '50', distance: 8, blur: 8, direction: 'column'}}>
+            <FillLogo size={100} />
+          </Neumorphism>
+          
         </Box>
       </Grid>
   );
