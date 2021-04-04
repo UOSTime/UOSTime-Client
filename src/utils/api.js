@@ -19,6 +19,7 @@ export const API_GET_ALL_NOTICES = GET('/notice/all');
 export const API_CREATE_NOTICE = POST('/notice');
 export const API_UPDATE_NOTICE = PATCH('/notice');
 export const API_DELETE_NOTICE = DELETE('/notice');
+export const API_LOGIN = POST('/user/login');
 
 export async function requestAPI(apiConfig, data) {
   const config = {
