@@ -2,13 +2,14 @@ import React from 'react';
 import { Box, makeStyles } from '@material-ui/core';
 
 const useStyles = makeStyles({
-    container: size => ({
-        width: `${size}px`,
-        height: `${size}px`,
+    container: styles => ({
+        width: `${styles.size}`,
+        height: `${styles.size}`,
         display: 'flex',
         flexDirection: 'row',
         justifyContent: 'space-between',
-        alignItems: 'center'
+        alignItems: 'center',
+        flexShrink: '0'
     }),
     firstBar: {
         width: '21.65%',
@@ -45,7 +46,7 @@ const useStyles = makeStyles({
 })
 
 export default function FillLogo({size}) {
-    const classes = useStyles(100);
+    const classes = useStyles({size});
 
     return (
         <Box className={classes.container}>
