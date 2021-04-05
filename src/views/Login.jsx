@@ -121,7 +121,7 @@ export default function Login() {
           {loading ? <Loading /> : null}
           <FindIdDialog onClose={dialogOnClose} open={findOpen.id}/>
           <FindPWDialog onClose={dialogOnClose} open={findOpen.pw}/>
-          <Neumorphism styles={{width: 165, height: 165, radius: '50', distance: 8, blur: 8, direction: 'column'}}>
+          <Neumorphism styles={{width: '165px', height: '165px', radius: '50px', distance: '10px', blur: '8px', direction: 'column'}}>
             <FillLogo size={100} />
           </Neumorphism>
           
