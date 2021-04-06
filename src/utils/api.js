@@ -14,7 +14,6 @@ const PATCH = path => ({ method: 'PATCH', path });
 const DELETE = path => ({ method: 'DELETE', path });
 
 // API CONFIG LIST
-export const API_LOGIN = POST('/user/login');
 export const API_GET_SEMESTERS = GET('/semesters');
 export const API_GET_ALL_NOTICES = GET('/notice/all');
 export const API_CREATE_NOTICE = POST('/notice');
