@@ -1,13 +1,19 @@
 import React from 'react';
 import { makeStyles, Container, Typography, Link } from '@material-ui/core';
 
-const useStyles = makeStyles({
+// ToDo : 모달 만들어서 연계, 모바일 대응
+
+const useStyles = makeStyles(theme => ({
   footer: {
     display: 'flex',
     flexDirection: 'row',
     marginTop: 'auto',
     backgroundColor: '##f6f6f6',
     color: '#4e4e4e',
+    [theme.breakpoints.down('sm')]: {
+      flexDirection: 'column',
+      fontSize: '12px',
+    },
   },
   font: {
     color: '#4e4e4e',
@@ -18,12 +24,21 @@ const useStyles = makeStyles({
   firstBox: {
     width: '50%',
     textAlign: 'left',
+    [theme.breakpoints.down('sm')]: {
+      width: '100%',
+      textAlign: 'center',
+    },
   },
   secondBox: {
     width: '50%',
     textAlign: 'right',
+    [theme.breakpoints.down('sm')]: {
+      width: '100%',
+      textAlign: 'center',
+    },
   },
-});
+}));
+
 function Footer() {
   const classes = useStyles();
   return (
@@ -39,7 +54,7 @@ function Footer() {
           <Link className={classes.font} underline="none" href="https://uostime.herokuapp.com/terms_of_service">이용약관</Link>{' | '}
         </Typography>
         <Typography variant="PrivacyPolicy">
-          <Link className={classes.font} underline="none" href="https://uostime.herokuapp.com/privacy_policy">개인정보처리방침</Link>
+          <Link className={classes.font} underline="none" href="/privacy_policy">개인정보처리방침</Link>
         </Typography>
       </div>
       <div className={classes.secondBox}>

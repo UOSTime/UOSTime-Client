@@ -10,8 +10,6 @@ import Login from './views/Login';
 import PrivacyPolicy from './views/PrivacyPolicy';
 import Admin from './views/admin';
 
-{/* ToDo : 모달 만들어서 연계, 개인정보처리방침 따로 빼기, 모바일 대응*/ }
-
 function ErrorPage() {
   return <h1>404 Not Found</h1>;
 }

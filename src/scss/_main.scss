@@ -14,10 +14,13 @@ $fnt-black: #4e4e4e;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  overflow-y: auto;
+  &::-webkit-scrollbar {
+    display: none;
+  }
   .main-container {
     width: 90%;
     color: $fnt-black;
-    overflow: hidden;
     position: relative;
     @media all and (max-width: 1200px) {
       width: 70%;
