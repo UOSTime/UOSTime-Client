@@ -176,10 +176,9 @@ const useStyles = makeStyles({
     flexDirection: 'column',
     justifyContent: 'space-between',
     padding: '0px',
-    height: '110px',
     width: '100%',
-    [theme.breakpoints.down('md')]: {
-      height: '80px',
+    [theme.breakpoints.up('md')]: {
+      height: '110px'
     }
   },
   otherLink: {

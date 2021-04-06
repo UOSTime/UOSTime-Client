@@ -4,7 +4,8 @@
 
 import axios from 'axios';
 
-const { API_URL_BASE } = process.env;
+// const { API_URL_BASE } = process.env;
+const API_URL_BASE = 'http://localhost:2021';
 
 // API CONFIG OBJECT
 const GET = path => ({ method: 'GET', path });
@@ -15,6 +16,8 @@ const DELETE = path => ({ method: 'DELETE', path });
 
 // API CONFIG LIST
 export const API_LOGIN = POST('/user/login');
+export const API_FIND_ID = GET('/user/id');
+export const API_FIND_PW = GET('/user/password');
 export const API_GET_SEMESTERS = GET('/semesters');
 export const API_GET_ALL_NOTICES = GET('/notice/all');
 export const API_CREATE_NOTICE = POST('/notice');
