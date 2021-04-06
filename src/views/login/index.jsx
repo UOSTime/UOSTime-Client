@@ -15,6 +15,7 @@ import useLogoLayoutStyles from '@utils/styles/login/LogoLayout';
 import useLoginLabelStyles from '@utils/styles/login/LoginLabel';
 import theme from '@utils/styles/Theme';
 import Logo from '@views/login/Logo';
+import useLinkStyles from '../../utils/styles/Link';
 
 
 
@@ -30,6 +31,7 @@ export default function Login() {
   const classes = useStyles();
   const logoLayoutClass = useLogoLayoutStyles();
   const loginLabelClass = useLoginLabelStyles();
+  const linkClass = useLinkStyles();
 
   const loginBtn = useRef();
 
@@ -81,6 +83,7 @@ export default function Login() {
   };
 
   const openFindDialog = (e) => {
+    console.log(e.target)
     const name = e.target.name === 'findID' ? 'id' : 'pw';
     setFindOpen({
       ...findOpen,
@@ -120,22 +123,16 @@ export default function Login() {
         <Container className={classes.otherLink}>
           <Box className={classes.rowBox}>
             <Typography>아이디를 잊으셨나요?</Typography>
-            <Link name='findID' onClick={openFindDialog}>
-              <Typography className={classes.fontBlue}>아이디 찾기</Typography>
-            </Link>
+            <Link name='findID' className={linkClass.blue} onClick={openFindDialog}>아이디 찾기</Link>
           </Box>
           <Box className={classes.rowBox}>
             <Typography>비밀번호를 잊으셨나요?</Typography>
-            <Link name='findPW' onClick={openFindDialog}>
-              <Typography className={classes.fontBlue}>비밀번호 찾기</Typography>
-            </Link>
+            <Link name='findPW' className={linkClass.blue} onClick={openFindDialog}>비밀번호 찾기</Link>
           </Box>
           <Typography className={classes.seperator}>또는</Typography>
           <Box className={classes.rowBox}>
             <Typography>UOSTime이 처음이신가요?</Typography>
-            <Link>
-              <Typography className={classes.fontRed}>회원가입</Typography>
-            </Link>
+            <Link className={linkClass.red}>회원가입</Link>
           </Box>
         </Container>
         {loading ? <Loading /> : null}
@@ -235,11 +232,5 @@ const useStyles = makeStyles({
   warning: {
     color: 'red',
     fontSize: '0.8rem'
-  },
-  fontRed: {
-    color: uosRed
-  },
-  fontBlue: {
-    color: uosBlue
   }
 })
