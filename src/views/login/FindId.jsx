@@ -22,6 +22,13 @@ export default function FindIdDialog({onClose, open}) {
     alignSelf: 'flex-end'
   });
 
+  const onCustomClose = () => {
+    setSend(false);
+    setEmail('');
+    setError('');
+    onClose();
+  }
+
   const onChange = (e) => {
     setEmail(e.target.value);
   }
@@ -58,7 +65,7 @@ export default function FindIdDialog({onClose, open}) {
   const resultMessage = send ? <Typography className={fontClass.blue}>이메일로 아이디를 전송했어요!</Typography> : null;
   const errorMessage = error ? <Typography className={fontClass.red}>{error}</Typography> : null;
   return (
-    <UosDialog full onClose={onClose} open={open}>
+    <UosDialog full onClose={onCustomClose} open={open}>
       <DialogTitle>아이디 찾기</DialogTitle>
         <Container className={classes.content}>
         <Container>

@@ -23,6 +23,14 @@ export default function FindPWDialog({onClose, open}) {
     alignSelf: 'flex-end'
   });
 
+  const onCustomClose = () => {
+    setSend(false);
+    setInput({username: '', email: ''});
+    setEmailError('');
+    setUsernameError('');
+    onClose();
+  }
+
   const onChange = (e) => {
     const {name, value} = e.target;
     setInput({
@@ -67,11 +75,13 @@ export default function FindPWDialog({onClose, open}) {
       setSend(false);
     }
   }
+  
   const emailErrorMessage = emailError ? <Typography className={fontClass.red}>{ emailError }</Typography> : null;
   const usernameErrorMessage = usernameError ? <Typography className={fontClass.red}>{ usernameError }</Typography> : null;
   const resultMessage = send ? <Typography className={fontClass.red}>이메일로 임시 비밀번호를 전송했어요!</Typography> : null;
+
   return (
-    <UosDialog fullWidth maxWidth='xs' onClose={onClose} open={open}>
+    <UosDialog fullWidth maxWidth='xs' onClose={onCustomClose} open={open}>
       <DialogTitle>비밀번호 찾기</DialogTitle>
       <Container className={classes.content}>
         <Container className={classes.block}>
