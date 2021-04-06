@@ -13,6 +13,7 @@ import { API_LOGIN, requestAPI } from '@utils/api';
 import { foregroundColor, uosRed, uosYellow, uosBlue } from '@utils/styles/Colors';
 import useLogoLayoutStyles from '@utils/styles/login/LogoLayout';
 import useLoginLabelStyles from '@utils/styles/login/LoginLabel';
+import useButtonStyles from '@utils/styles/Button';
 import theme from '@utils/styles/Theme';
 import Logo from '@views/login/Logo';
 import useLinkStyles from '../../utils/styles/Link';
@@ -32,6 +33,7 @@ export default function Login() {
   const logoLayoutClass = useLogoLayoutStyles();
   const loginLabelClass = useLoginLabelStyles();
   const linkClass = useLinkStyles();
+  const buttonClass = useButtonStyles();
 
   const loginBtn = useRef();
 
@@ -64,11 +66,11 @@ export default function Login() {
             break;
           
           case StatusCodes.BAD_REQUEST:
-            setWarning('클라이언트에서 오류가 났어요. 계속 시도해도 안되면 UOSTime 팀에 문의해주세요!');
+            setWarning('클라이언트에서 오류가 났어요. 계속 시도해도 안되면 UOSTime 팀에게 문의해주세요!');
             break;
           
           default:
-            setWarning('서버에서 오류가 났어요. 계속 시도해도 안되면 UOSTime 팀에 문의해주세요!');
+            setWarning('서버에서 오류가 났어요. 계속 시도해도 안되면 UOSTime 팀에게 문의해주세요!');
             break;
         }
       }
@@ -119,7 +121,7 @@ export default function Login() {
           <UosInput type='password' name='pw' label='비밀번호' onChange={inputOnChange} onKeyPress={onEnterPress} value={loginInfo.pw} />
           { warning.length > 0 ? <Typography className={classes.warning}>{warning}</Typography> : null }
         </Container>
-        <Button className={classes.loginBtn} onClick={login} ref={loginBtn}>Login</Button>
+        <Button className={buttonClass.linearRed} onClick={login} ref={loginBtn}>Login</Button>
         <Container className={classes.otherLink}>
           <Box className={classes.rowBox}>
             <Typography>아이디를 잊으셨나요?</Typography>
@@ -135,18 +137,13 @@ export default function Login() {
             <Link className={linkClass.red}>회원가입</Link>
           </Box>
         </Container>
-        {loading ? <Loading /> : null}
         <FindIdDialog onClose={dialogOnClose} open={findOpen.id}/>
         <FindPWDialog onClose={dialogOnClose} open={findOpen.pw}/>
       </Container>
-      </Container>
+      {loading ? <Loading /> : null}
+    </Container>
   );
 }
-
-
-
-
-
 
 const useStyles = makeStyles({
   container: {
@@ -184,18 +181,6 @@ const useStyles = makeStyles({
     [theme.breakpoints.down('md')]: {
       height: '80px',
     }
-  },
-  loginBtn: {
-    background: `linear-gradient(145deg, ${uosRed} 30%, ${uosYellow} 90%)`,
-    borderRadius: '100px',
-    border: 0,
-    fontSize: '24px',
-    fontWeight: 'bold',
-    color: 'white',
-    height: 48,
-    width: '100%',
-    padding: '0 30px',
-    boxShadow: '0 3px 5px 2px rgba(255, 105, 135, .3)'
   },
   otherLink: {
     height: '120px',
