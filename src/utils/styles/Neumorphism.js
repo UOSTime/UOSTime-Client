@@ -1,13 +1,13 @@
 import { makeStyles } from '@material-ui/core';
 
-const useNeumorphismStyles = makeStyles({
+const neumorphismStyles = {
     positive: styles => ({
         ...styles,
     }),
     negative: styles => ({
         ...styles,
     })
-});
+};
 
 const neumorphismForm = {
     positive: (styles) => ({
@@ -39,5 +39,5 @@ const neumorphismForm = {
 
 export {
     neumorphismForm,
-    useNeumorphismStyles
+    neumorphismStyles
 }

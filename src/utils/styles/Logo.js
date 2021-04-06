@@ -68,5 +68,7 @@ const useLogoStyles = makeStyles({
 });
 
 export {
+    common,
+    barStyle,
     useLogoStyles
 }
