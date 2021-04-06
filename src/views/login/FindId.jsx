@@ -1,11 +1,16 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {Button, Container, DialogTitle, makeStyles, Typography} from '@material-ui/core';
 import UosInput from '@components/UosInput';
 import useButtonStyles from '@utils/styles/Button';
 import useFontStyles from '@utils/styles/Font';
 import UosDialog from '@components/UosDialog';
+import { requestAPI, API_FIND_ID } from '@utils/api';
 
 export default function FindIdDialog({onClose, open}) {
+  const [ email, setEmail ] = useState('');
+  const [ send, setSend ] = useState(false);
+  const [ error, setError ] = useState('');
+
   const classes = useStyles();
   const fontClass = useFontStyles();
   const buttonClass = useButtonStyles({
@@ -16,7 +21,42 @@ export default function FindIdDialog({onClose, open}) {
     borderRadius: '10px',
     alignSelf: 'flex-end'
   });
+
+  const onChange = (e) => {
+    setEmail(e.target.value);
+  }
+
+  const onClick = async () => {
+    if(!email) {
+      setError('이메일을 입력해주세요!');
+      setSend(false);
+      return;
+    }
+
+    try {
+      await requestAPI(API_FIND_ID, {});     // ?email=...
+      setError('');
+      setSend(true);
+    } catch(e) {
+      switch (e.message) {
+        case '400':
+          setError('클라이언트에서 오류가 발생했어요...');
+          break;
+
+        case '404':
+          setError('해당 이메일로 등록된 계정이 없어요');
+          break;
+
+        default:
+          setError('서버에서 오류가 발생했어요...');
+          break;
+      }
+      setSend(false);
+    }
+  }
   
+  const resultMessage = send ? <Typography className={fontClass.blue}>이메일로 아이디를 전송했어요!</Typography> : null;
+  const errorMessage = error ? <Typography className={fontClass.red}>{error}</Typography> : null;
   return (
     <UosDialog full onClose={onClose} open={open}>
       <DialogTitle>아이디 찾기</DialogTitle>
@@ -24,12 +64,13 @@ export default function FindIdDialog({onClose, open}) {
         <Container>
           <Typography className={fontClass.default}>서울시립대학교 포탈 이메일을 입력해주세요.</Typography>
           <Container className={classes.emailRow}>
-            <UosInput name='email' type='text' label='이메일' />
+            <UosInput name='email' type='text' label='이메일' onChange={onChange} value={email} />
             <Typography className={fontClass.default}>@uos.ac.kr</Typography>
           </Container>
-
+        { resultMessage }
+        { errorMessage }
         </Container>
-        <Button className={buttonClass.blue}>찾기</Button>
+        <Button className={buttonClass.blue} onClick={onClick}>찾기</Button>
       </Container>
     </UosDialog>
   );

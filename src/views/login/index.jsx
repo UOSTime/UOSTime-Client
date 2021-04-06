@@ -85,7 +85,6 @@ export default function Login() {
   };
 
   const openFindDialog = (e) => {
-    console.log(e.target)
     const name = e.target.name === 'findID' ? 'id' : 'pw';
     setFindOpen({
       ...findOpen,
