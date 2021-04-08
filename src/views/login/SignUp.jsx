@@ -9,9 +9,10 @@ import { uosRed } from '@utils/styles/Colors';
 import Loading from '@components/Loading';
 
 export default function SignUpDialog({onClose, open}) {
-    const [ newUser, setNewUser ] = useState({uid: '', pw: '', pw2: '', name: '', email: ''});
+    const [ newUser, setNewUser ] = useState({uid: '', pw: '', pw2: '', name: '', email: '', code:''});
     const [ loading, setLoading ] = useState(false);
     const [ result, setResult ] = useState({send: false, error: ''});
+    const [ isAuth, setIsAuth ] = useState(false);
 
     const classes = useStyles();
     const fontClasses = useFontStyles({fontSize: '0.8rem'});
@@ -22,8 +23,7 @@ export default function SignUpDialog({onClose, open}) {
         padding: 0,
         borderRadius: '10px',
         alignSelf: 'flex-end',
-        marginTop: '20px',
-        marginBottom: '20px'
+        margin: '20px 0px',
       });
 
     const onCustomClose = () => {
@@ -39,6 +39,17 @@ export default function SignUpDialog({onClose, open}) {
             ...newUser,
             [name]: value
         });
+    }
+
+    const handleEmailAuth = () => {//TODO
+        setIsAuth(true);
+        try{
+            //await requestAPI()
+            
+        }
+        catch{
+            setIsAuth(false)
+        }
     }
 
     const onSubmit = async () => {
@@ -77,6 +88,10 @@ export default function SignUpDialog({onClose, open}) {
             });
             return;
         }
+        if(!newUser.code) {
+            const ret = confirm('이메일 인증이 완료되지 않았습니다. 계속하시겠습니까?')
+            if(!ret) return;
+        }
 
         setLoading(true);
         try {
@@ -114,13 +129,21 @@ export default function SignUpDialog({onClose, open}) {
             </Container>
             <Container>
                 <Container className={classes.emailRow}>
-                <UosInput name='email' type='text' label='이메일' onChange={onChange} value={newUser.email} />
-                <Typography className={fontClasses.default}>@uos.ac.kr</Typography>
+                    <UosInput name='email' type='text' label='이메일' onChange={onChange} value={newUser.email} />
+                    <Typography className={fontClasses.default}>@uos.ac.kr</Typography>
                 </Container>
                 <Typography className={fontClasses.default}>서울시립대학교 포탈 이메일을 입력해주세요.</Typography>
             </Container>
+            {isAuth &&
+                <Container>
+                    <UosInput name='code' type='text' label='인증코드' onChange={onChange} value={newUser.code} />
+                    <Typography className={fontClasses.default}>메일로 전송된 코드를 입력해주세요.</Typography>
+                </Container>
+            }
+            
             { resultMessage }
             { errorMessage }
+            {!isAuth && <Button className={buttonClasses.linearRed} onClick={handleEmailAuth}>메일 인증</Button>}
             <Button className={buttonClasses.linearRed} onClick={onSubmit}>회원가입</Button>
           </Container>
           { loadingMessage }
