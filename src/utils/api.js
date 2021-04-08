@@ -1,59 +1,112 @@
 /* eslint-disable no-console */
 /* eslint-disable no-unused-vars */
 /* eslint-disable prefer-const */
-
 import axios from 'axios';
 
-const { API_URL_BASE } = process.env;
+const { API_URL_BASE } =  process.env;
+
+const makeAPI = (method, path) => {
+  return () => {
+    const METHOD = method(path);
+
+    const API = {
+      ...METHOD,
+      data: {},
+
+      setPathParam: (...pathParams) => {
+        const pathVars = pathParams.map(param => `/${param}`)
+                  .reduce((acc, cur) => acc + cur);
+    
+        API.url += pathVars;
+        return API;
+      },
+      setQuery: queries => {
+        const keys = Object.keys(queries);
+        const queryStr = keys.map(key => `${key}=${queries[key]}`)
+                            .reduce((acc, cur) => `${acc}&${cur}`);
+        API.url = `${API.path}?${queryStr}`;
+        
+        return API;
+      },
+      setBody: body => {
+        API.data = body;
+
+        return API;
+      }
+    }
+
+    return API;
+  }
+}
 
 // API CONFIG OBJECT
-const GET = path => ({ method: 'GET', path });
-const POST = path => ({ method: 'POST', path });
-const PUT = path => ({ method: 'PUT', path });
-const PATCH = path => ({ method: 'PATCH', path });
-const DELETE = path => ({ method: 'DELETE', path });
+const GET = url => ({ method: 'GET', url });
+const POST = url => ({ method: 'POST', url });
+const PUT = url => ({ method: 'PUT', url });
+const PATCH = url => ({ method: 'PATCH', url });
+const DELETE = url => ({ method: 'DELETE', url });
+
 
 // API CONFIG LIST
-export const API_LOGIN = POST('/user/login');
-export const API_GET_SEMESTERS = GET('/semesters');
-export const API_GET_ALL_NOTICES = GET('/notice/all');
-export const API_CREATE_NOTICE = POST('/notice');
-export const API_UPDATE_NOTICE = PATCH('/notice');
-export const API_DELETE_NOTICE = DELETE('/notice');
-export const API_LOGIN = POST('/user/login');
+export const API_LOGIN = makeAPI(POST, '/user/login');
+export const API_GET_SEMESTERS = makeAPI(GET, '/semesters');
+export const API_GET_ALL_NOTICES = makeAPI(GET, '/notice/all');
+export const API_CREATE_NOTICE = makeAPI(POST, '/notice');
+export const API_UPDATE_NOTICE = makeAPI(PATCH, '/notice');
+export const API_DELETE_NOTICE = makeAPI(DELETE, '/notice');
+export const API_GET_ALL_LECTURES = makeAPI(GET, '/lecture');
+
+
+
+const axiosInstance = axios.create({
+  baseURL: `${API_URL_BASE}/api`,
+  timeout: 20000
+});
+
+axiosInstance.interceptors.request.use(
+  config => {
+    const token = window.localStorage.getItem('token');
+    if(token) {
+      config.headers.Authorization = localStorage.getItem('token');
+    }
+    return config;
+  },
+  error => {
+    console.error(error);
+
+    alert('서버를 찾을 수 없어요...');
+    return null
+  }
+)
+
+axiosInstance.interceptors.response.use(
+  config => {
+    return config;
+  },
+  error => {
+    const failResponse = error.response;
+    return Promise.resolve(failResponse);
+  }
+)
 
 export async function requestAPI(apiConfig, data) {
   const config = {
-    url: `${API_URL_BASE}/api${apiConfig.path}`,
+    url: apiConfig.url,
     method: apiConfig.method,
-    data,
+    data: data ? data : apiConfig.data
   };
-
-  try {
-    const response = await axios(config);
+  console.log(config);
+  try{
+    const response = await axiosInstance.request(config);
 
     // for test
     console.log(response.data);
 
-    return response.data;
+    // includes 3xx, 4xx responses
+    return response;
   } catch (error) {
-    // TODO: handle error user-friendly
-    if (error.response) {
-      // The request was made and the server responded with a status code
-      // that falls out of the range of 2xx
-      console.log(error.response.data);
-      console.log(error.response.status);
-      console.log(error.response.headers);
-    } else if (error.request) {
-      // The request was made but no response was received
-      // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
-      // http.ClientRequest in node.js
-      console.log(error.request);
-    } else {
-      // Something happened in setting up the request that triggered an Error
-      console.log('Error', error.message);
-    }
-    console.log(error.config);
+    console.error('Error', error);
+    
     return null;
   }
 }
