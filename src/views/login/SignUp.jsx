@@ -5,7 +5,8 @@ import useButtonStyles from '@utils/styles/Button';
 import useFontStyles from '@utils/styles/Font';
 import UosDialog from '@components/UosDialog';
 import { requestAPI, API_SIGN_UP } from '@utils/api';
-import axios from 'axios';
+import { uosRed } from '@utils/styles/Colors';
+import Loading from '@components/Loading';
 
 export default function SignUpDialog({onClose, open}) {
     const [ newUser, setNewUser ] = useState({uid: '', pw: '', pw2: '', name: '', email: ''});
@@ -90,9 +91,10 @@ export default function SignUpDialog({onClose, open}) {
 
     const errorMessage = result.error ? <Typography className={fontClasses.warning}>{result.error}</Typography> : null;
     const resultMessage = result.send ? <Typography className={fontClasses.blue}>회원가입이 완료되었어요!</Typography> : null;
+    const loadingMessage = loading ? <Loading /> : null;
     return (
         <UosDialog fullWidth onClose={onCustomClose} open={open}>
-          <DialogTitle>회원가입</DialogTitle>
+          <DialogTitle className={classes.title}>회원가입</DialogTitle>
           <Container className={classes.content}>
             <Container>
                 <UosInput name='uid' type='text' label='아이디' onChange={onChange} value={newUser.uid} />
@@ -113,7 +115,7 @@ export default function SignUpDialog({onClose, open}) {
             <Container>
                 <Container className={classes.emailRow}>
                 <UosInput name='email' type='text' label='이메일' onChange={onChange} value={newUser.email} />
-                <Typography >@uos.ac.kr</Typography>
+                <Typography className={fontClasses.default}>@uos.ac.kr</Typography>
                 </Container>
                 <Typography className={fontClasses.default}>서울시립대학교 포탈 이메일을 입력해주세요.</Typography>
             </Container>
@@ -121,6 +123,7 @@ export default function SignUpDialog({onClose, open}) {
             { errorMessage }
             <Button className={buttonClasses.linearRed} onClick={onSubmit}>회원가입</Button>
           </Container>
+          { loadingMessage }
         </UosDialog>
     )
 }
@@ -143,6 +146,11 @@ function checkNameFormat(name) {
 }
 
 const useStyles = makeStyles({
+    title: {
+        color: uosRed,
+        marginLeft: '10px',
+        marginTop: '10px'
+    },
     content: {
         display: 'flex',
         flexDirection: 'column',
