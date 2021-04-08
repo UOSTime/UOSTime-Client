@@ -17,6 +17,7 @@ import useButtonStyles from '@utils/styles/Button';
 import theme from '@utils/styles/Theme';
 import Logo from '@views/login/Logo';
 import useLinkStyles from '../../utils/styles/Link';
+import SignUpDialog from './SignUp';
 
 
 
@@ -27,7 +28,7 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
   const [warning, setWarning] = useState('');
   const [error, setError] = useState(null);
-  const [findOpen, setFindOpen] = useState({id: false, pw: false});
+  const [findOpen, setFindOpen] = useState({id: false, pw: false, signUp: false});
 
   const classes = useStyles();
   const logoLayoutClass = useLogoLayoutStyles();
@@ -81,11 +82,23 @@ export default function Login() {
   };
 
   const dialogOnClose = () => {
-    setFindOpen({id: false, pw: false});
+    setFindOpen({id: false, pw: false, signUp: false});
   };
 
-  const openFindDialog = (e) => {
-    const name = e.target.name === 'findID' ? 'id' : 'pw';
+  const openDialog = (e) => {
+    let name;
+    switch (e.target.name) {
+      case 'findID':
+        name = 'id'
+        break;
+      case 'findPW':
+        name = 'pw'
+        break;
+      default:
+        name = 'signUp';
+        break;
+    }
+
     setFindOpen({
       ...findOpen,
       [name]: true
@@ -124,20 +137,21 @@ export default function Login() {
         <Container className={classes.otherLink}>
           <Box className={classes.rowBox}>
             <Typography>아이디를 잊으셨나요?</Typography>
-            <Link name='findID' className={linkClass.blue} onClick={openFindDialog}>아이디 찾기</Link>
+            <Link name='findID' className={linkClass.blue} onClick={openDialog}>아이디 찾기</Link>
           </Box>
           <Box className={classes.rowBox}>
             <Typography>비밀번호를 잊으셨나요?</Typography>
-            <Link name='findPW' className={linkClass.blue} onClick={openFindDialog}>비밀번호 찾기</Link>
+            <Link name='findPW' className={linkClass.blue} onClick={openDialog}>비밀번호 찾기</Link>
           </Box>
           <Typography className={classes.seperator}>또는</Typography>
           <Box className={classes.rowBox}>
             <Typography>UOSTime이 처음이신가요?</Typography>
-            <Link className={linkClass.red}>회원가입</Link>
+            <Link name='signUp' className={linkClass.red} onClick={openDialog} >회원가입</Link>
           </Box>
         </Container>
         <FindIdDialog onClose={dialogOnClose} open={findOpen.id}/>
         <FindPWDialog onClose={dialogOnClose} open={findOpen.pw}/>
+        <SignUpDialog onClose={dialogOnClose} open={findOpen.signUp}/>
       </Container>
       {loading ? <Loading /> : null}
     </Container>

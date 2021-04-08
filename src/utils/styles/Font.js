@@ -16,6 +16,11 @@ const useFontStyles = makeStyles({
         color: uosBlue,
         fontSize: '1rem',
         ...styles
+    }),
+    warning: styles => ({
+        color: 'red',
+        fontSize: '1rem',
+        ...styles
     })
 });
 

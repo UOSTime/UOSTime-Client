@@ -16,6 +16,7 @@ const DELETE = path => ({ method: 'DELETE', path });
 
 // API CONFIG LIST
 export const API_LOGIN = POST('/user/login');
+export const API_SIGN_UP = POST('/user')
 export const API_FIND_ID = GET('/user/id');
 export const API_FIND_PW = GET('/user/password');
 export const API_GET_SEMESTERS = GET('/semesters');
