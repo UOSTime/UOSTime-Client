@@ -1,8 +1,6 @@
 import React from 'react';
 import { makeStyles, Container, Typography, Link } from '@material-ui/core';
 
-// ToDo : 모달 만들어서 연계, 모바일 대응
-
 const useStyles = makeStyles(theme => ({
   footer: {
     display: 'flex',
@@ -41,15 +39,16 @@ const useStyles = makeStyles(theme => ({
 
 function Footer() {
   const classes = useStyles();
+
   return (
     <Container maxWidth="lg" className={classes.footer}>
       <div className={classes.firstBox}>
         <Typography variant="UOS">
           <Link className={classes.font} underline="none" href="https://uos.ac.kr">서울시립대학교</Link>{' | '}
         </Typography>
-        <Typography variant="Contact">
-          {'문의하기 | '}
-        </Typography>
+        <Typography variant="Contact" className={classes.font}>
+          문의하기
+        </Typography>{' | '}
         <Typography variant="TermsOfService">
           <Link className={classes.font} underline="none" href="https://uostime.herokuapp.com/terms_of_service">이용약관</Link>{' | '}
         </Typography>
@@ -58,8 +57,9 @@ function Footer() {
         </Typography>
       </div>
       <div className={classes.secondBox}>
-        <Typography variant="UOSTime">
-          {'©UOSTime Team '}
+        {'서울시립대학교 시간표 관리 서비스 '}
+        <Typography variant="UOSTime" className={classes.font}>
+          {' © UOSTime Team '}
         </Typography>
         <Typography variant="Version">
           {' v2.0.0'}
