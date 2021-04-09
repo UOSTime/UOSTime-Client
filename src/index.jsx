@@ -6,7 +6,7 @@ import CssBaseline from '@material-ui/core/CssBaseline';
 
 import reportWebVitals from './reportWebVitals';
 import Timetable from './views/Timetable';
-import Login from './views/Login';
+import Login from './views/login';
 import PrivacyPolicy from './views/PrivacyPolicy';
 import Admin from './views/admin';
 
