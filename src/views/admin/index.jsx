@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Button, Container } from '@material-ui/core';
-import NoticeList from '@components/admin/NoticeList';
+import NoticeList from './NoticeList';
 import AddNoticeDialog from './AddNoticeDialog';
 
 export default function Admin() {
@@ -26,21 +26,18 @@ export default function Admin() {
 
   return (
     <Container>
-      <div id="TestContainer" className="container pt-7">
-        <AddNoticeDialog
-          open={isOpenAddNoticeDialog}
-          closeAddNoticeDialog={closeAddNoticeDialog}
-        />
-        <a href="/"><strong>UOSTime</strong></a>
-        <h1>Admin Page</h1>
+      <AddNoticeDialog
+        open={isOpenAddNoticeDialog}
+        closeAddNoticeDialog={closeAddNoticeDialog}
+      />
 
-        <div className="d-flex justify-content-center flex-wrap py-5 my-6 border-top border-bottom">
-          <Button variant="contained" color="primary" onClick={openAddNoticeDialog}>Add Notice</Button>
-        </div>
+      <a href="/"><strong>UOSTime</strong></a>
+      <h1>Admin Page</h1>
 
-        <h2 className="mt-6 mb-3">Notices</h2>
-        <NoticeList />
-      </div>
+      <Button variant="contained" color="primary" onClick={openAddNoticeDialog}>Add Notice</Button>
+
+      <h2>Notices</h2>
+      <NoticeList />
     </Container>
   );
 }
