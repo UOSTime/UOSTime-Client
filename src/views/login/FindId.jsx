@@ -1,15 +1,19 @@
 import React, { useState } from 'react';
+import StatusCodes from 'http-status-codes';
 import {Button, Container, DialogTitle, makeStyles, Typography} from '@material-ui/core';
 import UosInput from '@components/UosInput';
 import useButtonStyles from '@utils/styles/Button';
 import useFontStyles from '@utils/styles/Font';
 import UosDialog from '@components/UosDialog';
+import Loading from '@components/Loading';
 import { requestAPI, API_FIND_ID } from '@utils/api';
 
 export default function FindIdDialog({onClose, open}) {
   const [ email, setEmail ] = useState('');
+  const [ result, setResult ] = useState({send: false, error: ''});
   const [ send, setSend ] = useState(false);
   const [ error, setError ] = useState('');
+  const [ isLoading, setIsLoading ] = useState(false); 
 
   const classes = useStyles();
   const fontClass = useFontStyles();
@@ -23,9 +27,8 @@ export default function FindIdDialog({onClose, open}) {
   });
 
   const onCustomClose = () => {
-    setSend(false);
+    setResult({send: false, error: ''});
     setEmail('');
-    setError('');
     onClose();
   }
 
@@ -35,37 +38,43 @@ export default function FindIdDialog({onClose, open}) {
 
   const onClick = async () => {
     if(!email) {
-      setError('이메일을 입력해주세요!');
-      setSend(false);
+      setResult({send: false, error: '이메일을 입력해주세요!'});
+      return;
+    }
+    if(result.send) {
+      setResult({send: true, error: '이미 이메일을 보냈어요!'});
       return;
     }
 
-    try {
-      await requestAPI(API_FIND_ID, {});     // ?email=...
-      setError('');
-      setSend(true);
-    } catch(e) {
-      switch (e.message) {
-        case '400':
-          setError('클라이언트에서 오류가 발생했어요...');
-          break;
+    setIsLoading(true);
+    const response = await requestAPI(API_FIND_ID().setQuery({email: email}));
 
-        case '404':
-          setError('해당 이메일로 등록된 계정이 없어요');
+    if(response.status === StatusCodes.OK) {
+      setResult({send: true, error: ''});
+    } else {
+      let message = '';
+      switch (response.status) {
+        case 400:
+          message = '클라이언트에서 오류가 발생했어요...';
           break;
-
+        case 404:
+          message = '해당 이메일로 등록된 계정이 없어요!';
+          break;
         default:
-          setError('서버에서 오류가 발생했어요...');
+          message = '서버에서 오류가 발생했어요...';
           break;
       }
-      setSend(false);
+      setResult({send: false, error: message});
     }
+    setIsLoading(false);
   }
   
-  const resultMessage = send ? <Typography className={fontClass.blue}>이메일로 아이디를 전송했어요!</Typography> : null;
-  const errorMessage = error ? <Typography className={fontClass.red}>{error}</Typography> : null;
+  const resultMessage = result.send ? <Typography className={fontClass.blue}>이메일로 아이디를 전송했어요!</Typography> : null;
+  const errorMessage = result.error ? <Typography className={fontClass.red}>{result.error}</Typography> : null;
+  const loading = isLoading ? <Loading /> : null;
+
   return (
-    <UosDialog full onClose={onCustomClose} open={open}>
+    <UosDialog onClose={onCustomClose} open={open}>
       <DialogTitle>아이디 찾기</DialogTitle>
         <Container className={classes.content}>
         <Container>
@@ -79,6 +88,7 @@ export default function FindIdDialog({onClose, open}) {
         </Container>
         <Button className={buttonClass.blue} onClick={onClick}>찾기</Button>
       </Container>
+      { loading }
     </UosDialog>
   );
 }

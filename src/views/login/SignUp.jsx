@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import StatusCodes from 'http-status-codes';
 import {Button, Container, DialogTitle, makeStyles, Typography} from '@material-ui/core';
 import UosInput from '@components/UosInput';
 import useButtonStyles from '@utils/styles/Button';
@@ -10,7 +11,7 @@ import Loading from '@components/Loading';
 
 export default function SignUpDialog({onClose, open}) {
     const [ newUser, setNewUser ] = useState({uid: '', pw: '', pw2: '', name: '', email: ''});
-    const [ loading, setLoading ] = useState(false);
+    const [ isLoading, setIsLoading ] = useState(false);
     const [ result, setResult ] = useState({send: false, error: ''});
 
     const classes = useStyles();
@@ -29,7 +30,7 @@ export default function SignUpDialog({onClose, open}) {
     const onCustomClose = () => {
         setNewUser({uid: '', pw: '', pw2: '', name: '', email: ''});
         setResult({send: false, error: ''});
-        setLoading(false);
+        setIsLoading(false);
         onClose();
       }
 
@@ -42,6 +43,13 @@ export default function SignUpDialog({onClose, open}) {
     }
 
     const onSubmit = async () => {
+        if(result.send) {
+            setResult({
+                send: true,
+                error: '이미 회원가입을 완료했어요!'
+            });
+            return;
+        }
         if(!(newUser.uid && newUser.pw && newUser.pw2 && newUser.name, newUser.email)) {
             setResult({
                 send: false,
@@ -78,20 +86,21 @@ export default function SignUpDialog({onClose, open}) {
             return;
         }
 
-        setLoading(true);
-        try {
-            await requestAPI(API_SIGN_UP);          // TODO
-            // await axios.post('https://virtserver.swaggerhub.com/uostime/UOSTime/2.0.0/api/user', newUser);
+        setIsLoading(true);
+
+        const response = await requestAPI(API_SIGN_UP(), newUser);
+
+        if(response.status === StatusCodes.CREATED) {
             setResult({send: true, error: ''});
-        } catch(e) {
+        } else {
             setResult({send: false, error: e.message});
         }
-        setLoading(false);
+        setIsLoading(false);
     }
 
     const errorMessage = result.error ? <Typography className={fontClasses.warning}>{result.error}</Typography> : null;
     const resultMessage = result.send ? <Typography className={fontClasses.blue}>회원가입이 완료되었어요!</Typography> : null;
-    const loadingMessage = loading ? <Loading /> : null;
+    const loading = isLoading ? <Loading /> : null;
     return (
         <UosDialog fullWidth onClose={onCustomClose} open={open}>
           <DialogTitle className={classes.title}>회원가입</DialogTitle>
@@ -101,11 +110,11 @@ export default function SignUpDialog({onClose, open}) {
                 <Typography className={fontClasses.default}>4 ~ 20자의 영문자, 숫자, 특수기호(_)만 사용해주세요.</Typography>
             </Container>
             <Container>
-                <UosInput name='pw' type='password1' label='비밀번호' onChange={onChange} value={newUser.pw} />
+                <UosInput name='pw' type='password' label='비밀번호' onChange={onChange} value={newUser.pw} />
                 <Typography className={fontClasses.default}>4 ~ 20자의 영문자, 숫자, 특수문자(!@#$%^&*_())를 사용해주세요.</Typography>
             </Container>
             <Container>
-                <UosInput name='pw2' type='password1' label='비밀번호 확인' onChange={onChange} value={newUser.pw2} />
+                <UosInput name='pw2' type='password' label='비밀번호 확인' onChange={onChange} value={newUser.pw2} />
                 <Typography className={fontClasses.default}>비밀번호를 한 번 더 입력해주세요.</Typography>
             </Container>
             <Container>
@@ -123,7 +132,7 @@ export default function SignUpDialog({onClose, open}) {
             { errorMessage }
             <Button className={buttonClasses.linearRed} onClick={onSubmit}>회원가입</Button>
           </Container>
-          { loadingMessage }
+          { loading }
         </UosDialog>
     )
 }
