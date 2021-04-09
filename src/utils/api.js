@@ -21,10 +21,10 @@ const makeAPI = (method, path) => {
         return API;
       },
       setQuery: queries => {
-        const keys = Object.keys(queries);
-        const queryStr = keys.map(key => `${key}=${queries[key]}`)
-                            .reduce((acc, cur) => `${acc}&${cur}`);
-        API.url = `${API.path}?${queryStr}`;
+        const queryStr = Object.entries(queries)
+                              .map(([key, value]) => `${key}=${encodeURIComponent(value)}`)
+                              .join('&');
+        API.url = `${API.url}?${queryStr}`;
         
         return API;
       },
@@ -95,12 +95,11 @@ export async function requestAPI(apiConfig, data) {
     method: apiConfig.method,
     data: data ? data : apiConfig.data
   };
-  console.log(config);
   try{
     const response = await axiosInstance.request(config);
 
     // for test
-    console.log(response.data);
+    console.log(response);
 
     // includes 3xx, 4xx responses
     return response;
