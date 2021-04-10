@@ -49,11 +49,12 @@ export default function Login() {
       setLoading(true);
       setError(null);
       try {
-        const data = await requestAPI(API_LOGIN(), loginInfo);
+        const response = await requestAPI(API_LOGIN(), loginInfo);
 
         window.localStorage.setItem('token', data.token);
         window.localStorage.setItem('userID', data.userId);
-        setUserID(data.userId);
+        console.log(response)
+        setUserID(response.data.userId);
       } catch(e) {
         const statusCode = parseInt(e.message);
 
@@ -160,7 +161,7 @@ export default function Login() {
 
 const useStyles = makeStyles({
   container: {
-    height: '100vh',
+    height: '96vh',
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',

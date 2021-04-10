@@ -7,8 +7,10 @@ $fnt-black: #4e4e4e;
 
 .background-container {
   width: 100%;
-  height: 100vh;
+  height: 100%;
+  position: relative;
   background-color: $bg-white;
+  color: $fnt-black;
   background-size: cover;
   display: flex;
   flex-direction: column;
@@ -19,24 +21,6 @@ $fnt-black: #4e4e4e;
     display: none;
   }
   .main-container {
-    width: 90%;
-    color: $fnt-black;
-    position: relative;
-    @media all and (max-width: 1200px) {
-      width: 80%;
-    }
-    @media all and (max-width: 1000px) {
-      width: 85%;
-    }
-    @media all and (max-width: 800px) {
-      width: 90%;
-    }
-    .main-content {
-      min-height: 95vh;
-    }
-    .footer {
-      min-height: 5vh;
-      margin-top: auto;
-    }
+    width: 100%;
   }
 }

@@ -20,19 +20,17 @@ function App() {
       <CssBaseline>
         <RecoilRoot>
           <div className="main-container">
-            <div className="main-content">
-              <Router>
-                <Switch>
-                  <Route exact path="/" component={Timetable} />
-                  <Route exact path="/login" component={Login} />
-                  <Route exact path="/admin" component={Admin} />
-                  <Route path="/privacy_policy" component={PrivacyPolicy} />
-                  <Route path="*" component={ErrorPage} />
-                </Switch>
-              </Router>
-            </div>
-            <Footer className="footer" />
+            <Router>
+              <Switch>
+                <Route exact path="/" component={Timetable} />
+                <Route exact path="/login" component={Login} />
+                <Route exact path="/admin" component={Admin} />
+                <Route path="/privacy_policy" component={PrivacyPolicy} />
+                <Route path="*" component={ErrorPage} />
+              </Switch>
+            </Router>
           </div>
+          <Footer />
         </RecoilRoot>
       </CssBaseline>
     </div>
