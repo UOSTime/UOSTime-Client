@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, FormControlLabel, Grid, Switch, TextField } from '@material-ui/core';
+import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, FormControlLabel, Grid, Paper, Switch, TextField } from '@material-ui/core';
+import HtmlFromMarkdown from '@components/HtmlFromMarkdown';
 import { getUniqueID } from '@utils/id';
 import { API_CREATE_NOTICE, requestAPI } from '@utils/api';
 import { convertUTCtoYYYYMMDD, convertYYYYMMDDtoUTC, getUTCNow } from '@utils/time';
@@ -63,7 +64,7 @@ export default function AddNoticeDialog(props) {
             <Grid item xs={12}>
               <FormControl fullWidth>
                 <TextField
-                  label="내용"
+                  label="내용(markdown)"
                   variant="outlined"
                   value={content}
                   onChange={e => setContent(e.target.value)}
@@ -72,6 +73,13 @@ export default function AddNoticeDialog(props) {
                   required
                 />
               </FormControl>
+              <Box mt={2}>
+                <Paper variant="outlined">
+                  <Box p={2}>
+                    <HtmlFromMarkdown markdown={content} />
+                  </Box>
+                </Paper>
+              </Box>
             </Grid>
             <Grid container item xs={12}>
               <Grid item xs={12}>

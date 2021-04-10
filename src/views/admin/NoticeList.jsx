@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Accordion, AccordionDetails, AccordionSummary, Box, Button, FormControl, FormControlLabel, Grid, Paper, Switch, TextField, Typography } from '@material-ui/core';
 import { ExpandMore } from '@material-ui/icons';
+import HtmlFromMarkdown from '@components/HtmlFromMarkdown';
 import { API_DELETE_NOTICE, API_GET_ALL_NOTICES, API_UPDATE_NOTICE, requestAPI } from '@utils/api';
 import { convertUTCtoYYYYMMDD, convertYYYYMMDDtoUTC } from '@utils/time';
 import AddNoticeDialog from './AddNoticeDialog';
@@ -92,6 +93,13 @@ function NoticeListItem(props) {
                 required
               />
             </FormControl>
+            <Box mt={2}>
+              <Paper variant="outlined">
+                <Box p={2}>
+                  <HtmlFromMarkdown markdown={content} />
+                </Box>
+              </Paper>
+            </Box>
           </Grid>
           <Grid container item xs={12}>
             <Grid item xs={12}>
