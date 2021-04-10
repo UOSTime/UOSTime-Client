@@ -4,7 +4,7 @@ import useFontStyles from '@utils/styles/Font';
 import useButtonStyles from '@utils/styles/Button';
 import theme from '@utils/styles/Theme';
 import failLogo from '@img/fontawesome/logo-fail.svg';
-import { Redirect, useHistory } from 'react-router';
+import { useHistory } from 'react-router';
 
 export default function Error() {
 
