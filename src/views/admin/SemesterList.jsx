@@ -42,6 +42,7 @@ export default function SemesterList() {
   const [selectedTerm, setSelectedTerm] = useState('A10');
 
   useEffect(async () => {
+    // show update histories
     const { data: histories } = await requestAPI(API_GET_HISTORIES(), {
       year: selectedYear,
       term: selectedTerm,

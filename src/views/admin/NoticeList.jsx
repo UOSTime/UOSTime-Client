@@ -135,20 +135,17 @@ function NoticeListItem(props) {
   );
 }
 
-export default function NoticeList(props) {
+export default function NoticeList() {
   // state
   const [notices, setNotices] = useState([]);
   const [expandedIndex, setExpandedIndex] = useState(null);
   const [isOpenAddNoticeDialog, setIsOpenAddNoticeDialog] = useState(false);
 
-  useEffect(() => {
-    updateNoticeList();
-  }, []);
-
-  const updateNoticeList = async () => {
+  useEffect(async () => {
+    // update notice list
     const { data: allNotices } = await requestAPI(API_GET_ALL_NOTICES());
     setNotices(allNotices);
-  };
+  }, []);
 
   const toggleExpand = i => {
     setExpandedIndex(i === expandedIndex ? null : i);
