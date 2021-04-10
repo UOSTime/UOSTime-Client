@@ -4,8 +4,16 @@ import useFontStyles from '@utils/styles/Font';
 import useButtonStyles from '@utils/styles/Button';
 import theme from '@utils/styles/Theme';
 import failLogo from '@img/fontawesome/logo-fail.svg';
+import { Redirect, useHistory } from 'react-router';
 
 export default function Error() {
+
+    const history = useHistory();
+
+    const onClick = () => {
+        history.push('/');
+    }
+
     const buttonClasses = useButtonStyles({
         width: '100px',
         fontSize: '1.3rem',
@@ -39,7 +47,7 @@ export default function Error() {
                 <Typography className={H1FontClasses.black}>앗! 여기가 어디죠?</Typography>
                 <Typography className={ErrorFontClasses.black}>Error Code: 404 Not Found</Typography>
                 <Typography className={fontClasses.black}>홈으로 돌아가시겠어요?</Typography>
-                <Button className={buttonClasses.linearRed}>Home</Button>
+                <Button className={buttonClasses.linearRed} onClick={onClick}>Home</Button>
             </Container>
             <Container className={classes.logo}>
                 <img src={failLogo} />
