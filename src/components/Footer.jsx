@@ -57,9 +57,9 @@ function Footer() {
         </Typography>
       </div>
       <div className={classes.secondBox}>
-        {'서울시립대학교 시간표 관리 서비스 '}
+        {' ©'}
         <Typography variant="UOSTime" className={classes.font}>
-          {' © UOSTime Team '}
+          {' UOSTime Team '}
         </Typography>
         <Typography variant="Version">
           {' v2.0.0'}
