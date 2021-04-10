@@ -18,6 +18,7 @@ const useStyles = makeStyles(theme => ({
   },
   font: {
     color: '#4e4e4e',
+    cursor: 'pointer',
     '&:hover': {
       color: '#f68b7d',
     },
@@ -69,7 +70,7 @@ function Footer() {
       </div>
       <div className={classes.secondBox}>
         {' ©'}
-        <Link variant="UOSTime" className={classes.font} underline="none" onClick={uostimeDialogOpen}> UOSTime Team </Link>{' v2.0.0'}
+        <Link name="UOSTime" className={classes.font} underline="none" onClick={uostimeDialogOpen}> UOSTime Team </Link>{' v2.0.0'}
         <UOSTimeDialog onClose={uostimeDialogClose} open={uostimeOpen} />
       </div>
     </Container>
