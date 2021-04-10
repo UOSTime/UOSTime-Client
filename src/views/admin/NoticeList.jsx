@@ -31,7 +31,7 @@ function NoticeListItem(props) {
 
   const deleteNotice = () => {
     if (confirm('정말 삭제하시겠습니까?')) {
-      requestAPI(API_DELETE_NOTICE, { _id: notice._id });
+      requestAPI(API_DELETE_NOTICE(), { _id: notice._id });
     }
   };
 
@@ -41,7 +41,7 @@ function NoticeListItem(props) {
     notice.date = date;
     notice.is_hot = isHot;
     notice.is_using = isUsing;
-    requestAPI(API_UPDATE_NOTICE, notice);
+    requestAPI(API_UPDATE_NOTICE(), notice);
   };
 
   return (
@@ -143,7 +143,7 @@ export default function NoticeList(props) {
   }, []);
 
   const updateNoticeList = async () => {
-    const allNotices = await requestAPI(API_GET_ALL_NOTICES);
+    const { data: allNotices } = await requestAPI(API_GET_ALL_NOTICES());
     setNotices(allNotices);
   };
 
