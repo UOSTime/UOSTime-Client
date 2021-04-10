@@ -2,7 +2,7 @@ import React from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { semesterState } from '../states/Semester';
 import { userIDState } from '../states/User';
-import Login from './Login';
+import Login from '@views/login';
 
 export default function Timetable() {
   const userID = useRecoilValue(userIDState);

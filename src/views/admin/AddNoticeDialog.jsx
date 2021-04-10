@@ -21,7 +21,7 @@ export default function AddNoticeDialog(props) {
   ] = getUniqueID(1);
 
   const onSubmit = () => {
-    requestAPI(API_CREATE_NOTICE, {
+    requestAPI(API_CREATE_NOTICE(), {
       title,
       content,
       date,
