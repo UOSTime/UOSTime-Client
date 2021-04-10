@@ -9,6 +9,7 @@ import Timetable from './views/Timetable';
 import Login from './views/login';
 import PrivacyPolicy from './views/PrivacyPolicy';
 import Admin from './views/admin';
+import Error from './views/error';
 
 ReactDOM.render(
   <React.StrictMode>
@@ -20,7 +21,7 @@ ReactDOM.render(
           <Route exact path="/Login" component={Login} />
           <Route exact path="/admin" component={Admin} />
           <Route path="/privacy_policy" component={PrivacyPolicy} />
-          <Route path="*" component={ErrorPage} />
+          <Route path="*" component={Error} />
         </Switch>
       </Router>
     </RecoilRoot>
@@ -33,6 +34,3 @@ ReactDOM.render(
 // or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
 reportWebVitals();
 
-function ErrorPage() {
-  return <h1>404 Not Found</h1>;
-}

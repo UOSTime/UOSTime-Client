@@ -49,7 +49,7 @@ export default function Login() {
       setLoading(true);
       setError(null);
       try {
-        const data = await requestAPI(API_LOGIN, loginInfo);
+        const data = await requestAPI(API_LOGIN(), loginInfo);
 
         window.localStorage.setItem('token', data.token);
         window.localStorage.setItem('userID', data.userId);
