@@ -70,11 +70,11 @@ export default function SemesterList() {
     <>
       <Box display="flex" flexDirection="row" alignItems="center" p={2}>
         <Box mr="auto">
-          <h1>Semesters</h1>
+          <h2>강의 업데이트</h2>
         </Box>
         <Box mx={1}>
           <TextField
-            label="Year"
+            label="연도"
             type="number"
             defaultValue={selectedYear}
             onChange={e => setSelectedYear(e.target.value)}
@@ -82,7 +82,7 @@ export default function SemesterList() {
         </Box>
         <Box mx={1}>
           <FormControl>
-            <InputLabel id={termSelectLabelId}>Term</InputLabel>
+            <InputLabel id={termSelectLabelId}>학기</InputLabel>
             <Select
               labelId={termSelectLabelId}
               value={selectedTerm}
@@ -97,13 +97,15 @@ export default function SemesterList() {
           </FormControl>
         </Box>
         <Box mx={1}>
-          <Button variant="contained" color="primary" onClick={() => updateLectures()}>Update</Button>
+          <Button variant="contained" color="primary" onClick={() => updateLectures()}>업데이트</Button>
         </Box>
       </Box>
       <Paper>
-        <List dense>
-          {updateHistoryList}
-        </List>
+        {
+          updateHistoryList.length
+            ? <List dense>{updateHistoryList}</List>
+            : <Box p={2}>(업데이트 이력 없음)</Box>
+        }
       </Paper>
     </>
   );
