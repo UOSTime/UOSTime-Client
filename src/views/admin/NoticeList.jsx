@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { Accordion, AccordionDetails, AccordionSummary, Button, FormControl, FormControlLabel, Grid, Switch, TextField, Typography } from '@material-ui/core';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import { Accordion, AccordionDetails, AccordionSummary, Box, Button, FormControl, FormControlLabel, Grid, Switch, TextField, Typography } from '@material-ui/core';
+import { ExpandMore } from '@material-ui/icons';
 import { API_DELETE_NOTICE, API_GET_ALL_NOTICES, API_UPDATE_NOTICE, requestAPI } from '@utils/api';
 import { convertUTCtoYYYYMMDD, convertYYYYMMDDtoUTC } from '@utils/time';
+import AddNoticeDialog from './AddNoticeDialog';
 
 function NoticeListItem(props) {
   // props
@@ -47,7 +48,7 @@ function NoticeListItem(props) {
   return (
     <Accordion expanded={expanded} onChange={() => onChange(accordionIndex)}>
       <AccordionSummary
-        expandIcon={<ExpandMoreIcon />}
+        expandIcon={<ExpandMore />}
         aria-controls={`notice-content-${accordionIndex}`}
         id={`notice-${accordionIndex}`}
       >
@@ -137,6 +138,8 @@ function NoticeListItem(props) {
 export default function NoticeList(props) {
   // state
   const [notices, setNotices] = useState([]);
+  const [expandedIndex, setExpandedIndex] = useState(null);
+  const [isOpenAddNoticeDialog, setIsOpenAddNoticeDialog] = useState(false);
 
   useEffect(() => {
     updateNoticeList();
@@ -146,9 +149,6 @@ export default function NoticeList(props) {
     const { data: allNotices } = await requestAPI(API_GET_ALL_NOTICES());
     setNotices(allNotices);
   };
-
-  // state
-  const [expandedIndex, setExpandedIndex] = useState(null);
 
   const toggleExpand = i => {
     setExpandedIndex(i === expandedIndex ? null : i);
@@ -166,6 +166,18 @@ export default function NoticeList(props) {
 
   return (
     <>
+      <AddNoticeDialog
+        open={isOpenAddNoticeDialog}
+        closeAddNoticeDialog={() => setIsOpenAddNoticeDialog(false)}
+      />
+      <Box display="flex" flexDirection="row" alignItems="center" p={2}>
+        <Box mr="auto">
+          <h1>Notices</h1>
+        </Box>
+        <Box mx={1}>
+          <Button variant="contained" color="primary" onClick={() => setIsOpenAddNoticeDialog(true)}>Add Notice</Button>
+        </Box>
+      </Box>
       {noticeList}
     </>
   );
