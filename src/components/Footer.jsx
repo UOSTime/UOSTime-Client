@@ -1,5 +1,5 @@
 import React from 'react';
-import { makeStyles, Container, Typography, Link } from '@material-ui/core';
+import { makeStyles, Container, Link } from '@material-ui/core';
 import ContactDialog from './ContactDialog';
 import UOSTimeDialog from './UOSTimeDialog';
 
@@ -41,7 +41,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function Footer() {
+export default function Footer() {
   const classes = useStyles();
   const [contactOpen, setContactOpen] = React.useState(false);
   const [uostimeOpen, setUostimeOpen] = React.useState(false);
@@ -77,5 +77,3 @@ function Footer() {
     </Container>
   );
 }
-
-export default Footer;
