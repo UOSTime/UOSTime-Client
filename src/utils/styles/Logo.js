@@ -44,25 +44,25 @@ const barStyle = {
 }
 
 const useLogoStyles = makeStyles({
-    small: {
+    sm: {
         ...common,
-        width: '40px',
-        height: '40px'
+        width: '30px',
+        height: '30px'
     },
-    medium: {
+    md: {
         ...common,
-        width: '100px',
-        height: '100px'
+        width: '70px',
+        height: '70px'
     },
-    large: {
+    lg: {
         ...common,
-        width: '200px',
-        height: '200px'
+        width: '110px',
+        height: '110px'
     },
-    xlarge: {
+    xl: {
         ...common,
-        width: '300px',
-        height: '300px'
+        width: '150px',
+        height: '150px'
     },
     ...barStyle
 });
