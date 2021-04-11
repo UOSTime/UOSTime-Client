@@ -48,16 +48,15 @@ export default function Login() {
     const callLogin = async () => {
       setLoading(true);
       setError(null);
-      try {
-        const data = await requestAPI(API_LOGIN, loginInfo);
 
-        window.localStorage.setItem('token', data.token);
-        window.localStorage.setItem('userID', data.userId);
-        setUserID(data.userId);
-      } catch(e) {
-        const statusCode = parseInt(e.message);
+      const response = await requestAPI(API_LOGIN(), loginInfo);
 
-        switch(statusCode) {
+      if(response.status === StatusCodes.OK) {
+        window.localStorage.setItem('token', response.data.token);
+        window.localStorage.setItem('userID', response.data.userId);
+        setUserID(response.data.userId);
+      } else {
+        switch(response.status) {
           case StatusCodes.UNAUTHORIZED:
             setWarning('아이디 혹은 비밀번호가 틀렸어요!');
             setLoginInfo({
@@ -75,7 +74,6 @@ export default function Login() {
             break;
         }
       }
-
       setLoading(false);
     }
     callLogin();
@@ -153,7 +151,7 @@ export default function Login() {
         <FindPWDialog onClose={dialogOnClose} open={findOpen.pw}/>
         <SignUpDialog onClose={dialogOnClose} open={findOpen.signUp}/>
       </Container>
-      {loading ? <Loading /> : null}
+      {loading ? <Loading bg={false} size='lg' /> : null}
     </Container>
   );
 }
