@@ -1,8 +1,6 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import SwipeableViews from 'react-swipeable-views';
 import { makeStyles, useTheme, AppBar, Tabs, Tab, Typography, Box, Container } from '@material-ui/core';
-import FillLogo from './FillLogo';
+import Logo from './Logo';
 
 function a11yProps(index) {
   return {
@@ -20,19 +18,30 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     flexDirection: 'row',
   },
-  title: {
+  logoBox: {
+    display: 'flex',
+    flexDirection: 'row',
     color: '#4e4e4e',
-    flexGrow: 0.1,
+    flexGrow: 0.08,
+    alignItems: 'center',
+    padding: '6px 12px',
+  },
+  font: {
     fontSize: '32px',
+    marginLeft: '12px',
   },
   tab: {
+    height: '60px',
+    fontSize: '20px',
     color: '#c4c4c4',
-    transition: 'none',
     '&$selected':{
       color: '#f68b7d',
     },
   },
   selected: {},
+  indicator: {
+    height: '4px',
+  },
 }));
 
 export default function Header() {
@@ -50,11 +59,14 @@ export default function Header() {
   return (
     <Container className={classes.root}>
       <AppBar position="static" className={classes.appBar}>
-        <FillLogo size="small"/>
-        <Typography className={classes.title}>UOSTime</Typography>
+        <Box className={classes.logoBox}>
+          <Logo size='smd'/>
+          <Typography className={classes.font}>UOSTime</Typography>
+        </Box>
         <Tabs
           value={value}
           onChange={handleChange}
+          classes={{ indicator: classes.indicator }}
           variant="fullWidth"
           aria-label="full width tabs"
         >

@@ -3,7 +3,7 @@ import { Box } from '@material-ui/core';
 import { useLogoStyles } from '@utils/styles/Logo';
 
 
-// size: small, medium, large, xlarge
+// size: small, small-medium, medium, large, xlarge
 export default function FillLogo({size}) {
     const logoClasses = useLogoStyles();
 

@@ -49,6 +49,11 @@ const useLogoStyles = makeStyles({
         width: '30px',
         height: '30px'
     },
+    smd: {
+        ...common,
+        width: '48px',
+        height: '48px'
+    },
     md: {
         ...common,
         width: '70px',
