@@ -4,10 +4,25 @@ import { easeElasticOut } from 'd3-ease';
 import { Box, makeStyles } from '@material-ui/core';
 
 
+const sizeMap = {
+    'sm': { width: '20px', height: '20px' },
+    'md': { width: '50px', height: '50px' },
+    'lg': { width: '80px', height: '80px' },
+    'xl': { width: '100px', height: '100px' }
+};
 
-export default function Loading() {
-    const scale = 1.1
+const scaleMap = {
+    'sm': 0.3,
+    'md': 0.7,
+    'lg': 1.1,
+    'xl': 1.7
+};
 
+export default function Loading({size, bg}) {
+    const scale = size ? scaleMap[size] : scaleMap['lg'];
+
+    const sizeStyle = size ? sizeMap[size] : sizeMap['lg'];
+    const bgPanel = bg ? { backgroundColor : 'gray' } : {};
     const setLoopState = useState(true)[1];
 
     const getProp = (scale, height, top, order) => {
@@ -57,14 +72,13 @@ export default function Loading() {
 
     return (<Box className={classes.background}>
         <animated.div style={{
-        width: `80px`,
-        height: `80px`,
+        ...sizeStyle,
+        ...bgPanel,
         opacity: 0.6,
         display: `flex`, 
         flexDirection: `row`,
         alignItems: `center`,
         justifyContent: `center`,
-        backgroundColor: `gray`,
         borderRadius: `1.2rem`,
         gap: `${0.2 * scale}rem`}} >
         <animated.div style={firstBar}></animated.div>
