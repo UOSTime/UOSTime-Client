@@ -2,32 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import SwipeableViews from 'react-swipeable-views';
 import { makeStyles, useTheme, AppBar, Tabs, Tab, Typography, Box, Container } from '@material-ui/core';
-
-function TabPanel(props) {
-  const { children, value, index, ...other } = props;
-
-  return (
-    <Container
-      role="tabpanel"
-      hidden={value !== index}
-      id={`full-width-tabpanel-${index}`}
-      aria-labelledby={`full-width-tab-${index}`}
-      {...other}
-    >
-      {value === index && (
-        <Box p={3}>
-          <Typography>{children}</Typography>
-        </Box>
-      )}
-    </Container>
-  );
-}
-
-TabPanel.propTypes = {
-  children: PropTypes.node,
-  index: PropTypes.any.isRequired,
-  value: PropTypes.any.isRequired,
-};
+import FillLogo from './FillLogo';
 
 function a11yProps(index) {
   return {
@@ -42,9 +17,17 @@ const useStyles = makeStyles(theme => ({
   },
   appBar: {
     backgroundColor: '#f6f6f6',
+    display: 'flex',
+    flexDirection: 'row',
+  },
+  title: {
+    color: '#4e4e4e',
+    flexGrow: 0.1,
+    fontSize: '32px',
   },
   tab: {
     color: '#c4c4c4',
+    transition: 'none',
     '&$selected':{
       color: '#f68b7d',
     },
@@ -67,6 +50,8 @@ export default function Header() {
   return (
     <Container className={classes.root}>
       <AppBar position="static" className={classes.appBar}>
+        <FillLogo size="small"/>
+        <Typography className={classes.title}>UOSTime</Typography>
         <Tabs
           value={value}
           onChange={handleChange}
@@ -78,21 +63,6 @@ export default function Header() {
           <Tab label="공지사항" classes={{ root: classes.tab, selected: classes.selected }} {...a11yProps(2)} />
         </Tabs>
       </AppBar>
-      <SwipeableViews
-        axis={theme.direction === 'rtl' ? 'x-reverse' : 'x'}
-        index={value}
-        onChangeIndex={handleChangeIndex}
-      >
-        <TabPanel value={value} index={0} dir={theme.direction}>
-          시간표
-        </TabPanel>
-        <TabPanel value={value} index={1} dir={theme.direction}>
-          게시판
-        </TabPanel>
-        <TabPanel value={value} index={2} dir={theme.direction}>
-          공지사항
-        </TabPanel>
-      </SwipeableViews>
     </Container>
   );
 }
