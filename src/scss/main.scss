@@ -6,8 +6,8 @@ $fnt-gray: #9e9494;
 $fnt-black: #4e4e4e;
 
 .background-container {
-  width: 100%;
-  height: 100%;
+  width: 100vw;
+  height: 100vh;
   position: relative;
   background-color: $bg-white;
   color: $fnt-black;
@@ -19,8 +19,5 @@ $fnt-black: #4e4e4e;
   overflow-y: auto;
   &::-webkit-scrollbar {
     display: none;
-  }
-  .main-container {
-    width: 100%;
   }
 }

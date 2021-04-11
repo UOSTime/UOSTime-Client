@@ -61,18 +61,19 @@ function Footer() {
 
   return (
     <Container maxWidth="lg" className={classes.footer}>
-      <div className={classes.firstBox}>
+      <Container className={classes.firstBox}>
         <Link name="UOS" className={classes.font} underline="none" href="https://uos.ac.kr">서울시립대학교</Link>{' | '}
-        <Link name="Contact" className={classes.font} underline="none" onClick={contactDialogOpen}>문의하기</Link>
-        <ContactDialog  onClose={contactDialogClose} open={contactOpen} />{' | '}
+        <Link name="Contact" className={classes.font} underline="none" onClick={contactDialogOpen}>문의하기</Link>{' | '}
         <Link name= "TermsOfService" className={classes.font} underline="none" href="https://uostime.herokuapp.com/terms_of_service">이용약관</Link>{' | '}
         <Link name="PrivacyPolicy" className={classes.font} underline="none" href="/privacy_policy">개인정보처리방침</Link>
-      </div>
-      <div className={classes.secondBox}>
+      </Container>
+      <Container className={classes.secondBox}>
         {' ©'}
-        <Link name="UOSTime" className={classes.font} underline="none" onClick={uostimeDialogOpen}> UOSTime Team </Link>{' v2.0.0'}
-        <UOSTimeDialog onClose={uostimeDialogClose} open={uostimeOpen} />
-      </div>
+        <Link name="UOSTime" className={classes.font} underline="none" onClick={uostimeDialogOpen}> UOSTime Team </Link>
+        {' v2.0.0'}
+      </Container>
+      <ContactDialog  onClose={contactDialogClose} open={contactOpen} />
+      <UOSTimeDialog onClose={uostimeDialogClose} open={uostimeOpen} />
     </Container>
   );
 }

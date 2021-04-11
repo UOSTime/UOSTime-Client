@@ -18,6 +18,7 @@ import theme from '@utils/styles/Theme';
 import Logo from '@views/login/Logo';
 import useLinkStyles from '../../utils/styles/Link';
 import SignUpDialog from './SignUp';
+import Footer from '../../components/Footer'
 
 
 
@@ -158,7 +159,8 @@ export default function Login() {
 
 const useStyles = makeStyles({
   container: {
-    height: '96vh',
+    height: '100%',
+    width: '100%',
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',

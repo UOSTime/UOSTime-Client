@@ -1,6 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
-import './scss/index.scss';
+import './scss/main.scss';
 import { RecoilRoot } from 'recoil';
 import { CssBaseline } from '@material-ui/core';
 import Footer from './components/Footer';
@@ -19,17 +19,15 @@ function App() {
     <div className="background-container">
       <CssBaseline>
         <RecoilRoot>
-          <div className="main-container">
-            <Router>
-              <Switch>
-                <Route exact path="/" component={Timetable} />
-                <Route exact path="/login" component={Login} />
-                <Route exact path="/admin" component={Admin} />
-                <Route path="/privacy_policy" component={PrivacyPolicy} />
-                <Route path="*" component={ErrorPage} />
-              </Switch>
-            </Router>
-          </div>
+          <Router>
+            <Switch>
+              <Route exact path="/" component={Timetable} />
+              <Route exact path="/login" component={Login} />
+              <Route exact path="/admin" component={Admin} />
+              <Route path="/privacy_policy" component={PrivacyPolicy} />
+              <Route path="*" component={ErrorPage} />
+            </Switch>
+          </Router>
           <Footer />
         </RecoilRoot>
       </CssBaseline>
