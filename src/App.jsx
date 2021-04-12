@@ -6,7 +6,6 @@ import { CssBaseline } from '@material-ui/core';
 import Footer from './components/Footer';
 
 import Home from '@views/home';
-import Timetable from './views/Timetable';
 import Login from './views/login/index';
 import PrivacyPolicy from './views/PrivacyPolicy';
 import Admin from './views/admin';
