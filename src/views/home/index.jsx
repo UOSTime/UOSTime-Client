@@ -6,6 +6,7 @@ import TimeTable from '@components/TimeTable';
 import { requestAPI, API_GET_TIMETABLES } from '@utils/api';
 import { StatusCodes } from 'http-status-codes';
 import { timeTableMapState } from '@states/TimeTable';
+import LectureList from '../../components/LectureList';
 
 export default function Home() {
     const [ timeTableMap, setTimeTableMap ] = useRecoilState(timeTableMapState);
@@ -41,6 +42,7 @@ export default function Home() {
 
     return (
         <div>
+            <LectureList />
             { timeTableComponents }
         </div>
     )
