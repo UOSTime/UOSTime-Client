@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { Redirect } from 'react-router';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { semesterState } from '@states/Semester';
 import TimeTable from '@components/TimeTable';
@@ -11,6 +12,10 @@ export default function Home() {
     const semester = useRecoilValue(semesterState);
 
     useEffect(() => {
+        if(!localStorage.getItem('userID')) {
+            return;
+        }
+
         const getTimeTables = async () => {
             const response = await requestAPI(API_GET_TIMETABLES().setQuery({year: semester.year, term: semester.term}));
 
@@ -29,6 +34,10 @@ export default function Home() {
     }, []);
 
     const timeTableComponents = Object.keys(timeTableMap).map((timeTableId, idx) => <TimeTable key={idx} timeTableId={timeTableId} />)
+
+    if(!localStorage.getItem('userID')) {
+        return <Redirect to='/login' />;
+    }
 
     return (
         <div>

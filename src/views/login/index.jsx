@@ -56,6 +56,7 @@ export default function Login() {
         window.localStorage.setItem('token', response.data.token);
         window.localStorage.setItem('userID', response.data.userId);
         setUserID(response.data.userId);
+        setSemester({year: '2021', term: 'A10'})
       } else {
         switch(response.status) {
           case StatusCodes.UNAUTHORIZED:
@@ -118,7 +119,7 @@ export default function Login() {
     }
   };
 
-  if (userID) return <Redirect path='/' />;
+  if (userID) return <Redirect to='/' />;
   if (error) return <Box>에러가 발생했어요...</Box>
   return (
       <Container className={classes.container}>

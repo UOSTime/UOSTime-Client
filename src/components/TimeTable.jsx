@@ -49,7 +49,7 @@ export default function TimeTable({timeTableId}) {
     
         return <TimeTableBlock lectureInfo={lecture} />
     }
-
+    
     return (
         <Container className={classes.container}>
             <Container className={classes.dayRowContainer}>
@@ -91,11 +91,11 @@ export default function TimeTable({timeTableId}) {
 }
 
 function TimeTableBlock({lectureInfo}) {
-    const classes = useStyles();
+    const classes = useBoxBlockStyles({height: `${lectureInfo.times.length * 100}%`});
     const fontClasses = useFontStyles({fontSize: '0.8rem', textAlign: 'center'});
 
     return (
-        <Box className={classes.lectureBox}>
+        <Box className={classes.root}>
             <Typography className={fontClasses.white}>{lectureInfo.name}</Typography>
             <Typography className={fontClasses.white}>{lectureInfo.place}</Typography>
         </Box>
@@ -103,6 +103,19 @@ function TimeTableBlock({lectureInfo}) {
 }
 
 
+const useBoxBlockStyles = makeStyles({
+    root: styles => ({
+        backgroundColor: 'green',
+        height: '100%',
+        position: 'absolute',
+        borderRadius: '5px',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        padding: '3px',
+        ...styles
+    })
+});
 
 const useStyles = makeStyles({
     container: {
@@ -137,16 +150,6 @@ const useStyles = makeStyles({
     box: {
         flex: '1',
         position: 'relative'
-    },
-    lectureBox: {
-        backgroundColor: 'green',
-        height: '300%',
-        position: 'absolute',
-        borderRadius: '5px',
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
-        padding: '3px'
     },
     timeBox: {
         width: '20px',
