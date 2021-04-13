@@ -49,7 +49,7 @@ export default function Login() {
     const callLogin = async () => {
       setLoading(true);
       setError(null);
-
+      
       const response = await requestAPI(API_LOGIN(), loginInfo);
 
       if(response.status === StatusCodes.OK) {
