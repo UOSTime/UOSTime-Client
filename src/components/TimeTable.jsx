@@ -16,12 +16,12 @@ const timeArr = [9, 10, 11, 12, 1, 2, 3, 4, 5, 6, 7, 8, 9];
 
 export default function TimeTable({timeTableId}) {
     const timeTable = useRecoilValue(timeTableMapState)[timeTableId];
-    const cellRefs = timeArr.map(() => Object.keys(day2Num).map(() => useRef()));
     const lectureInfoList = useRef([]);
+    const timeTableMap = useRef(timeArr.map(() => Object.keys(day2Num).map(() => null)));
 
     const classes = useStyles();
     const dayFontClasses = useFontStyles({fontSize: '1rem'});
-    const fontClasses = useFontStyles({fontSize: '0.7rem'});
+    const fontClasses = useFontStyles({fontSize: '0.7rem', fontWeight: '700'});
     const colorClass = useLectureColor();
     const sizeClass = useLectureSize();
 
@@ -51,24 +51,12 @@ export default function TimeTable({timeTableId}) {
                 return lectureInfos;
             }).flat();
 
-            lectureInfoList.current.forEach(lectureInfo => {
-                const row = lectureInfo.times[0]-1;
-                const col = lectureInfo.day;
-                console.log(colorClass['0'])
+            lectureInfoList.current.forEach(lecture => {
+                const row = lecture.times[0] - 1;
+                const col = lecture.day;
 
-                const content = <Container>
-                    { lectureInfo.name }
-                    { lectureInfo.place }
-                </Container>
-
-                console.log(cellRefs[row][col].current.children[0])
-                // cellRefs[row][col].current.children[0] = content;
-                cellRefs[row][col].current.classList.add(
-                    colorClass[lectureInfo.color], 
-                    sizeClass[lectureInfo.times.length], 
-                    classes.lectureBox
-                );
-            })
+                timeTableMap.current[row][col] = lecture;
+            });
     }, [timeTable]);
     
     
@@ -97,8 +85,15 @@ export default function TimeTable({timeTableId}) {
                     }
                     {
                         Object.keys(day2Num).map((col, colIdx) => (
-                            <Box key={colIdx} className={classes.box}>                                
-                                <Box ref={cellRefs[rowIdx][colIdx]}></Box>
+                            <Box key={colIdx} className={classes.box}>  
+                            {
+                                timeTableMap.current[rowIdx][colIdx] ?
+                                <Box className={`${colorClass[timeTableMap.current[rowIdx][colIdx].color]} ${sizeClass[timeTableMap.current[rowIdx][colIdx].times.length]} ${classes.lectureBox}`}>
+                                    <Typography className={fontClasses.white}>{timeTableMap.current[rowIdx][colIdx].name}</Typography>
+                                    <Typography className={fontClasses.white}>{timeTableMap.current[rowIdx][colIdx].place}</Typography>
+                                </Box>
+                                : null
+                            }
                             </Box>)
                         )
                     }
@@ -154,6 +149,7 @@ const useStyles = makeStyles({
         alignContent: 'stretch'
     },
     rowContainer: {
+        maxHeight: '7.7%',              // TODO - refactoring
         flex: '1',
         display: 'flex',
         flexDirection: 'row',
@@ -189,7 +185,10 @@ const useStyles = makeStyles({
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'center',
-        alignItems: 'center'
+        alignItems: 'center',
+        textAlign: 'center',
+        borderRadius: '5px',
+        margin: '2px'
     }
 });
 
