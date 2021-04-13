@@ -22,6 +22,7 @@ export default function LectureList() {
     const [ lectureList, setLectureList ] = useState([]);
     const [ input, setInput ] = useState({searchType: 'subject_nm', keyword: ''});
     const lectureListComponent = useRef();
+    const searchBtn = useRef();
     const allLectures = useRef([]);
 
     const classes = useStyles();
@@ -55,14 +56,19 @@ export default function LectureList() {
         const scrollY = lectureListComponent.current.scrollHeight;
         const scrollTop = lectureListComponent.current.scrollTop;
         const clientHeight = lectureListComponent.current.clientHeight;
-        console.log(scrollY, scrollTop, clientHeight)
 
         if (scrollTop + clientHeight >= scrollY-200) {
             const currentLength = lectureList.length;
             setLectureList(lectureList.concat(allLectures.current.slice(currentLength, currentLength+scrollSize)));
         }
-       };
+    };
     
+    const onEnter = (e) => {
+        if (e.key === 'Enter') {
+            searchBtn.current.click();
+        };
+        
+    }
 
     const onChange = (e) => {
         const {name, value} = e.target;
@@ -78,8 +84,8 @@ export default function LectureList() {
             <select name='searchType' onChange={onChange} value={input.searchType}>
                 {Object.entries(searchOption).map(([code, name], idx) => <option key={idx} value={code}>{name}</option>)}
             </select>
-            <TextField name='keyword' onChange={onChange} value={input.keyword}></TextField>
-            <Button onClick={onSearch}>검색</Button>
+            <TextField name='keyword' onKeyPress={onEnter} onChange={onChange} value={input.keyword}></TextField>
+            <Button onClick={onSearch} ref={searchBtn}>검색</Button>
             <Container className={classes.lectureList} onScroll={handleScroll} ref={lectureListComponent}>
                 { lectureList.map((lecture, idx) => <LectureRecord key={idx} lecture={lecture} />)}
             </Container>

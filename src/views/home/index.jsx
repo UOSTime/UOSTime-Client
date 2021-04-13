@@ -18,7 +18,7 @@ export default function Home() {
         }
 
         const getTimeTables = async () => {
-            const response = await requestAPI(API_GET_TIMETABLES().setQuery({year: semester.year, term: semester.term}));
+            const response = await requestAPI(API_GET_TIMETABLES().setQuery({year: 2021, term: 'A10'}));
 
             if(!response || response.status !== StatusCodes.OK) {
                 alert('시간표를 가져오는데 실패했어요');
