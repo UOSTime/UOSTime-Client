@@ -18,6 +18,7 @@ import theme from '@utils/styles/Theme';
 import Logo from '@views/login/Logo';
 import useLinkStyles from '../../utils/styles/Link';
 import SignUpDialog from './SignUp';
+import Footer from '../../components/Footer'
 
 
 
@@ -121,44 +122,45 @@ export default function Login() {
   if (error) return <Box>에러가 발생했어요...</Box>
   return (
       <Container className={classes.container}>
-      <Box className={logoLayoutClass.root} >
-        <Logo />
-        <Typography className={loginLabelClass.root}>UOSTime</Typography>
-      </Box>
-      <Container className={classes.loginPanel}>
-        <Container className={classes.loginInputPanel}>
-          <UosInput type='text' name='uid' label='아이디' onChange={inputOnChange} value={loginInfo.uid} />
-          <UosInput type='password' name='pw' label='비밀번호' onChange={inputOnChange} onKeyPress={onEnterPress} value={loginInfo.pw} />
-          { warning.length > 0 ? <Typography className={classes.warning}>{warning}</Typography> : null }
+        <Box className={logoLayoutClass.root} >
+          <Logo />
+          <Typography className={loginLabelClass.root}>UOSTime</Typography>
+        </Box>
+        <Container className={classes.loginPanel}>
+          <Container className={classes.loginInputPanel}>
+            <UosInput type='text' name='uid' label='아이디' onChange={inputOnChange} value={loginInfo.uid} />
+            <UosInput type='password' name='pw' label='비밀번호' onChange={inputOnChange} onKeyPress={onEnterPress} value={loginInfo.pw} />
+            { warning.length > 0 ? <Typography className={classes.warning}>{warning}</Typography> : null }
+          </Container>
+          <Button className={buttonClass.linearRed} onClick={login} ref={loginBtn}>Login</Button>
+          <Container className={classes.otherLink}>
+            <Box className={classes.rowBox}>
+              <Typography>아이디를 잊으셨나요?</Typography>
+              <Link name='findID' className={linkClass.blue} onClick={openDialog}>아이디 찾기</Link>
+            </Box>
+            <Box className={classes.rowBox}>
+              <Typography>비밀번호를 잊으셨나요?</Typography>
+              <Link name='findPW' className={linkClass.blue} onClick={openDialog}>비밀번호 찾기</Link>
+            </Box>
+            <Typography className={classes.seperator}>또는</Typography>
+            <Box className={classes.rowBox}>
+              <Typography>UOSTime이 처음이신가요?</Typography>
+              <Link name='signUp' className={linkClass.red} onClick={openDialog} >회원가입</Link>
+            </Box>
+          </Container>
+          <FindIdDialog onClose={dialogOnClose} open={findOpen.id}/>
+          <FindPWDialog onClose={dialogOnClose} open={findOpen.pw}/>
+          <SignUpDialog onClose={dialogOnClose} open={findOpen.signUp}/>
         </Container>
-        <Button className={buttonClass.linearRed} onClick={login} ref={loginBtn}>Login</Button>
-        <Container className={classes.otherLink}>
-          <Box className={classes.rowBox}>
-            <Typography>아이디를 잊으셨나요?</Typography>
-            <Link name='findID' className={linkClass.blue} onClick={openDialog}>아이디 찾기</Link>
-          </Box>
-          <Box className={classes.rowBox}>
-            <Typography>비밀번호를 잊으셨나요?</Typography>
-            <Link name='findPW' className={linkClass.blue} onClick={openDialog}>비밀번호 찾기</Link>
-          </Box>
-          <Typography className={classes.seperator}>또는</Typography>
-          <Box className={classes.rowBox}>
-            <Typography>UOSTime이 처음이신가요?</Typography>
-            <Link name='signUp' className={linkClass.red} onClick={openDialog} >회원가입</Link>
-          </Box>
-        </Container>
-        <FindIdDialog onClose={dialogOnClose} open={findOpen.id}/>
-        <FindPWDialog onClose={dialogOnClose} open={findOpen.pw}/>
-        <SignUpDialog onClose={dialogOnClose} open={findOpen.signUp}/>
+        {loading ? <Loading /> : null}
       </Container>
-      {loading ? <Loading /> : null}
-    </Container>
   );
 }
 
 const useStyles = makeStyles({
   container: {
     height: '100%',
+    width: '100%',
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
