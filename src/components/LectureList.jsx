@@ -34,9 +34,8 @@ export default function LectureList() {
     const classes = useStyles();
 
     const onMouseEnter = (e) => {
-        const idx = parseInt(e.target.getAttribute('name'));
+        const idx = parseInt(e.currentTarget.getAttribute('name'));
         const lecture = lectureList[idx];
-
         const highlight = lectureToTime(lecture);
         setHighlight(highlight);
     };
@@ -45,8 +44,8 @@ export default function LectureList() {
         setHighlight([]);
     };
 
-    const onDetail = ({target}) => {
-        const idx = parseInt(target.getAttribute('name'));
+    const onDetail = ({currentTarget}) => {
+        const idx = parseInt(currentTarget.getAttribute('name'));
 
         if(selected === idx)
             setSelected(null);
@@ -107,13 +106,23 @@ export default function LectureList() {
     }
     
     return (
-        <Container>
+        <Container className={classes.root}>
             <select name='searchType' onChange={onChange} value={input.searchType}>
                 {Object.entries(searchOption).map(([code, name], idx) => <option key={idx} value={code}>{name}</option>)}
             </select>
             <TextField name='keyword' onKeyPress={onEnter} onChange={onChange} value={input.keyword}></TextField>
             <Button onClick={onSearch} ref={searchBtn}>검색</Button>
             <Container className={classes.lectureList} onScroll={handleScroll} ref={lectureListComponent}>
+                <Container className={classes.titles}>
+                    <Typography>학부(과)</Typography>
+                    <Typography>과목명</Typography>
+                    <Typography>분반</Typography>
+                    <Typography>교과구분</Typography>
+                    <Typography>학년</Typography>
+                    <Typography>학점</Typography>
+                    <Typography>교수명</Typography>
+                    <Typography>정원</Typography>
+                </Container>
                 { 
                     lectureList.map((lecture, idx) => 
                         <LectureRecord 
@@ -136,15 +145,15 @@ function LectureRecord({name, lecture, onMouseEnter, onMouseLeave, onClick, sele
 
     return (
         <Container name={name} className={classes.root} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
-            <Container className={classes.simple} onClick={onClick}>
-                <Box name={name}>{lecture.sub_dept}</Box>
-                <Box name={name}>{lecture.subject_nm}</Box>
-                <Box name={name}>{lecture.class_div}</Box>
-                <Box name={name}>{lecture.subject_div}</Box>
-                <Box name={name}>{lecture.shyr}</Box>
-                <Box name={name}>{lecture.credit}</Box>
-                <Box name={name}>{lecture.prof_nm}</Box>
-                <Box name={name}>{lecture.tlsn_limit_count}</Box>
+            <Container name={name} className={classes.simple} onClick={onClick}>
+                <Box>{lecture.sub_dept}</Box>
+                <Box>{lecture.subject_nm}</Box>
+                <Box>{lecture.class_div}</Box>
+                <Box>{lecture.subject_div}</Box>
+                <Box>{lecture.shyr}</Box>
+                <Box>{lecture.credit}</Box>
+                <Box>{lecture.prof_nm}</Box>
+                <Box>{lecture.tlsn_limit_count}</Box>
             </Container>
             {
                 selected ?
@@ -171,19 +180,30 @@ function LectureRecord({name, lecture, onMouseEnter, onMouseLeave, onClick, sele
 const useLectureRecordStyles = makeStyles({
     root: {
         display: 'flex',
-        flexDirection: 'column'
+        flexDirection: 'column',
+        padding: '0'
     },
     simple: {
-        display: 'flex'
+        display: 'flex',
+        padding: '0'
     },
     detail: {
-        display: 'flex'
+        display: 'flex',
+        padding: '0'
     }
 })
 
 const useStyles = makeStyles({
+    root: {
+        padding: '0'
+    },
     lectureList: {
         height: '500px',
         overflow: 'auto',
+        padding: '0'
+    },
+    titles: {
+        display: 'flex',
+        padding: '0'
     }
 })
