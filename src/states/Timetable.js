@@ -16,9 +16,15 @@ const timeTableState = atomFamily({
         createAt: [],
         updateAt: []
     }
-})
+});
 
-  export {
-    timeTableMapState,
-    timeTableState,
-  };
+const highLightState = atom({
+  key: 'highlight',
+  default: []
+});
+
+export {
+  timeTableMapState,
+  timeTableState,
+  highLightState
+};

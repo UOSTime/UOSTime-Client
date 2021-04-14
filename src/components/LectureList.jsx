@@ -1,8 +1,10 @@
-import { useRecoilValue } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import React, { useRef, useState, useEffect } from 'react';
 import { Box, Button, Container, makeStyles, Select, TextField } from '@material-ui/core';
 import { semesterState } from '@states/Semester';
+import { highLightState } from '@states/TimeTable';
 import { requestAPI, API_GET_ALL_LECTURES } from '@utils/api';
+import lectureToTime from '@utils/lectureToTime';
 import { StatusCodes } from 'http-status-codes';
 
 const searchOption = {
@@ -19,6 +21,7 @@ const scrollSize = 50;
 
 export default function LectureList() {
     const semester = useRecoilValue(semesterState);
+    const setHighlight = useSetRecoilState(highLightState);
     const [ lectureList, setLectureList ] = useState([]);
     const [ input, setInput ] = useState({searchType: 'subject_nm', keyword: ''});
     const lectureListComponent = useRef();
@@ -26,6 +29,18 @@ export default function LectureList() {
     const allLectures = useRef([]);
 
     const classes = useStyles();
+
+    const onMouseEnter = (e) => {
+        const idx = parseInt(e.target.getAttribute('name'));
+        const lecture = lectureList[idx];
+
+        const highlight = lectureToTime(lecture);
+        setHighlight(highlight);
+    };
+
+    const onMouseLeave = () => {
+        setHighlight([]);
+    };
 
     const onSearch = async () => {
         const query = {
@@ -87,25 +102,25 @@ export default function LectureList() {
             <TextField name='keyword' onKeyPress={onEnter} onChange={onChange} value={input.keyword}></TextField>
             <Button onClick={onSearch} ref={searchBtn}>검색</Button>
             <Container className={classes.lectureList} onScroll={handleScroll} ref={lectureListComponent}>
-                { lectureList.map((lecture, idx) => <LectureRecord key={idx} lecture={lecture} />)}
+                { lectureList.map((lecture, idx) => <LectureRecord name={idx} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave} key={idx} lecture={lecture} />)}
             </Container>
         </Container>
     )
 }
 
-function LectureRecord({lecture}) {
+function LectureRecord({lecture, onMouseEnter, onMouseLeave, name}) {
     const classes = useLectureRecordStyles();
-    
+
     return (
-        <Container className={classes.root}>
-            <Box>{lecture.sub_dept}</Box>
-            <Box>{lecture.subject_nm}</Box>
-            <Box>{lecture.class_div}</Box>
-            <Box>{lecture.subject_div}</Box>
-            <Box>{lecture.shyr}</Box>
-            <Box>{lecture.credit}</Box>
-            <Box>{lecture.prof_nm}</Box>
-            <Box>{lecture.tlsn_limit_count}</Box>
+        <Container name={name} className={classes.root} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
+            <Box name={name}>{lecture.sub_dept}</Box>
+            <Box name={name}>{lecture.subject_nm}</Box>
+            <Box name={name}>{lecture.class_div}</Box>
+            <Box name={name}>{lecture.subject_div}</Box>
+            <Box name={name}>{lecture.shyr}</Box>
+            <Box name={name}>{lecture.credit}</Box>
+            <Box name={name}>{lecture.prof_nm}</Box>
+            <Box name={name}>{lecture.tlsn_limit_count}</Box>
         </Container>
     )
 }
@@ -118,9 +133,7 @@ const useLectureRecordStyles = makeStyles({
 
 const useStyles = makeStyles({
     lectureList: {
-        width: '500px',
         height: '500px',
         overflow: 'auto',
-        
     }
 })

@@ -1,11 +1,14 @@
 import { Box, Container, makeStyles, Typography } from '@material-ui/core';
-import React, { useEffect, useRef, ReactDOM } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useRecoilValue } from 'recoil';
 import { timeTableMapState } from '@states/TimeTable';
+import { highLightState } from '@states/TimeTable';
 import { foregroundColor } from '@utils/styles/Colors';
 import useFontStyles from '@utils/styles/Font';
+import lectureToTime from '@utils/lectureToTime';
+import { uosRed } from '@utils/styles/Colors';
 
-const day2Num = {
+export const day2Num = {
     '월': 0,
     '화': 1,
     '수': 2,
@@ -16,8 +19,11 @@ const timeArr = [9, 10, 11, 12, 1, 2, 3, 4, 5, 6, 7, 8, 9];
 
 export default function TimeTable({timeTableId}) {
     const timeTable = useRecoilValue(timeTableMapState)[timeTableId];
+    const highlight = useRecoilValue(highLightState);
     const lectureInfoList = useRef([]);
+    const previousHighlight = useRef([]);
     const timeTableMap = useRef(timeArr.map(() => Object.keys(day2Num).map(() => null)));
+    const cellRefs = timeArr.map(() => Object.keys(day2Num).map(() => useRef()));
 
     const classes = useStyles();
     const dayFontClasses = useFontStyles({fontSize: '1rem'});
@@ -25,31 +31,12 @@ export default function TimeTable({timeTableId}) {
     const colorClass = useLectureColor();
     const sizeClass = useLectureSize();
 
-    
-
     useEffect(() => {
         lectureInfoList.current = timeTable.tlecture_list
             .map(tlecture => tlecture.lecture)
             .filter(lecture => lecture.class_nm !== '')
-            .map((lecture, idx) => {
-                const name = lecture.subject_nm;
-                
-                const dayStrings = lecture.class_nm.split(', ');
-
-                const lectureInfos = dayStrings.map(dayStr => {
-                    const parts = dayStr.split('/');
-                    const time = parts[0];
-                    const place = parts.slice(1).join('/');
-
-                    const day = day2Num[time.charAt(0)];
-                    const times = time.substring(1).split(',').map(t => parseInt(t));
-                    const color = String(idx);
-
-                    return { day, times, place, name, color };
-                })
-
-                return lectureInfos;
-            }).flat();
+            .map((lecture, idx) => lectureToTime(lecture, idx))
+            .flat();
 
             lectureInfoList.current.forEach(lecture => {
                 const row = lecture.times[0] - 1;
@@ -58,8 +45,34 @@ export default function TimeTable({timeTableId}) {
                 timeTableMap.current[row][col] = lecture;
             });
     }, [timeTable]);
-    
-    
+
+    useEffect(() => {
+        if(highlight !== previousHighlight) {
+            previousHighlight.current
+                .filter(h => h.times && h.day !== undefined)
+                .forEach(h => {
+                    const row = h.times[0] - 1;
+                    const col = h.day;
+
+                    cellRefs[row][col].current.innerHTML = cellRefs[row][col].current.innerHTML
+                        .replace(`<div class="${sizeClass[h.times.length]} ${colorClass[h.color]} ${classes.lectureBox}"></div>`, '');
+                });
+            if(highlight.length === 0)
+                return;
+        }
+        
+        previousHighlight.current = highlight;
+        highlight
+            .filter(h => h.times && h.day !== undefined)
+            .forEach(h => {
+            const row = h.times[0] - 1;
+            const col = h.day;
+            
+            cellRefs[row][col].current.innerHTML += 
+            `<div class="${sizeClass[h.times.length]} ${colorClass[h.color]} ${classes.lectureBox}"></div>`
+        })
+    }, [highlight]);
+
     return (
         <Container className={classes.container}>
             <Container className={classes.dayRowContainer}>
@@ -85,10 +98,11 @@ export default function TimeTable({timeTableId}) {
                     }
                     {
                         Object.keys(day2Num).map((col, colIdx) => (
-                            <Box key={colIdx} className={classes.box}>  
+                            <Box key={colIdx} className={classes.box} ref={cellRefs[rowIdx][colIdx]}>  
                             {
                                 timeTableMap.current[rowIdx][colIdx] ?
                                 <Box className={`${colorClass[timeTableMap.current[rowIdx][colIdx].color]} ${sizeClass[timeTableMap.current[rowIdx][colIdx].times.length]} ${classes.lectureBox}`}>
+                                    <button className={classes.deleteBtn}>×</button>
                                     <Typography className={fontClasses.white}>{timeTableMap.current[rowIdx][colIdx].name}</Typography>
                                     <Typography className={fontClasses.white}>{timeTableMap.current[rowIdx][colIdx].place}</Typography>
                                 </Box>
@@ -104,33 +118,6 @@ export default function TimeTable({timeTableId}) {
         </Container>
     );
 }
-
-// function TimeTableBlock({lectureInfo}) {
-//     const classes = useBoxBlockStyles({height: `${lectureInfo.current.times.length * 100}%`});
-//     const fontClasses = useFontStyles({fontSize: '0.8rem', textAlign: 'center'});
-
-//     return (
-//         <Box className={classes.root}>
-//             <Typography className={fontClasses.white}>{lectureInfo.current.name}</Typography>
-//             <Typography className={fontClasses.white}>{lectureInfo.current.place}</Typography>
-//         </Box>
-//     )
-// }
-
-
-const useBoxBlockStyles = makeStyles({
-    root: styles => ({
-        backgroundColor: 'green',
-        height: '100%',
-        position: 'absolute',
-        borderRadius: '5px',
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
-        padding: '3px',
-        ...styles
-    })
-});
 
 const useStyles = makeStyles({
     container: {
@@ -165,7 +152,10 @@ const useStyles = makeStyles({
     },
     box: {
         flex: '1',
-        position: 'relative'
+        position: 'relative',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center'
     },
     timeBox: {
         width: '20px',
@@ -182,13 +172,44 @@ const useStyles = makeStyles({
         textAlign: 'center'
     },
     lectureBox: {
+        position: 'absolute',
+        width: '95%',
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'center',
         alignItems: 'center',
         textAlign: 'center',
         borderRadius: '5px',
-        margin: '2px'
+        padding: '2%',
+        zIndex: '10'
+    },
+    deleteBtn: {
+        width: '15px',
+        height: '15px',
+        lineHeight: '0rem',
+        textAlign: 'center',
+        position: 'absolute',
+        fontWeight: '700',
+        fontSize: '1rem',
+        zIndex: '11',
+        top: '0px',
+        right: '0px',
+        padding: '0',
+        margin: '1px',
+        background: 'none',
+        color: uosRed,
+        border: 'none',
+        '&:hover': {
+            color: 'white',
+            background: uosRed,
+            borderRadius: '100px'
+        },
+        '&:focus': {
+            outline: 'none'
+        },
+        '$lectureBox:not(:hover) &': {
+            display: 'none'
+        }
     }
 });
 
@@ -203,7 +224,8 @@ const useLectureColor = makeStyles({
     7: { backgroundColor: '#ff8303' },
     8: { backgroundColor: '#bdc7c9' },
     9: { backgroundColor: '#845460' },
-    10: { backgroundColor: '#9ede73' },
+    10: { backgroundColor: '#000000' },
+    preview: { backgroundColor: 'gray', opacity: 0.3, position: 'absolute' }
 });
 
 const useLectureSize = makeStyles({

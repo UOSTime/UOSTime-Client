@@ -7,10 +7,13 @@ import { requestAPI, API_GET_TIMETABLES } from '@utils/api';
 import { StatusCodes } from 'http-status-codes';
 import { timeTableMapState } from '@states/TimeTable';
 import LectureList from '../../components/LectureList';
+import { Container, makeStyles } from '@material-ui/core';
 
 export default function Home() {
     const [ timeTableMap, setTimeTableMap ] = useRecoilState(timeTableMapState);
     const semester = useRecoilValue(semesterState);
+
+    const classes = useStyles();
 
     useEffect(() => {
         if(!localStorage.getItem('userID')) {
@@ -41,9 +44,15 @@ export default function Home() {
     }
 
     return (
-        <div>
+        <Container className={classes.root}>
             <LectureList />
             { timeTableComponents }
-        </div>
+        </Container>
     )
 }
+
+const useStyles = makeStyles({
+    root: {
+        display: 'flex',
+    }
+})
