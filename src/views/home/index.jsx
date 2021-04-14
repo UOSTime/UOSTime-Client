@@ -2,24 +2,19 @@ import React, { useEffect } from 'react';
 import { Redirect } from 'react-router';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { semesterState } from '@states/Semester';
+import { timeTableState } from '@states/TimeTable';
 import TimeTable from '@components/TimeTable';
 import { requestAPI, API_GET_TIMETABLES } from '@utils/api';
 import { StatusCodes } from 'http-status-codes';
-import { timeTableListState, timeTableMapState } from '@states/TimeTable';
 import LectureList from '../../components/LectureList';
 import { Container, makeStyles } from '@material-ui/core';
-import { timeTableState } from '../../states/TimeTable';
 
 export default function Home() {
-    const [ timeTableMap, setTimeTableMap ] = useRecoilState(timeTableMapState);
     const semester = useRecoilValue(semesterState);
     const classes = useStyles();
     const timeTableStates = [0, 1, 2, 3].map(idx => {
         const [value, set] = useRecoilState(timeTableState(idx));
-        return {
-            value,
-            set
-        };
+        return { value, set };
     });
 
     useEffect(() => {
@@ -34,7 +29,6 @@ export default function Home() {
                 alert('시간표를 가져오는데 실패했어요');
                 return null;
             }
-
 
             const timeTables = response.data;
 

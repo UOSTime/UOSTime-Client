@@ -1,10 +1,5 @@
 import { atom, atomFamily } from 'recoil';
 
-const timeTableMapState = atom({
-    key: 'timetableMap',
-    default: {}
-  });
-  
 const timeTableState = atomFamily({
     key: 'timetable',
     default: {
@@ -18,19 +13,12 @@ const timeTableState = atomFamily({
     }
 });
 
-const timeTableListState = atom({
-  key: 'timeTableList',
-  default: []
-});
-
 const highLightState = atom({
   key: 'highlight',
   default: [null]
 });
 
 export {
-  timeTableMapState,
   timeTableState,
-  timeTableListState,
   highLightState
 };

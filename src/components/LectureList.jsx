@@ -1,6 +1,6 @@
 import { useRecoilValue, useSetRecoilState } from 'recoil';
-import React, { useRef, useState, useEffect } from 'react';
-import { Box, Button, Container, makeStyles, Select, TextField } from '@material-ui/core';
+import React, { useRef, useState } from 'react';
+import { Box, Button, Container, makeStyles, TextField, Typography } from '@material-ui/core';
 import { semesterState } from '@states/Semester';
 import { highLightState } from '@states/TimeTable';
 import { requestAPI, API_GET_ALL_LECTURES } from '@utils/api';
@@ -22,8 +22,11 @@ const scrollSize = 50;
 export default function LectureList() {
     const semester = useRecoilValue(semesterState);
     const setHighlight = useSetRecoilState(highLightState);
+
     const [ lectureList, setLectureList ] = useState([]);
     const [ input, setInput ] = useState({searchType: 'subject_nm', keyword: ''});
+    const [ selected, setSelected ] = useState(null);
+
     const lectureListComponent = useRef();
     const searchBtn = useRef();
     const allLectures = useRef([]);
@@ -41,6 +44,15 @@ export default function LectureList() {
     const onMouseLeave = () => {
         setHighlight([]);
     };
+
+    const onDetail = ({target}) => {
+        const idx = parseInt(target.getAttribute('name'));
+
+        if(selected === idx)
+            setSelected(null);
+        else
+            setSelected(idx);
+    }
 
     const onSearch = async () => {
         const query = {
@@ -102,31 +114,69 @@ export default function LectureList() {
             <TextField name='keyword' onKeyPress={onEnter} onChange={onChange} value={input.keyword}></TextField>
             <Button onClick={onSearch} ref={searchBtn}>검색</Button>
             <Container className={classes.lectureList} onScroll={handleScroll} ref={lectureListComponent}>
-                { lectureList.map((lecture, idx) => <LectureRecord name={idx} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave} key={idx} lecture={lecture} />)}
+                { 
+                    lectureList.map((lecture, idx) => 
+                        <LectureRecord 
+                            key={idx} 
+                            name={idx} 
+                            selected={selected===idx} 
+                            onClick={onDetail} 
+                            onMouseEnter={onMouseEnter} 
+                            onMouseLeave={onMouseLeave} 
+                            lecture={lecture} 
+                        />)
+                }
             </Container>
         </Container>
     )
 }
 
-function LectureRecord({lecture, onMouseEnter, onMouseLeave, name}) {
+function LectureRecord({name, lecture, onMouseEnter, onMouseLeave, onClick, selected}) {
     const classes = useLectureRecordStyles();
 
     return (
         <Container name={name} className={classes.root} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
-            <Box name={name}>{lecture.sub_dept}</Box>
-            <Box name={name}>{lecture.subject_nm}</Box>
-            <Box name={name}>{lecture.class_div}</Box>
-            <Box name={name}>{lecture.subject_div}</Box>
-            <Box name={name}>{lecture.shyr}</Box>
-            <Box name={name}>{lecture.credit}</Box>
-            <Box name={name}>{lecture.prof_nm}</Box>
-            <Box name={name}>{lecture.tlsn_limit_count}</Box>
+            <Container className={classes.simple} onClick={onClick}>
+                <Box name={name}>{lecture.sub_dept}</Box>
+                <Box name={name}>{lecture.subject_nm}</Box>
+                <Box name={name}>{lecture.class_div}</Box>
+                <Box name={name}>{lecture.subject_div}</Box>
+                <Box name={name}>{lecture.shyr}</Box>
+                <Box name={name}>{lecture.credit}</Box>
+                <Box name={name}>{lecture.prof_nm}</Box>
+                <Box name={name}>{lecture.tlsn_limit_count}</Box>
+            </Container>
+            {
+                selected ?
+                <Container className={classes.detail}>
+                    <Box>
+                        <Typography>강의시간 및 강의실</Typography>
+                        <Typography>{lecture.class_nm}</Typography>
+                    </Box>
+                    <Box>
+                        <Typography>수강정원</Typography>
+                        <Typography>{lecture.tlsn_limit_count}</Typography>
+                    </Box>
+                    <Box>
+                        <Typography>타과허용/복수전공</Typography>
+                        <Typography>{lecture.etc_permit_yn}/{lecture.sec_permit_yn}</Typography>
+                    </Box>
+                </Container>
+                : null
+            }
         </Container>
     )
 }
 
 const useLectureRecordStyles = makeStyles({
     root: {
+        display: 'flex',
+        flexDirection: 'column'
+    },
+    simple: {
+        display: 'flex'
+    },
+    detail: {
         display: 'flex'
     }
 })

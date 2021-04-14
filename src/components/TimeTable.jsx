@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useRef } from 'react';
 import { useRecoilValue, useRecoilState } from 'recoil';
 import { Box, Container, makeStyles, Typography } from '@material-ui/core';
 import { timeTableState } from '@states/TimeTable';
@@ -20,11 +20,10 @@ export const day2Num = {
 const timeArr = [9, 10, 11, 12, 1, 2, 3, 4, 5, 6, 7, 8, 9];
 
 export default function TimeTable({timeTableIdx}) {
-    // const timeTable = useRecoilValue(timeTableMapState)[timeTableId];
-
     const [timeTable, setTimeTable] = useRecoilState(timeTableState(timeTableIdx));
     const highlight = useRecoilValue(highLightState);
     const semester = useRecoilValue(semesterState);
+
     const previousHighlight = useRef([]);
     const cellRefs = timeArr.map(() => Object.keys(day2Num).map(() => useRef()));
 
@@ -73,7 +72,7 @@ export default function TimeTable({timeTableIdx}) {
             ...timeTable,
             tlecture_list: timeTable.tlecture_list.filter(t => t._id !== tlectureId)
         }
-        
+
         setTimeTable(updatedTimeTable);
     }
 
@@ -120,12 +119,6 @@ export default function TimeTable({timeTableIdx}) {
 
     return (
         <Container className={classes.container}>
-        {
-            console.log('render')
-        }
-        {
-            console.log(timeTable.tlecture_list.length)
-        }
             <Container className={classes.dayRowContainer}>
                 <Box className={classes.timeBox} ></Box>
                 {
