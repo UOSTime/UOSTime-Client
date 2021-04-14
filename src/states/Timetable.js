@@ -18,13 +18,19 @@ const timeTableState = atomFamily({
     }
 });
 
+const timeTableListState = atom({
+  key: 'timeTableList',
+  default: []
+});
+
 const highLightState = atom({
   key: 'highlight',
-  default: []
+  default: [null]
 });
 
 export {
   timeTableMapState,
   timeTableState,
+  timeTableListState,
   highLightState
 };

@@ -5,15 +5,22 @@ import { semesterState } from '@states/Semester';
 import TimeTable from '@components/TimeTable';
 import { requestAPI, API_GET_TIMETABLES } from '@utils/api';
 import { StatusCodes } from 'http-status-codes';
-import { timeTableMapState } from '@states/TimeTable';
+import { timeTableListState, timeTableMapState } from '@states/TimeTable';
 import LectureList from '../../components/LectureList';
 import { Container, makeStyles } from '@material-ui/core';
+import { timeTableState } from '../../states/TimeTable';
 
 export default function Home() {
     const [ timeTableMap, setTimeTableMap ] = useRecoilState(timeTableMapState);
     const semester = useRecoilValue(semesterState);
-
     const classes = useStyles();
+    const timeTableStates = [0, 1, 2, 3].map(idx => {
+        const [value, set] = useRecoilState(timeTableState(idx));
+        return {
+            value,
+            set
+        };
+    });
 
     useEffect(() => {
         if(!localStorage.getItem('userID')) {
@@ -28,16 +35,20 @@ export default function Home() {
                 return null;
             }
 
-            const timeTables = {};
-            response.data.forEach(timeTable => timeTables[timeTable._id] = timeTable);
 
-            setTimeTableMap(timeTables);
+            const timeTables = response.data;
+
+            timeTables.forEach((timeTable, idx) => {
+                timeTableStates[idx].set(timeTable);
+            });
         };
 
         getTimeTables();
     }, []);
 
-    const timeTableComponents = Object.keys(timeTableMap).map((timeTableId, idx) => <TimeTable key={idx} timeTableId={timeTableId} />)
+    const timeTableComponents = timeTableStates
+                            .filter(timeTable => timeTable.value._id !== null)
+                            .map((_, idx) => <TimeTable key={idx} timeTableIdx={idx} />)
 
     if(!localStorage.getItem('userID')) {
         return <Redirect to='/login' />;

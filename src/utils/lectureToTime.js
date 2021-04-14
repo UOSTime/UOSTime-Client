@@ -13,8 +13,9 @@ export default function lectureToTime(lecture, idx) {
         const day = day2Num[time.charAt(0)];
         const times = time.substring(1).split(',').map(t => parseInt(t));
         const color = idx!==undefined ? String(idx) : 'preview';
+        const id = lecture._id;
 
-        return { day, times, place, name, color };
+        return { id, day, times, place, name, color };
     });
 
     return lectureInfos;

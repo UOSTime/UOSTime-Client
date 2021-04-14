@@ -1,12 +1,14 @@
+import React, { useState, useEffect, useRef } from 'react';
+import { useRecoilValue, useRecoilState } from 'recoil';
 import { Box, Container, makeStyles, Typography } from '@material-ui/core';
-import React, { useEffect, useRef } from 'react';
-import { useRecoilValue } from 'recoil';
-import { timeTableMapState } from '@states/TimeTable';
+import { timeTableState } from '@states/TimeTable';
 import { highLightState } from '@states/TimeTable';
+import { semesterState } from '@states/Semester';
+import lectureToTime from '@utils/lectureToTime';
 import { foregroundColor } from '@utils/styles/Colors';
 import useFontStyles from '@utils/styles/Font';
-import lectureToTime from '@utils/lectureToTime';
 import { uosRed } from '@utils/styles/Colors';
+import { requestAPI, API_DELETE_TLECTURE } from '@utils/api';
 
 export const day2Num = {
     '월': 0,
@@ -17,12 +19,13 @@ export const day2Num = {
 }
 const timeArr = [9, 10, 11, 12, 1, 2, 3, 4, 5, 6, 7, 8, 9];
 
-export default function TimeTable({timeTableId}) {
-    const timeTable = useRecoilValue(timeTableMapState)[timeTableId];
+export default function TimeTable({timeTableIdx}) {
+    // const timeTable = useRecoilValue(timeTableMapState)[timeTableId];
+
+    const [timeTable, setTimeTable] = useRecoilState(timeTableState(timeTableIdx));
     const highlight = useRecoilValue(highLightState);
-    const lectureInfoList = useRef([]);
+    const semester = useRecoilValue(semesterState);
     const previousHighlight = useRef([]);
-    const timeTableMap = useRef(timeArr.map(() => Object.keys(day2Num).map(() => null)));
     const cellRefs = timeArr.map(() => Object.keys(day2Num).map(() => useRef()));
 
     const classes = useStyles();
@@ -31,38 +34,66 @@ export default function TimeTable({timeTableId}) {
     const colorClass = useLectureColor();
     const sizeClass = useLectureSize();
 
-    useEffect(() => {
-        lectureInfoList.current = timeTable.tlecture_list
-            .map(tlecture => tlecture.lecture)
-            .filter(lecture => lecture.class_nm !== '')
-            .map((lecture, idx) => lectureToTime(lecture, idx))
-            .flat();
+    const lectureList = timeTable.tlecture_list
+        .map(tlecture => tlecture.lecture)
+        .filter(lecture => lecture.class_nm !== '')
+        .map((lecture, idx) => lectureToTime(lecture, idx))
+        .flat();;
 
-            lectureInfoList.current.forEach(lecture => {
-                const row = lecture.times[0] - 1;
-                const col = lecture.day;
+    const timeTableMap = timeArr.map(() => Object.keys(day2Num).map(() => null));
+    lectureList.forEach(lecture => {
+        const row = lecture.times[0] - 1;
+        const col = lecture.day;
 
-                timeTableMap.current[row][col] = lecture;
-            });
-    }, [timeTable]);
+        timeTableMap[row][col] = lecture;
+    });
 
-    useEffect(() => {
-        if(highlight !== previousHighlight) {
-            previousHighlight.current
-                .filter(h => h.times && h.day !== undefined)
-                .forEach(h => {
-                    const row = h.times[0] - 1;
-                    const col = h.day;
+    const onDelete = async ({target}) => {
+        const lectureId = target.getAttribute('name');
 
-                    cellRefs[row][col].current.innerHTML = cellRefs[row][col].current.innerHTML
-                        .replace(`<div class="${sizeClass[h.times.length]} ${colorClass[h.color]} ${classes.lectureBox}"></div>`, '');
-                });
-            if(highlight.length === 0)
-                return;
+        const tlecture = timeTable.tlecture_list
+                                    .find(tlecture => tlecture.lecture._id === lectureId);
+
+        if(!tlecture) {
+            alert('이미 삭제된 강의입니다.');
+            return;
+        }
+        const tlectureId = tlecture._id;
+
+        // const updatedTimeTable = await requestAPI(API_DELETE_TLECTURE(), {
+        //     year: 2021,
+        //     term: 'A10',
+        //     // year: semester.year,
+        //     // term: semester.term,
+        //     tLectureId: tlectureId,
+        //     timeTableId: timeTableId
+        // });
+
+        const updatedTimeTable = {
+            ...timeTable,
+            tlecture_list: timeTable.tlecture_list.filter(t => t._id !== tlectureId)
         }
         
+        setTimeTable(updatedTimeTable);
+    }
+
+    if(highlight !== previousHighlight) {
+        previousHighlight.current
+            .filter(h => h)
+            .filter(h => h.times && h.day!==undefined)
+            .forEach(h => {
+                const row = h.times[0] - 1;
+                const col = h.day;
+
+                cellRefs[row][col].current.innerHTML = cellRefs[row][col].current.innerHTML
+                    .replace(`<div class="${sizeClass[h.times.length]} ${colorClass[h.color]} ${classes.lectureBox}"></div>`, '');
+            });
+    }
+    
+    if(highlight.length !== 0) {
         previousHighlight.current = highlight;
         highlight
+            .filter(h => h)
             .filter(h => h.times && h.day !== undefined)
             .forEach(h => {
             const row = h.times[0] - 1;
@@ -71,10 +102,30 @@ export default function TimeTable({timeTableId}) {
             cellRefs[row][col].current.innerHTML += 
             `<div class="${sizeClass[h.times.length]} ${colorClass[h.color]} ${classes.lectureBox}"></div>`
         })
-    }, [highlight]);
+    }
+
+    const getLectureBox = (rowIdx, colIdx) => {
+        const lecture = timeTableMap[rowIdx][colIdx];
+        if(lecture) {
+            return (
+                <Box className={`${colorClass[lecture.color]} ${sizeClass[lecture.times.length]} ${classes.lectureBox}`}>
+                    <button name={lecture.id} className={classes.deleteBtn} onClick={onDelete}>×</button>
+                    <Typography className={fontClasses.white}>{lecture.name}</Typography>
+                    <Typography className={fontClasses.white}>{lecture.place}</Typography>
+                </Box>
+            );
+        }
+        return null;
+    };
 
     return (
         <Container className={classes.container}>
+        {
+            console.log('render')
+        }
+        {
+            console.log(timeTable.tlecture_list.length)
+        }
             <Container className={classes.dayRowContainer}>
                 <Box className={classes.timeBox} ></Box>
                 {
@@ -99,15 +150,7 @@ export default function TimeTable({timeTableId}) {
                     {
                         Object.keys(day2Num).map((col, colIdx) => (
                             <Box key={colIdx} className={classes.box} ref={cellRefs[rowIdx][colIdx]}>  
-                            {
-                                timeTableMap.current[rowIdx][colIdx] ?
-                                <Box className={`${colorClass[timeTableMap.current[rowIdx][colIdx].color]} ${sizeClass[timeTableMap.current[rowIdx][colIdx].times.length]} ${classes.lectureBox}`}>
-                                    <button className={classes.deleteBtn}>×</button>
-                                    <Typography className={fontClasses.white}>{timeTableMap.current[rowIdx][colIdx].name}</Typography>
-                                    <Typography className={fontClasses.white}>{timeTableMap.current[rowIdx][colIdx].place}</Typography>
-                                </Box>
-                                : null
-                            }
+                                { getLectureBox(rowIdx, colIdx) }
                             </Box>)
                         )
                     }
