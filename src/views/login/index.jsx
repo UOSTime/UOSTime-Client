@@ -160,7 +160,7 @@ export default function Login() {
 
 const useStyles = makeStyles({
   container: {
-    height: '100%',
+    height: '96vh',
     width: '100%',
     display: 'flex',
     flexDirection: 'row',
