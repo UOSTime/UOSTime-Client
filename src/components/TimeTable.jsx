@@ -172,6 +172,7 @@ const useStyles = makeStyles({
         alignContent: 'stretch'
     },
     rowContainer: {
+        borderBottom: `1px solid #FFFFFF`,
         maxHeight: '7.7%',              // TODO - refactoring
         flex: '1',
         display: 'flex',
