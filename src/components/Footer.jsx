@@ -1,20 +1,24 @@
 import React from 'react';
-import { makeStyles, Container, Typography, Link } from '@material-ui/core';
+import { makeStyles, Container, Typography, Link, Box } from '@material-ui/core';
 import ContactDialog from './ContactDialog';
 import UOSTimeDialog from './UOSTimeDialog';
 
 const useStyles = makeStyles(theme => ({
   footer: {
-    paddingLeft: '5px',
-    paddingRight: '5px',
+    borderTop: '1px solid #e0e0e0',
+    padding: '1em',
+    margin: 'auto 0 0 0',
     display: 'flex',
     flexDirection: 'row',
-    backgroundColor: '##f6f6f6',
+    backgroundColor: '#f6f6f6',
     color: '#4e4e4e',
-    [theme.breakpoints.down('sm')]: {
-      flexDirection: 'column',
-      fontSize: '12px',
-    },
+    width: '100%',
+  },
+  innerFooter: {
+    display: 'flex',
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    alignItems: 'center',
   },
   font: {
     color: '#4e4e4e',
@@ -22,21 +26,13 @@ const useStyles = makeStyles(theme => ({
     '&:hover': {
       color: '#f68b7d',
     },
+    padding: '0.5em',
   },
-  firstBox: {
-    width: '50%',
-    textAlign: 'left',
-    [theme.breakpoints.down('sm')]: {
-      width: '100%',
-      textAlign: 'center',
-    },
-  },
-  secondBox: {
-    width: '50%',
-    textAlign: 'right',
-    [theme.breakpoints.down('sm')]: {
-      width: '100%',
-      textAlign: 'center',
+  creativeCommons: {
+    width: '100%',
+    [theme.breakpoints.up('md')]: {
+      width: 'auto',
+      marginLeft: 'auto',
     },
   },
 }));
@@ -60,21 +56,19 @@ function Footer() {
   };
 
   return (
-    <Container maxWidth="lg" className={classes.footer}>
-      <Container className={classes.firstBox}>
+    <Box className={classes.footer}>
+      <Container maxWidth="lg" className={classes.innerFooter}>
         <Link name="UOS" className={classes.font} underline="none" href="https://uos.ac.kr">서울시립대학교</Link>{' | '}
         <Link name="Contact" className={classes.font} underline="none" onClick={contactDialogOpen}>문의하기</Link>{' | '}
         <Link name= "TermsOfService" className={classes.font} underline="none" href="https://uostime.herokuapp.com/terms_of_service">이용약관</Link>{' | '}
         <Link name="PrivacyPolicy" className={classes.font} underline="none" href="/privacy_policy">개인정보처리방침</Link>
+        <Box className={classes.creativeCommons} component="span">
+          ©<Link name="UOSTime" className={classes.font} underline="none" onClick={uostimeDialogOpen}>UOSTime Team</Link> v2.0.0
+        </Box>
       </Container>
-      <Container className={classes.secondBox}>
-        {' ©'}
-        <Link name="UOSTime" className={classes.font} underline="none" onClick={uostimeDialogOpen}> UOSTime Team </Link>
-        {' v2.0.0'}
-      </Container>
-      <ContactDialog  onClose={contactDialogClose} open={contactOpen} />
+      <ContactDialog onClose={contactDialogClose} open={contactOpen} />
       <UOSTimeDialog onClose={uostimeDialogClose} open={uostimeOpen} />
-    </Container>
+    </Box>
   );
 }
 
