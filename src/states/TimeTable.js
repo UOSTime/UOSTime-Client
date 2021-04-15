@@ -18,7 +18,13 @@ const highLightState = atom({
   default: [null]
 });
 
+const currentTimeTableState = atom({
+  key: 'currentTimeTable',
+  default: null
+});
+
 export {
   timeTableState,
-  highLightState
+  highLightState,
+  currentTimeTableState
 };

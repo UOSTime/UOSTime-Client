@@ -1,17 +1,18 @@
 import React, { useEffect } from 'react';
 import { Redirect } from 'react-router';
-import { useRecoilState, useRecoilValue } from 'recoil';
-import { semesterState } from '@states/Semester';
-import { timeTableState } from '@states/TimeTable';
-import TimeTable from '@components/TimeTable';
-import { requestAPI, API_GET_TIMETABLES } from '@utils/api';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { StatusCodes } from 'http-status-codes';
-import LectureList from '../../components/LectureList';
+import TimeTable from '@components/TimeTable';
+import LectureList from '@components/LectureList';
+import { semesterState } from '@states/Semester';
+import { timeTableState, currentTimeTableState } from '@states/TimeTable';
+import { requestAPI, API_GET_TIMETABLES } from '@utils/api';
 import { Container, makeStyles } from '@material-ui/core';
 
 export default function Home() {
     const semester = useRecoilValue(semesterState);
     const classes = useStyles();
+    const setCurrentTimeTable = useSetRecoilState(currentTimeTableState);
     const timeTableStates = [0, 1, 2, 3].map(idx => {
         const [value, set] = useRecoilState(timeTableState(idx));
         return { value, set };
@@ -35,6 +36,10 @@ export default function Home() {
             timeTables.forEach((timeTable, idx) => {
                 timeTableStates[idx].set(timeTable);
             });
+
+            if(timeTables.length) {
+                setCurrentTimeTable(0);
+            }
         };
 
         getTimeTables();

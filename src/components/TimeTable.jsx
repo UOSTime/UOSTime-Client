@@ -1,8 +1,7 @@
 import React, { useRef } from 'react';
 import { useRecoilValue, useRecoilState } from 'recoil';
 import { Box, Container, makeStyles, Typography } from '@material-ui/core';
-import { timeTableState } from '@states/TimeTable';
-import { highLightState } from '@states/TimeTable';
+import { timeTableState, highLightState } from '@states/TimeTable';
 import { semesterState } from '@states/Semester';
 import lectureToTime from '@utils/lectureToTime';
 import { foregroundColor } from '@utils/styles/Colors';
@@ -262,7 +261,7 @@ const useLectureColor = makeStyles({
     8: { backgroundColor: '#bdc7c9' },
     9: { backgroundColor: '#845460' },
     10: { backgroundColor: '#000000' },
-    preview: { backgroundColor: 'gray', opacity: 0.3, position: 'absolute' }
+    preview: { backgroundColor: 'gray', opacity: 0.3, position: 'absolute', zIndex: 100 }
 });
 
 const useLectureSize = makeStyles({

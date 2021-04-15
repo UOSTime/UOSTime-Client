@@ -1,12 +1,12 @@
 import React, { useRef, useState } from 'react';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { StatusCodes } from 'http-status-codes';
 import { Button, Container, makeStyles, TextField, Typography } from '@material-ui/core';
+import { currentTimeTableState, timeTableState, highLightState } from '@states/TimeTable';
 import { semesterState } from '@states/Semester';
-import { highLightState } from '@states/TimeTable';
 import LectureRecord from '@components/LectureRecord';
 import { requestAPI, API_GET_ALL_LECTURES } from '@utils/api';
 import lectureToTime from '@utils/lectureToTime';
-import { StatusCodes } from 'http-status-codes';
 
 const searchOption = {
     sub_dept: '학과/학부',
@@ -23,12 +23,14 @@ const scrollSize = 50;
 export default function LectureList() {
     const semester = useRecoilValue(semesterState);
     const setHighlight = useSetRecoilState(highLightState);
+    const currentTimeTable = useRecoilValue(currentTimeTableState);
+    const [ timeTable, setTimeTable ] = useRecoilState(timeTableState(currentTimeTable));
 
     const [ lectureList, setLectureList ] = useState([]);
     const [ input, setInput ] = useState({searchType: 'subject_nm', keyword: ''});
     const [ selected, setSelected ] = useState(null);
 
-    const lectureListComponent = useRef();
+    const scrollContainer = useRef();
     const searchBtn = useRef();
     const allLectures = useRef([]);
 
@@ -80,9 +82,9 @@ export default function LectureList() {
     };
 
     const handleScroll = (e) => {
-        const scrollY = lectureListComponent.current.scrollHeight;
-        const scrollTop = lectureListComponent.current.scrollTop;
-        const clientHeight = lectureListComponent.current.clientHeight;
+        const scrollY = scrollContainer.current.scrollHeight;
+        const scrollTop = scrollContainer.current.scrollTop;
+        const clientHeight = scrollContainer.current.clientHeight;
 
         if (scrollTop + clientHeight >= scrollY-200) {
             const currentLength = lectureList.length;
@@ -106,6 +108,18 @@ export default function LectureList() {
         });
     }
     
+    const lectures = lectureList.map((lecture, idx) => 
+                                <LectureRecord 
+                                    key={idx} 
+                                    name={idx} 
+                                    selected={selected===idx} 
+                                    onClick={onDetail} 
+                                    onMouseEnter={onMouseEnter} 
+                                    onMouseLeave={onMouseLeave} 
+                                    lecture={lecture}
+                                    timeTable ={timeTable}
+                                />);
+
     return (
         <Container className={classes.root}>
             <select name='searchType' onChange={onChange} value={input.searchType}>
@@ -113,7 +127,7 @@ export default function LectureList() {
             </select>
             <TextField name='keyword' onKeyPress={onEnter} onChange={onChange} value={input.keyword}></TextField>
             <Button onClick={onSearch} ref={searchBtn}>검색</Button>
-            <Container className={classes.lectureList} onScroll={handleScroll} ref={lectureListComponent}>
+            <Container className={classes.lectureList} onScroll={handleScroll} ref={scrollContainer}>
                 <Container className={classes.titles}>
                     <Typography>학부(과)</Typography>
                     <Typography>과목명</Typography>
@@ -124,18 +138,7 @@ export default function LectureList() {
                     <Typography>교수명</Typography>
                     <Typography>정원</Typography>
                 </Container>
-                { 
-                    lectureList.map((lecture, idx) => 
-                        <LectureRecord 
-                            key={idx} 
-                            name={idx} 
-                            selected={selected===idx} 
-                            onClick={onDetail} 
-                            onMouseEnter={onMouseEnter} 
-                            onMouseLeave={onMouseLeave} 
-                            lecture={lecture} 
-                        />)
-                }
+                { lectures }
             </Container>
         </Container>
     )
