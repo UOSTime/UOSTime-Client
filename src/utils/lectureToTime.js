@@ -1,4 +1,4 @@
-import { day2Num } from '@components/TimeTable';
+import { day2Num } from '@components/home/TimeTable';
 
 export default function lectureToTime(lecture, idx) {
     const name = lecture.subject_nm;

@@ -8,6 +8,7 @@ import { foregroundColor } from '@utils/styles/Colors';
 import useFontStyles from '@utils/styles/Font';
 import { uosRed } from '@utils/styles/Colors';
 import { requestAPI, API_DELETE_TLECTURE } from '@utils/api';
+import { StatusCodes } from 'http-status-codes';
 
 export const day2Num = {
     '월': 0,
@@ -47,8 +48,8 @@ export default function TimeTable({timeTableIdx}) {
     });
 
     const onDelete = async ({target}) => {
+        console.log(target)
         const lectureId = target.getAttribute('name');
-
         const tlecture = timeTable.tlecture_list
                                     .find(tlecture => tlecture.lecture._id === lectureId);
 
@@ -58,49 +59,24 @@ export default function TimeTable({timeTableIdx}) {
         }
         const tlectureId = tlecture._id;
 
-        // const updatedTimeTable = await requestAPI(API_DELETE_TLECTURE(), {
-        //     year: 2021,
-        //     term: 'A10',
-        //     // year: semester.year,
-        //     // term: semester.term,
-        //     tLectureId: tlectureId,
-        //     timeTableId: timeTableId
-        // });
+        const response = await requestAPI(API_DELETE_TLECTURE(), {
+            year: 2021,
+            term: 'A10',
+            // year: semester.year,
+            // term: semester.term,
+            tLectureId: tlectureId,
+            timeTableId: timeTable._id
+        });
 
-        const updatedTimeTable = {
-            ...timeTable,
-            tlecture_list: timeTable.tlecture_list.filter(t => t._id !== tlectureId)
+        if(response.status !== StatusCodes.OK) {
+            alert('시간표를 삭제하지 못했어요...');
+            return;
         }
 
-        setTimeTable(updatedTimeTable);
+        setTimeTable(response.data);
     }
 
-    if(highlight !== previousHighlight) {
-        previousHighlight.current
-            .filter(h => h)
-            .filter(h => h.times && h.day!==undefined)
-            .forEach(h => {
-                const row = h.times[0] - 1;
-                const col = h.day;
-
-                cellRefs[row][col].current.innerHTML = cellRefs[row][col].current.innerHTML
-                    .replace(`<div class="${sizeClass[h.times.length]} ${colorClass[h.color]} ${classes.lectureBox}"></div>`, '');
-            });
-    }
     
-    if(highlight.length !== 0) {
-        previousHighlight.current = highlight;
-        highlight
-            .filter(h => h)
-            .filter(h => h.times && h.day !== undefined)
-            .forEach(h => {
-            const row = h.times[0] - 1;
-            const col = h.day;
-            
-            cellRefs[row][col].current.innerHTML += 
-            `<div class="${sizeClass[h.times.length]} ${colorClass[h.color]} ${classes.lectureBox}"></div>`
-        })
-    }
 
     const getLectureBox = (rowIdx, colIdx) => {
         const lecture = timeTableMap[rowIdx][colIdx];
@@ -143,6 +119,17 @@ export default function TimeTable({timeTableIdx}) {
                         Object.keys(day2Num).map((col, colIdx) => (
                             <Box key={colIdx} className={classes.box} ref={cellRefs[rowIdx][colIdx]}>  
                                 { getLectureBox(rowIdx, colIdx) }
+                                {
+                                highlight.filter(h=>h)
+                                        .filter(h => h.times && h.day !== undefined)
+                                        .filter(h => {
+                                            const row = h.times[0] - 1;
+                                            const col = h.day;
+
+                                            return row === rowIdx && col === colIdx
+                                        })
+                                        .map(h => <Box className={`${sizeClass[h.times.length]} ${colorClass[h.color]} ${classes.lectureBox}`}></Box>)
+                            }
                             </Box>)
                         )
                     }
@@ -227,7 +214,7 @@ const useStyles = makeStyles({
         position: 'absolute',
         fontWeight: '700',
         fontSize: '1rem',
-        zIndex: '11',
+        zIndex: '100',
         top: '0px',
         right: '0px',
         padding: '0',

@@ -4,7 +4,7 @@ import { StatusCodes } from 'http-status-codes';
 import { Button, Container, makeStyles, TextField, Typography } from '@material-ui/core';
 import { currentTimeTableState, timeTableState, highLightState } from '@states/TimeTable';
 import { semesterState } from '@states/Semester';
-import LectureRecord from '@components/LectureRecord';
+import LectureRecord from '@components/home/LectureRecord';
 import { requestAPI, API_GET_ALL_LECTURES } from '@utils/api';
 import lectureToTime from '@utils/lectureToTime';
 
