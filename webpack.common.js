@@ -2,8 +2,6 @@ const Dotenv = require('dotenv-webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
-const port = process.env.PORT || 3000;
-
 module.exports = {
   entry: './src/index.jsx', // entry point
   module: {
@@ -69,10 +67,4 @@ module.exports = {
       path: './config/.env',
     }),
   ],
-  devServer: {
-    host: 'localhost',
-    port,
-    open: true,
-    historyApiFallback: true,
-  },
 };
