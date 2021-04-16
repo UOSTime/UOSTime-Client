@@ -8,7 +8,7 @@ import LectureList from '@components/home/LectureList';
 import { semesterState } from '@states/Semester';
 import { timeTableState, currentTimeTableState } from '@states/TimeTable';
 import { requestAPI, API_GET_TIMETABLES, API_CREATE_TIMETABLE, API_DELETE_TIMETABLE } from '@utils/api';
-import { Button, Container, makeStyles } from '@material-ui/core';
+import { Button, Container, makeStyles, Typography } from '@material-ui/core';
 import MyLectureList from '@components/home/MyLectureList';
 import TimeTableCard from '@components/home/TimeTableCard';
 import CreateTimeTable from '../../components/home/CreateTimeTable';
@@ -26,7 +26,7 @@ export default function Home() {
         return { value, set };
     });
 
-    const [type, setType] = useState('search');
+    const [type, setType] = useState('main');
 
     useEffect(() => {
         if(!localStorage.getItem('userID')) {
@@ -38,7 +38,7 @@ export default function Home() {
 
             if(!response || response.status !== StatusCodes.OK) {
                 alert('시간표를 가져오는데 실패했어요');
-                return null;
+                return;
             }
 
             const timeTables = response.data;
@@ -84,6 +84,17 @@ export default function Home() {
         }
     };
 
+    const onSearchMode = () => {
+        setType('search');
+    }
+
+    const onMyMode = () => {
+        setType('my');
+    }
+
+    const onMainMode = () => {
+        setType('main');
+    }
     const onDelete = async ({target}) => {
         const timeTableIdx = parseInt(target.getAttribute('name'));
         const timeTableId = timeTableStates[timeTableIdx].value._id;
@@ -121,6 +132,8 @@ export default function Home() {
         });
     };
 
+
+    const title = timeTableStates[currentTimeTable] ? <Button onClick={onMyMode}>{timeTableStates[currentTimeTable].value.name}</Button> : null;
     const mainTimeTable = <TimeTable timeTableIdx={currentTimeTable} />;
     const timeTableComponents = timeTableStates
                             .filter(timeTable => timeTable.value && timeTable.value._id !== null)
@@ -130,18 +143,41 @@ export default function Home() {
         return <Redirect to='/login' />;
     }
 
-    return (
-        <Container className={classes.root}>
-            <Button onClick={onSwitch}>{type==='search' ? '내 강의':'강의 검색'}</Button>
-            {
-                type==='search' ? <LectureList /> : <MyLectureList />
-            }
-            { mainTimeTable }
+    const lecturePanel = (content) => {
+        return (
+            <Container>
+                <Container>
+                    <Button onClick={onSwitch}>{type==='search' ? '내 강의':'강의 검색'}</Button>
+                    <Button onClick={onMainMode}>×</Button>
+                </Container>
+                <Container>
+                    { content }
+                </Container>
+            </Container>
+        )
+    }
+
+    const sideBar = {
+        search: lecturePanel(<LectureList />),
+        my: lecturePanel(<MyLectureList />),
+        main: (
             <Container>
                 { timeTableComponents }
                 { timeTableComponents.length < 4 ? <CreateTimeTable onClick={onCreate} /> : null}
             </Container>
-
+        )
+    }
+    return (
+        <Container className={classes.root}>
+            <Container>
+                <Container>
+                    { title }
+                    <Button onClick={onSearchMode}>+</Button>
+                </Container>
+                { mainTimeTable }
+            </Container>
+            { sideBar[type] }
+            
         </Container>
     )
 }

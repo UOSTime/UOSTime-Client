@@ -47,7 +47,6 @@ export default function TimeTable({timeTableIdx}) {
     });
 
     const onDelete = async ({target}) => {
-        console.log(target)
         const lectureId = target.getAttribute('name');
         const tlecture = timeTable.tlecture_list
                                     .find(tlecture => tlecture.lecture._id === lectureId);
