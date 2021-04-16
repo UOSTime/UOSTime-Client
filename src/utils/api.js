@@ -60,6 +60,8 @@ export const API_CREATE_NOTICE = makeAPI(POST, '/notice');
 export const API_UPDATE_NOTICE = makeAPI(PATCH, '/notice');
 export const API_DELETE_NOTICE = makeAPI(DELETE, '/notice');
 export const API_GET_ALL_LECTURES = makeAPI(GET, '/lecture');
+export const API_UPDATE_LECTURES = makeAPI(PATCH, '/lecture');
+export const API_GET_HISTORIES = makeAPI(GET, '/history');
 
 
 

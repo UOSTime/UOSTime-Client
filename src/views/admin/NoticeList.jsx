@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { Accordion, AccordionDetails, AccordionSummary, Button, FormControl, FormControlLabel, Grid, Switch, TextField, Typography } from '@material-ui/core';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import { Accordion, AccordionDetails, AccordionSummary, Box, Button, FormControl, FormControlLabel, Grid, Paper, Switch, TextField, Typography } from '@material-ui/core';
+import { ExpandMore } from '@material-ui/icons';
 import { API_DELETE_NOTICE, API_GET_ALL_NOTICES, API_UPDATE_NOTICE, requestAPI } from '@utils/api';
 import { convertUTCtoYYYYMMDD, convertYYYYMMDDtoUTC } from '@utils/time';
+import AddNoticeDialog from './AddNoticeDialog';
 
 function NoticeListItem(props) {
   // props
@@ -31,7 +32,7 @@ function NoticeListItem(props) {
 
   const deleteNotice = () => {
     if (confirm('정말 삭제하시겠습니까?')) {
-      requestAPI(API_DELETE_NOTICE, { _id: notice._id });
+      requestAPI(API_DELETE_NOTICE(), { _id: notice._id });
     }
   };
 
@@ -41,13 +42,13 @@ function NoticeListItem(props) {
     notice.date = date;
     notice.is_hot = isHot;
     notice.is_using = isUsing;
-    requestAPI(API_UPDATE_NOTICE, notice);
+    requestAPI(API_UPDATE_NOTICE(), notice);
   };
 
   return (
     <Accordion expanded={expanded} onChange={() => onChange(accordionIndex)}>
       <AccordionSummary
-        expandIcon={<ExpandMoreIcon />}
+        expandIcon={<ExpandMore />}
         aria-controls={`notice-content-${accordionIndex}`}
         id={`notice-${accordionIndex}`}
       >
@@ -134,21 +135,17 @@ function NoticeListItem(props) {
   );
 }
 
-export default function NoticeList(props) {
+export default function NoticeList() {
   // state
   const [notices, setNotices] = useState([]);
-
-  useEffect(() => {
-    updateNoticeList();
-  }, []);
-
-  const updateNoticeList = async () => {
-    const allNotices = await requestAPI(API_GET_ALL_NOTICES);
-    setNotices(allNotices);
-  };
-
-  // state
   const [expandedIndex, setExpandedIndex] = useState(null);
+  const [isOpenAddNoticeDialog, setIsOpenAddNoticeDialog] = useState(false);
+
+  useEffect(async () => {
+    // update notice list
+    const { data: allNotices } = await requestAPI(API_GET_ALL_NOTICES());
+    setNotices(allNotices);
+  }, []);
 
   const toggleExpand = i => {
     setExpandedIndex(i === expandedIndex ? null : i);
@@ -166,7 +163,25 @@ export default function NoticeList(props) {
 
   return (
     <>
-      {noticeList}
+      <AddNoticeDialog
+        open={isOpenAddNoticeDialog}
+        closeAddNoticeDialog={() => setIsOpenAddNoticeDialog(false)}
+      />
+      <Box display="flex" flexDirection="row" alignItems="center" p={2}>
+        <Box mr="auto">
+          <h2>공지사항</h2>
+        </Box>
+        <Box mx={1}>
+          <Button variant="contained" color="primary" onClick={() => setIsOpenAddNoticeDialog(true)}>공지사항 추가</Button>
+        </Box>
+      </Box>
+      <Paper>
+        {
+          noticeList.length
+            ? noticeList
+            : <Box p={2}>(공지사항 없음)</Box>
+        }
+      </Paper>
     </>
   );
 }
