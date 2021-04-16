@@ -24,7 +24,6 @@ export default function TimeTable({timeTableIdx}) {
     const highlight = useRecoilValue(highLightState);
     const semester = useRecoilValue(semesterState);
 
-    const previousHighlight = useRef([]);
     const cellRefs = timeArr.map(() => Object.keys(day2Num).map(() => useRef()));
 
     const classes = useStyles();

@@ -1,7 +1,6 @@
-import React, { useRef, useState } from 'react';
+import React, { useState } from 'react';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
-import { StatusCodes } from 'http-status-codes';
-import { Button, Container, makeStyles, TextField, Typography } from '@material-ui/core';
+import { Container, makeStyles, Typography } from '@material-ui/core';
 import { currentTimeTableState, timeTableState, highLightState } from '@states/TimeTable';
 import { semesterState } from '@states/Semester';
 import LectureRecord from '@components/home/LectureRecord';

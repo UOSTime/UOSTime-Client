@@ -5,11 +5,13 @@ const timeTableState = atomFamily({
     default: {
         _id: null,
         uid: null,
-        yaer: null,
+        name: null,
+        year: null,
         term: null,
         tlecture_list: [],
         createAt: [],
-        updateAt: []
+        updateAt: [],
+        __v: null
     }
 });
 

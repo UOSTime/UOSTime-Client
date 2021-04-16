@@ -12,8 +12,11 @@ export default function LectureRecord({name, type, lecture, onMouseEnter, onMous
     const classes = useStyles();
 
     const onAdd = async () => {
+        console.log(timeTable)
+        console.log(timeTable.year,lecture.year, timeTable.term,lecture.term)
         if(timeTable.year !== lecture.year || timeTable.term !== lecture.term) {
             alert('추가하려는 강의가 시간표와 학기가 맞지 않아요..');
+            return;
         }
 
         const body = {
