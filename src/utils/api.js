@@ -62,6 +62,7 @@ export const API_DELETE_NOTICE = makeAPI(DELETE, '/notice');
 export const API_GET_ALL_LECTURES = makeAPI(GET, '/lecture');
 export const API_CREATE_TIMETABLE = makeAPI(POST, '/timetable');
 export const API_DELETE_TIMETABLE = makeAPI(DELETE, '/timetable');
+export const API_PATCH_TIMETABLE_NAME = makeAPI(PATCH, '/timetable/name');
 export const API_GET_TIMETABLES = makeAPI(GET, '/timetable');
 export const API_DELETE_TLECTURE = makeAPI(DELETE, '/timetable/tlecture');
 export const API_ADD_TLECTURE = makeAPI(POST, '/timetable/tlecture');

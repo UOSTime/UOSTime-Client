@@ -7,7 +7,7 @@ import TimeTable from '@components/home/TimeTable';
 import LectureList from '@components/home/LectureList';
 import { semesterState } from '@states/Semester';
 import { timeTableState, currentTimeTableState } from '@states/TimeTable';
-import { requestAPI, API_GET_TIMETABLES, API_CREATE_TIMETABLE, API_DELETE_TIMETABLE } from '@utils/api';
+import { requestAPI, API_GET_TIMETABLES, API_CREATE_TIMETABLE, API_DELETE_TIMETABLE, API_PATCH_TIMETABLE_NAME } from '@utils/api';
 import { Button, Container, makeStyles, Typography } from '@material-ui/core';
 import MyLectureList from '@components/home/MyLectureList';
 import TimeTableCard from '@components/home/TimeTableCard';
@@ -19,15 +19,18 @@ export default function Home() {
         year: 2021,
         term: 'A10'
     }
-    const classes = useStyles();
     const [currentTimeTable, setCurrentTimeTable] = useRecoilState(currentTimeTableState);
     const timeTableStates = [0, 1, 2, 3].map(idx => {
         const [value, set] = useRecoilState(timeTableState(idx));
         return { value, set };
     });
 
+    const [ tableName, setTableName ] = useState('');
+    const [isChangeName, setIsChangeName] = useState(false);
     const [type, setType] = useState('main');
 
+    const classes = useStyles();
+    
     useEffect(() => {
         if(!localStorage.getItem('userID')) {
             return;
@@ -55,8 +58,41 @@ export default function Home() {
         getTimeTables();
     }, []);
 
+    const onChangeNameField = ({target}) => {
+        setTableName(target.value);
+    }
+
     const onSwitch = () => {
         setType(type==='search'? 'my' : 'search');
+    }
+
+    const onChangeName = () => {
+        setIsChangeName(true);
+        setTableName(timeTableStates[currentTimeTable].value.name);
+    }
+
+    const onSubmitName = async () => {
+        const timeTable = timeTableStates[currentTimeTable].value;
+
+        const body = {
+            year: timeTable.year,
+            term: timeTable.term,
+            name: tableName,
+            timeTableId: timeTable._id
+        };
+
+        const response = await requestAPI(API_PATCH_TIMETABLE_NAME(), body);
+
+        if(response.status !== StatusCodes.OK) {
+            alert('시간표 명을 변경하지 못 했어요...');
+            return;
+        }
+        timeTableStates[currentTimeTable].set(response.data);
+        setIsChangeName(false);
+    }
+
+    const onCancelName = () => {
+        setIsChangeName(false);
     }
 
     const onCreate = async () => {
@@ -95,6 +131,7 @@ export default function Home() {
     const onMainMode = () => {
         setType('main');
     }
+
     const onDelete = async ({target}) => {
         const timeTableIdx = parseInt(target.getAttribute('name'));
         const timeTableId = timeTableStates[timeTableIdx].value._id;
@@ -133,7 +170,21 @@ export default function Home() {
     };
 
 
-    const title = timeTableStates[currentTimeTable] ? <Button onClick={onMyMode}>{timeTableStates[currentTimeTable].value.name}</Button> : null;
+    let title = null;
+    if(timeTableStates[currentTimeTable]) {
+        if(isChangeName) {
+            title = (
+                <Container>
+                    <input onChange={onChangeNameField} value={tableName}></input>
+                    <Button onClick={onSubmitName}>변경</Button>
+                    <Button onClick={onCancelName}>취소</Button>
+                </Container>
+            )
+        } else {
+            title = <Button onClick={onChangeName}>{timeTableStates[currentTimeTable].value.name}</Button>;
+        }
+    }
+
     const mainTimeTable = <TimeTable timeTableIdx={currentTimeTable} />;
     const timeTableComponents = timeTableStates
                             .filter(timeTable => timeTable.value && timeTable.value._id !== null)
@@ -167,12 +218,16 @@ export default function Home() {
             </Container>
         )
     }
+
+
     return (
         <Container className={classes.root}>
             <Container>
                 <Container>
                     { title }
-                    <Button onClick={onSearchMode}>+</Button>
+                    <Container>
+                        <Button onClick={onSearchMode}>+</Button>
+                    </Container>
                 </Container>
                 { mainTimeTable }
             </Container>
