@@ -5,12 +5,7 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const port = process.env.PORT || 3000;
 
 module.exports = {
-  mode: 'development', // development, production
   entry: './src/index.jsx', // entry point
-  // output: {
-  //   filename: 'bundle.script.js'
-  // },
-
   module: {
     rules: [
       {
