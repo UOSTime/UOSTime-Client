@@ -76,20 +76,18 @@ export default function Home() {
 
         const newTimeTable = response.data;
         timeTableStates[nextIdx].set(newTimeTable);
-        console.log(timeTableStates[nextIdx]);
-        const maxNum = timeTableStates.filter(state => state.value && state.value._id !== null).length;
 
-        if(maxNum === 1) {
+        if(nextIdx === 0) {
             setCurrentTimeTable(0);
         } else {
-            setCurrentTimeTable(maxNum-1);
+            setCurrentTimeTable(nextIdx);
         }
     };
 
     const onDelete = async ({target}) => {
         const timeTableIdx = parseInt(target.getAttribute('name'));
         const timeTableId = timeTableStates[timeTableIdx].value._id;
-        console.log(timeTableId)
+
         const response = await requestAPI(API_DELETE_TIMETABLE().setPathParam(timeTableId).setQuery({year: semester.year, term: semester.term}));
 
         if(response.status !== StatusCodes.NO_CONTENT) {
@@ -103,15 +101,11 @@ export default function Home() {
             if(maxNum === 1) {
                 setCurrentTimeTable(null);
             } else {
-                setCurrentTimeTable(0);   
+                setCurrentTimeTable(currentTimeTable-1);   
             }
-        } else {
-            console.log('cur', timeTableStates[currentTimeTable].value)
-            console.log(currentTimeTable)
         }
 
         for(let i=timeTableIdx+1; i<maxNum; i++) {
-            console.log(i)
             timeTableStates[i-1].set(timeTableStates[i].value);
         }
         timeTableStates[maxNum-1].set({
