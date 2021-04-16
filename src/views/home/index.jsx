@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Redirect } from 'react-router';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { StatusCodes } from 'http-status-codes';
@@ -7,7 +7,8 @@ import LectureList from '@components/home/LectureList';
 import { semesterState } from '@states/Semester';
 import { timeTableState, currentTimeTableState } from '@states/TimeTable';
 import { requestAPI, API_GET_TIMETABLES } from '@utils/api';
-import { Container, makeStyles } from '@material-ui/core';
+import { Button, Container, makeStyles } from '@material-ui/core';
+import MyLectureList from '../../components/home/MyLectureList';
 
 export default function Home() {
     const semester = useRecoilValue(semesterState);
@@ -17,6 +18,8 @@ export default function Home() {
         const [value, set] = useRecoilState(timeTableState(idx));
         return { value, set };
     });
+
+    const [type, setType] = useState('search');
 
     useEffect(() => {
         if(!localStorage.getItem('userID')) {
@@ -45,6 +48,10 @@ export default function Home() {
         getTimeTables();
     }, []);
 
+    const onSwitch = () => {
+        setType(type==='search'? 'my' : 'search');
+    }
+
     const timeTableComponents = timeTableStates
                             .filter(timeTable => timeTable.value._id !== null)
                             .map((_, idx) => <TimeTable key={idx} timeTableIdx={idx} />)
@@ -55,8 +62,12 @@ export default function Home() {
 
     return (
         <Container className={classes.root}>
-            <LectureList />
+            <Button onClick={onSwitch}>{type==='search' ? '내 강의':'강의 검색'}</Button>
+            {
+                type==='search' ? <LectureList /> : <MyLectureList />
+            }
             { timeTableComponents }
+            
         </Container>
     )
 }

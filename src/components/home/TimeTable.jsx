@@ -128,7 +128,7 @@ export default function TimeTable({timeTableIdx}) {
 
                                             return row === rowIdx && col === colIdx
                                         })
-                                        .map(h => <Box className={`${sizeClass[h.times.length]} ${colorClass[h.color]} ${classes.lectureBox}`}></Box>)
+                                        .map((h, idx) => <Box key={idx} className={`${sizeClass[h.times.length]} ${colorClass[h.color]} ${classes.lectureBox}`}></Box>)
                             }
                             </Box>)
                         )

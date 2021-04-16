@@ -1,11 +1,11 @@
 import React from 'react';
 import { makeStyles, Container, Box, Typography, Button } from '@material-ui/core';
-import { requestAPI, API_ADD_LECTURE_TIMETABLE } from '@utils/api';
+import { requestAPI, API_ADD_TLECTURE, API_DELETE_TLECTURE } from '@utils/api';
 import { currentTimeTableState, timeTableState } from '@states/TimeTable';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { StatusCodes } from 'http-status-codes';
 
-export default function LectureRecord({name, lecture, onMouseEnter, onMouseLeave, onClick, selected}) {
+export default function LectureRecord({name, type, lecture, onMouseEnter, onMouseLeave, onClick, selected}) {
     const currentTimeTable = useRecoilValue(currentTimeTableState);
     const [timeTable, setTimeTable] = useRecoilState(timeTableState(currentTimeTable));
 
@@ -22,16 +22,37 @@ export default function LectureRecord({name, lecture, onMouseEnter, onMouseLeave
             lectureId: lecture._id,
             timeTableId: timeTable._id
         }
-        console.log(body)
-        const response = await requestAPI(API_ADD_LECTURE_TIMETABLE(), body);
+
+        const response = await requestAPI(API_ADD_TLECTURE(), body);
 
         if(response.status !== StatusCodes.OK) {
             alert('시간표를 추가하는데 실패했어요...');
             return;
         }
-
         setTimeTable(response.data);
     };
+
+    const onDelete = async () => {
+        const tlecture = timeTable.tlecture_list.find(tlecture => tlecture.lecture._id === lecture._id);
+
+        const body = {
+            year: timeTable.year,
+            term: timeTable.term,
+            tLectureId: tlecture._id,
+            timeTableId: timeTable._id
+        };
+        const response = await requestAPI(API_DELETE_TLECTURE(), body);
+
+        if(response.status !== StatusCodes.OK) {
+            alert('강의를 버리지 못했어요..');
+            return;
+        }
+
+        setTimeTable(response.data);
+    }
+
+    const addBtn = <Button onClick={onAdd}>시간표에 추가</Button>;
+    const deleteBtn = <Button onClick={onDelete}>시간표에서 삭제</Button>;
 
     return (
         <Container name={name} className={classes.root} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
@@ -60,7 +81,7 @@ export default function LectureRecord({name, lecture, onMouseEnter, onMouseLeave
                         <Typography>타과허용/복수전공</Typography>
                         <Typography>{lecture.etc_permit_yn}/{lecture.sec_permit_yn}</Typography>
                     </Box>
-                    <Button onClick={onAdd}>시간표에 추가</Button>
+                    { type==='search' ? addBtn : deleteBtn}
                 </Container>
                 : null
             }
