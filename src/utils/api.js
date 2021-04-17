@@ -51,9 +51,12 @@ const DELETE = url => ({ method: 'DELETE', url });
 // API CONFIG LIST
 
 export const API_LOGIN = makeAPI(POST, '/user/login');
+export const API_MY_INFO = makeAPI(GET, '/user');
 export const API_SIGN_UP = makeAPI(POST, '/user');
 export const API_FIND_ID = makeAPI(GET, '/user/id');
 export const API_FIND_PW = makeAPI(GET, '/user/password');
+export const API_SEND_CODE = makeAPI(POST, 'user/auth');
+export const API_AUTH_EMAIL = (userID, code) => makeAPI(POST, `user/auth/${userID}/${code}`);
 export const API_GET_SEMESTERS = makeAPI(GET, '/semesters');
 export const API_GET_ALL_NOTICES = makeAPI(GET, '/notice/all');
 export const API_CREATE_NOTICE = makeAPI(POST, '/notice');
