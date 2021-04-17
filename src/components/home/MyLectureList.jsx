@@ -4,7 +4,6 @@ import { Container, makeStyles, Typography } from '@material-ui/core';
 import { currentTimeTableState, timeTableState, highLightState } from '@states/TimeTable';
 import { semesterState } from '@states/Semester';
 import LectureRecord from '@components/home/LectureRecord';
-import { requestAPI, API_GET_ALL_LECTURES } from '@utils/api';
 import lectureToTime from '@utils/lectureToTime';
 
 export default function MyLectureList() {
@@ -55,14 +54,10 @@ export default function MyLectureList() {
     return (
         <Container className={classes.lectureList}>
                 <Container className={classes.titles}>
-                    <Typography>학부(과)</Typography>
-                    <Typography>과목명</Typography>
-                    <Typography>분반</Typography>
-                    <Typography>교과구분</Typography>
-                    <Typography>학년</Typography>
-                    <Typography>학점</Typography>
-                    <Typography>교수명</Typography>
-                    <Typography>정원</Typography>
+                    <Typography className={classes.title_1}>학부(과)</Typography>
+                    <Typography className={classes.title_2}>과목명</Typography>
+                    <Typography className={classes.title_3}>분반</Typography>
+                    <Typography className={classes.title_4}>교수명</Typography>
                 </Container>
                 { lectures }
             </Container>
@@ -75,12 +70,34 @@ const useStyles = makeStyles({
         padding: '0'
     },
     lectureList: {
-        height: '500px',
+        height: '100%',
         overflow: 'auto',
         padding: '0'
     },
     titles: {
         display: 'flex',
-        padding: '0'
-    }
+        padding: '0',
+        textAlign: 'center',
+        height: '1.7rem',
+    },
+    title_1: {
+        fontSize: '0.8rem',
+        fontWeight: '700',
+        width: '35%'
+    },
+    title_2: {
+        fontSize: '0.8rem',
+        fontWeight: '700',
+        width: '35%'
+    },
+    title_3: {
+        fontSize: '0.8rem',
+        fontWeight: '700',
+        width: '10%'
+    },
+    title_4: {
+        fontSize: '0.8rem',
+        fontWeight: '700',
+        width: '20%'
+    },
 })

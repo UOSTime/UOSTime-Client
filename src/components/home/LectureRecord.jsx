@@ -4,12 +4,19 @@ import { requestAPI, API_ADD_TLECTURE, API_DELETE_TLECTURE } from '@utils/api';
 import { currentTimeTableState, timeTableState } from '@states/TimeTable';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { StatusCodes } from 'http-status-codes';
+import useButtonStyles from '@utils/styles/Button';
 
 export default function LectureRecord({name, type, lecture, onMouseEnter, onMouseLeave, onClick, selected}) {
     const currentTimeTable = useRecoilValue(currentTimeTableState);
     const [timeTable, setTimeTable] = useRecoilState(timeTableState(currentTimeTable));
 
     const classes = useStyles();
+    const buttonClasses = useButtonStyles({
+        width: '20px',
+        fontSize: '0.8rem',
+        borderRadius: '10px',
+        padding: '0'
+    });
 
     const onAdd = async () => {
         console.log(timeTable)
@@ -54,36 +61,43 @@ export default function LectureRecord({name, type, lecture, onMouseEnter, onMous
         setTimeTable(response.data);
     }
 
-    const addBtn = <Button onClick={onAdd}>시간표에 추가</Button>;
-    const deleteBtn = <Button onClick={onDelete}>시간표에서 삭제</Button>;
+    const addBtn = <Button className={buttonClasses.linearRed} onClick={onAdd}>추가</Button>;
+    const deleteBtn = <Button className={buttonClasses.blue} onClick={onDelete}>삭제</Button>;
 
     return (
         <Container name={name} className={classes.root} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
             <Container name={name} className={classes.simple} onClick={onClick}>
-                <Box>{lecture.sub_dept}</Box>
-                <Box>{lecture.subject_nm}</Box>
-                <Box>{lecture.class_div}</Box>
-                <Box>{lecture.subject_div}</Box>
-                <Box>{lecture.shyr}</Box>
-                <Box>{lecture.credit}</Box>
-                <Box>{lecture.prof_nm}</Box>
-                <Box>{lecture.tlsn_limit_count}</Box>
+                <Box className={classes.title_1}>{lecture.sub_dept}</Box>
+                <Box className={classes.title_2}>{lecture.subject_nm}</Box>
+                <Box className={classes.title_3}>{lecture.class_div}</Box>
+                <Box className={classes.title_4}>{lecture.prof_nm}</Box>
             </Container>
             {
                 selected ?
                 <Container className={classes.detail}>
-                    <Box>
-                        <Typography>강의시간 및 강의실</Typography>
-                        <Typography>{lecture.class_nm}</Typography>
-                    </Box>
-                    <Box>
-                        <Typography>수강정원</Typography>
-                        <Typography>{lecture.tlsn_limit_count}</Typography>
-                    </Box>
-                    <Box>
-                        <Typography>타과허용/복수전공</Typography>
-                        <Typography>{lecture.etc_permit_yn}/{lecture.sec_permit_yn}</Typography>
-                    </Box>
+                    <Container className={classes.detailContents}>
+                        <Box className={classes.row}>
+                            교과구분: {lecture.subject_div}
+                        </Box>
+                        <Box className={classes.row}>
+                            강의시간 및 강의실: {lecture.class_nm}
+                        </Box>
+                        <Box className={classes.row}>
+                            수강정원: {lecture.tlsn_limit_count}
+                        </Box>
+                        <Box className={classes.row}>
+                            학년: {lecture.shyr}
+                        </Box>
+                        <Box className={classes.row}>
+                            학점: {lecture.credit}
+                        </Box>
+                        <Box className={classes.row}>
+                            수강정원: {lecture.tlsn_limit_count}
+                        </Box>
+                        <Box className={classes.row}>
+                            타과허용/복수전공: {lecture.etc_permit_yn}/{lecture.sec_permit_yn}
+                        </Box>
+                    </Container>
                     { type==='search' ? addBtn : deleteBtn}
                 </Container>
                 : null
@@ -100,11 +114,40 @@ const useStyles = makeStyles({
         padding: '0'
     },
     simple: {
+        height: '1.7rem',
         display: 'flex',
-        padding: '0'
+        padding: '0',
+        textAlign: 'center'
     },
     detail: {
+        display: 'flex'
+    },
+    detailContents: {
         display: 'flex',
-        padding: '0'
-    }
+        flexDirection: 'column'
+    },
+    row: {
+        fontSize: '0.7rem',
+        display: 'flex'
+    },
+    title_1: {
+        fontSize: '0.7rem',
+        fontWeight: '600',
+        width: '35%'
+    },
+    title_2: {
+        fontSize: '0.7rem',
+        fontWeight: '600',
+        width: '35%'
+    },
+    title_3: {
+        fontSize: '0.7rem',
+        fontWeight: '600',
+        width: '10%'
+    },
+    title_4: {
+        fontSize: '0.7rem',
+        fontWeight: '600',
+        width: '20%'
+    },
 })

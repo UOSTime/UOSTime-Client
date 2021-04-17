@@ -74,16 +74,14 @@ export default function TimeTable({timeTableIdx}) {
         setTimeTable(response.data);
     }
 
-    
-
     const getLectureBox = (rowIdx, colIdx) => {
         const lecture = timeTableMap[rowIdx][colIdx];
         if(lecture) {
             return (
                 <Box className={`${colorClass[lecture.color]} ${sizeClass[lecture.times.length]} ${classes.lectureBox}`}>
                     <button name={lecture.id} className={classes.deleteBtn} onClick={onDelete}>×</button>
-                    <Typography className={fontClasses.white}>{lecture.name}</Typography>
-                    <Typography className={fontClasses.white}>{lecture.place}</Typography>
+                    <Typography className={fontClasses.black}>{lecture.name}</Typography>
+                    <Typography className={fontClasses.black}>{lecture.place}</Typography>
                 </Box>
             );
         }
@@ -141,8 +139,8 @@ export default function TimeTable({timeTableIdx}) {
 
 const useStyles = makeStyles({
     container: {
-        width: '500px',
-        height: '500px',
+        maxWidth: '500px',
+        height: '800px',
         padding: '0',
         display: 'flex',
         flexDirection: 'column',
@@ -168,6 +166,7 @@ const useStyles = makeStyles({
         display: 'flex',
         flexDirection: 'row',
         padding: '0',
+        margin: '0px 0px 3px 0px',
         backgroundColor: foregroundColor,
         borderRadius: '10px'
     },
@@ -257,5 +256,7 @@ const useLectureSize = makeStyles({
     5: { height: '500%'},
     6: { height: '600%'},
     7: { height: '700%'},
-    8: { height: '800%'}
+    8: { height: '800%'},
+    9: { height: '900%'},
+    10: { height: '1000%'}
 })

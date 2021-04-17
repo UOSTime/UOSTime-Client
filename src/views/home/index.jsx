@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import dayjs from 'dayjs';
 import { Redirect } from 'react-router';
 import { useRecoilState, useRecoilValue } from 'recoil';
@@ -12,6 +12,7 @@ import { Button, Container, makeStyles, Typography } from '@material-ui/core';
 import MyLectureList from '@components/home/MyLectureList';
 import TimeTableCard from '@components/home/TimeTableCard';
 import CreateTimeTable from '../../components/home/CreateTimeTable';
+import useButtonStyles from '../../utils/styles/Button';
 
 export default function Home() {
     // const semester = useRecoilValue(semesterState);
@@ -30,6 +31,14 @@ export default function Home() {
     const [type, setType] = useState('main');
 
     const classes = useStyles();
+    const buttonClasses = useButtonStyles({
+        width: '30px',
+        height: '33px',
+        fontSize: '0.8rem !important',
+        padding: '0',
+        margin: '0px 2px 0px 2px',
+        borderRadius: '5px',
+    });
     
     useEffect(() => {
         if(!localStorage.getItem('userID')) {
@@ -69,6 +78,12 @@ export default function Home() {
     const onChangeName = () => {
         setIsChangeName(true);
         setTableName(timeTableStates[currentTimeTable].value.name);
+    }
+
+    const onTableNameEnter = (e) => {
+        if(e.key == 'Enter') {
+            onSubmitName()
+        }
     }
 
     const onSubmitName = async () => {
@@ -174,14 +189,14 @@ export default function Home() {
     if(timeTableStates[currentTimeTable]) {
         if(isChangeName) {
             title = (
-                <Container>
-                    <input onChange={onChangeNameField} value={tableName}></input>
-                    <Button onClick={onSubmitName}>변경</Button>
-                    <Button onClick={onCancelName}>취소</Button>
+                <Container className={classes.tableNameChangeContainer}>
+                    <input className={classes.tableNameInput} onChange={onChangeNameField} value={tableName} onKeyPress={onTableNameEnter}/>
+                    <Button className={buttonClasses.linearRed} onClick={onSubmitName}>변경</Button>
+                    <Button className={buttonClasses.blue} onClick={onCancelName}>취소</Button>
                 </Container>
             )
         } else {
-            title = <Button onClick={onChangeName}>{timeTableStates[currentTimeTable].value.name}</Button>;
+            title = <Button className={classes.tableNameBtn} onClick={onChangeName}>{timeTableStates[currentTimeTable].value.name}</Button>;
         }
     }
 
@@ -196,37 +211,40 @@ export default function Home() {
 
     const lecturePanel = (content) => {
         return (
-            <Container>
-                <Container>
+            <Container className={classes.sideBarPanel}>
+                <Container className={classes.lectureTop}>
                     <Button onClick={onSwitch}>{type==='search' ? '내 강의':'강의 검색'}</Button>
                     <Button onClick={onMainMode}>×</Button>
                 </Container>
-                <Container>
-                    { content }
-                </Container>
+                { content }
             </Container>
-        )
+        );
     }
 
     const sideBar = {
         search: lecturePanel(<LectureList />),
         my: lecturePanel(<MyLectureList />),
         main: (
-            <Container>
+            <Container className={classes.sideBarPanel}>
                 { timeTableComponents }
                 { timeTableComponents.length < 4 ? <CreateTimeTable onClick={onCreate} /> : null}
             </Container>
         )
-    }
+    };
+
+    const addBtn = timeTableStates.filter(timeTable => timeTable.value && timeTable.value._id !== null).length ?
+                        type==='main' ? <Button onClick={onSearchMode}>+</Button>
+                        : <Button onClick={onMainMode}>×</Button>
+                    : null;
 
 
     return (
         <Container className={classes.root}>
-            <Container>
-                <Container>
+            <Container className={classes.timeTablePanel}>
+                <Container className={classes.timeTableTitle}>
                     { title }
-                    <Container>
-                        <Button onClick={onSearchMode}>+</Button>
+                    <Container className={classes.timeTableTitleUtils}>
+                        { addBtn }
                     </Container>
                 </Container>
                 { mainTimeTable }
@@ -240,5 +258,49 @@ export default function Home() {
 const useStyles = makeStyles({
     root: {
         display: 'flex',
-    }
+    },
+    timeTablePanel: {
+        padding: '0'
+    },
+    timeTableTitle: {
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        padding: '10px 0px 10px 0px',
+        '& button': {
+            fontSize: '1.5rem',
+            padding: '0',
+            lineHeight: '1.5rem'
+        }
+    },
+    timeTableTitleUtils: {
+        width: '70px',
+        margin: '0',
+        padding: '0',
+    },
+    tableNameChangeContainer: {
+        width: '300px',
+        display: 'flex',
+        padding: '0',
+        margin: '0'
+    },
+    sideBarPanel: {
+        display: 'flex',
+        flexDirection: 'column',
+        width: '700px',
+        padding: '0'
+    },
+    lectureTop: {
+
+    },
+    tableNameBtn: {
+        fontSize: '1.5rem', 
+        '& span': {
+            lineHeight: '1.5rem'
+        }
+    },
+    tableNameInput: {
+        fontSize: '1.5rem',
+        width: '60%'
+    }, 
 })

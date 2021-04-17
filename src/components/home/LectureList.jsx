@@ -1,12 +1,15 @@
 import React, { useRef, useState } from 'react';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { StatusCodes } from 'http-status-codes';
-import { Button, Container, makeStyles, TextField, Typography } from '@material-ui/core';
+import { Button, Container, makeStyles, Typography, Select } from '@material-ui/core';
 import { currentTimeTableState, timeTableState, highLightState } from '@states/TimeTable';
 import { semesterState } from '@states/Semester';
 import LectureRecord from '@components/home/LectureRecord';
 import { requestAPI, API_GET_ALL_LECTURES } from '@utils/api';
+import UosInput from '@components/UosInput';
 import lectureToTime from '@utils/lectureToTime';
+import useButtonStyles from '@utils/styles/Button';
+import { uosRed } from '@utils/styles/Colors';
 
 const searchOption = {
     sub_dept: '학과/학부',
@@ -35,6 +38,13 @@ export default function LectureList() {
     const allLectures = useRef([]);
 
     const classes = useStyles();
+    const buttonClasses = useButtonStyles({
+        width: '60px',
+        height: '32px',
+        fontSize: '0.8rem',
+        padding: '0',
+        borderRadius: '5px'
+    });
 
     const onMouseEnter = (e) => {
         const idx = parseInt(e.currentTarget.getAttribute('name'));
@@ -96,7 +106,6 @@ export default function LectureList() {
         if (e.key === 'Enter') {
             searchBtn.current.click();
         };
-        
     }
 
     const onChange = (e) => {
@@ -123,21 +132,19 @@ export default function LectureList() {
 
     return (
         <Container className={classes.root}>
-            <select name='searchType' onChange={onChange} value={input.searchType}>
-                {Object.entries(searchOption).map(([code, name], idx) => <option key={idx} value={code}>{name}</option>)}
-            </select>
-            <TextField name='keyword' onKeyPress={onEnter} onChange={onChange} value={input.keyword}></TextField>
-            <Button onClick={onSearch} ref={searchBtn}>검색</Button>
+            <Container className={classes.searchBar}>
+                <Select className={classes.select} name='searchType' native value={input.searchType} onChange={onChange}>
+                    {Object.entries(searchOption).map(([code, name], idx) => <option key={idx} value={code}>{name}</option>)}
+                </Select>
+                <UosInput name='keyword' onKeyPress={onEnter} onChange={onChange} value={input.keyword} />
+                <Button className={buttonClasses.linearRed} onClick={onSearch} ref={searchBtn}>검색</Button>
+            </Container>
             <Container className={classes.lectureList} onScroll={handleScroll} ref={scrollContainer}>
                 <Container className={classes.titles}>
-                    <Typography>학부(과)</Typography>
-                    <Typography>과목명</Typography>
-                    <Typography>분반</Typography>
-                    <Typography>교과구분</Typography>
-                    <Typography>학년</Typography>
-                    <Typography>학점</Typography>
-                    <Typography>교수명</Typography>
-                    <Typography>정원</Typography>
+                    <Typography className={classes.title_1}>학부(과)</Typography>
+                    <Typography className={classes.title_2}>과목명</Typography>
+                    <Typography className={classes.title_3}>분반</Typography>
+                    <Typography className={classes.title_4}>교수명</Typography>
                 </Container>
                 { lectures }
             </Container>
@@ -149,15 +156,49 @@ export default function LectureList() {
 
 const useStyles = makeStyles({
     root: {
+        height: '800px',
         padding: '0'
     },
     lectureList: {
-        height: '500px',
+        height: '100%',
         overflow: 'auto',
         padding: '0'
     },
+    searchBar: {
+        padding: 0
+    },
     titles: {
         display: 'flex',
-        padding: '0'
+        padding: '0',
+        textAlign: 'center',
+        height: '1.7rem',
+    },
+    title_1: {
+        fontSize: '0.8rem',
+        fontWeight: '700',
+        width: '35%'
+    },
+    title_2: {
+        fontSize: '0.8rem',
+        fontWeight: '700',
+        width: '35%'
+    },
+    title_3: {
+        fontSize: '0.8rem',
+        fontWeight: '700',
+        width: '10%'
+    },
+    title_4: {
+        fontSize: '0.8rem',
+        fontWeight: '700',
+        width: '20%'
+    },
+    select: {
+        '&:hover:not($disabled):not($focused):not($error):before': {
+            borderBottom: `2px solid ${uosRed} !important`,
+        },  
+        '&:after': {
+            borderBottom: `2px solid ${uosRed}`
+        }
     }
 })
