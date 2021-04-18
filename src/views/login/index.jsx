@@ -152,7 +152,7 @@ export default function Login() {
           <FindPWDialog onClose={dialogOnClose} open={findOpen.pw}/>
           <SignUpDialog onClose={dialogOnClose} open={findOpen.signUp}/>
         </Container>
-        {loading ? <Loading /> : null}
+        {loading ? <Loading bg={false} size='lg' /> : null}
       </Container>
   );
 }
