@@ -2,15 +2,8 @@ const Dotenv = require('dotenv-webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
-const port = process.env.PORT || 3000;
-
 module.exports = {
-  mode: 'development', // development, production
   entry: './src/index.jsx', // entry point
-  // output: {
-  //   filename: 'bundle.script.js'
-  // },
-
   module: {
     rules: [
       {
@@ -74,10 +67,4 @@ module.exports = {
       path: './config/.env',
     }),
   ],
-  devServer: {
-    host: 'localhost',
-    port,
-    open: true,
-    historyApiFallback: true,
-  },
 };
