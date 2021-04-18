@@ -75,7 +75,7 @@ export default function FindPWDialog({onClose, open}) {
   const emailErrorMessage = result.emailError ? <Typography className={fontClass.red}>{ result.emailError }</Typography> : null;
   const usernameErrorMessage = result.usernameError ? <Typography className={fontClass.red}>{ result.usernameError }</Typography> : null;
   const resultMessage = result.send ? <Typography className={fontClass.blue}>이메일로 임시 비밀번호를 전송했어요!</Typography> : null;
-  const loading = isLoading ? <Loading /> : null;
+  const loading = isLoading ? <Loading bg={false} size='lg' /> : null;
 
   return (
     <UosDialog onClose={onCustomClose} open={open}>
