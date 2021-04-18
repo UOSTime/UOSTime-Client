@@ -7,7 +7,8 @@ import Footer from './components/Footer';
 
 import Timetable from './views/Timetable';
 import Login from './views/login/index';
-import PrivacyPolicy from './views/PrivacyPolicy';
+import PrivacyPolicy from './views/terms/PrivacyPolicy';
+import TermsOfService from './views/terms/TermsOfService';
 import Admin from './views/admin';
 
 function ErrorPage() {
@@ -25,6 +26,7 @@ function App() {
               <Route exact path="/login" component={Login} />
               <Route exact path="/admin" component={Admin} />
               <Route path="/privacy_policy" component={PrivacyPolicy} />
+              <Route path="/terms_of_service" component={TermsOfService} />
               <Route path="*" component={ErrorPage} />
             </Switch>
           </Router>
