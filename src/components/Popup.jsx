@@ -21,7 +21,7 @@ export default function Popup() {
   );
 }
 
-export function showPopup(title, content) {
+export function useShowPopup(title, content) {
   const setPopup = useSetRecoilState(popupState);
   setPopup({
     open: true,
