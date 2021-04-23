@@ -9,6 +9,7 @@ import Timetable from './views/Timetable';
 import Login from './views/login/index';
 import PrivacyPolicy from './views/PrivacyPolicy';
 import Admin from './views/admin';
+import Popup from './components/Popup';
 
 function ErrorPage() {
   return <h1>404 Not Found</h1>;
@@ -29,6 +30,7 @@ function App() {
             </Switch>
           </Router>
           <Footer />
+          <Popup />
         </RecoilRoot>
       </CssBaseline>
     </div>
