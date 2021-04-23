@@ -1,6 +1,6 @@
 /* eslint-disable no-nested-ternary */
 import React from 'react';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useSetRecoilState } from 'recoil';
 import { popupState } from '../states/App';
 import CustomDialog from './CustomDialog';
 
@@ -19,4 +19,13 @@ export default function Popup() {
       {content}
     </CustomDialog>
   );
+}
+
+export function showPopup(title, content) {
+  const setPopup = useSetRecoilState(popupState);
+  setPopup({
+    open: true,
+    title,
+    content,
+  });
 }
