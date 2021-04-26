@@ -59,7 +59,8 @@ const useStyles = makeStyles(theme => ({
     fontSize: '28px',
   },
   activedButton: {
-
+    color: '#f68b7d',
+    fontSize: '28px',
   },
   userButton: {
     color: '#A6C0FE',
@@ -104,8 +105,10 @@ export default function Header() {
           <Tab label="공지사항" classes={{ root: classes.tab, selected: classes.selected }} {...a11yProps(2)} />
         </Tabs>
         <Box className={classes.buttonBox}>
-          <IconButton aria-label="chat"><ForumOutlinedIcon className={classes.inactiveButton} /></IconButton>
-          <IconButton aria-label="notification"><NotificationsNoneOutlinedIcon className={classes.inactiveButton} /></IconButton>
+          <IconButton aria-label="chat"><ForumOutlinedIcon className={classes.inactivedButton} /></IconButton>
+          {/*<IconButton aria-label="chat"><ForumIcon className={classes.activedButton} /></IconButton>*/}
+          {/*<IconButton aria-label="notification"><NotificationsNoneOutlinedIcon className={classes.inactivedButton} /></IconButton>*/}
+          <IconButton aria-label="notification"><NotificationsActiveIcon className={classes.activedButton} /></IconButton>
           <Button
             className={classes.userButton}
             startIcon={<PersonIcon className={classes.innerIcon} />}
