@@ -1,4 +1,5 @@
 import React from 'react';
+import { useHistory } from "react-router-dom";
 import { makeStyles, useTheme, AppBar, Tabs, Tab, Typography, Box, Link, Button, IconButton } from '@material-ui/core';
 import ForumIcon from '@material-ui/icons/Forum';
 import ForumOutlinedIcon from '@material-ui/icons/ForumOutlined';
@@ -76,9 +77,21 @@ export default function Header() {
   const classes = useStyles();
   const theme = useTheme();
   const [value, setValue] = React.useState(0);
+  const history = useHistory();
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
+    switch (newValue) {
+      case 0:
+          history.push("/");
+          break;
+      case 1:
+          history.push("/board");
+          break;
+      case 2:
+          history.push("/notice");
+          break;
+      }
   };
   const handleChangeIndex = (index) => {
     setValue(index);
