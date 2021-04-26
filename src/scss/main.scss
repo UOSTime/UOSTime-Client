@@ -7,7 +7,7 @@ $fnt-black: #4e4e4e;
 
 .background-container {
   width: 100vw;
-  height: 100vh;
+  min-height: 100vh;
   position: relative;
   background-color: $bg-white;
   color: $fnt-black;
