@@ -62,7 +62,7 @@ export default function SemesterList() {
             >
               {
                 allTerms.map(({ termCode, termName }) => (
-                  <MenuItem value={termCode}>{termName}</MenuItem>
+                  <MenuItem key={termCode} value={termCode}>{termName}</MenuItem>
                 ))
               }
             </Select>
