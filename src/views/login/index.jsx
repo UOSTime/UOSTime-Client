@@ -49,7 +49,7 @@ export default function Login() {
     const callLogin = async () => {
       setLoading(true);
       setError(null);
-
+      
       const response = await requestAPI(API_LOGIN(), loginInfo);
 
       if(response.status === StatusCodes.OK) {
@@ -152,7 +152,7 @@ export default function Login() {
           <FindPWDialog onClose={dialogOnClose} open={findOpen.pw}/>
           <SignUpDialog onClose={dialogOnClose} open={findOpen.signUp}/>
         </Container>
-        {loading ? <Loading /> : null}
+        {loading ? <Loading bg={false} size='lg' /> : null}
       </Container>
   );
 }
@@ -161,6 +161,7 @@ const useStyles = makeStyles({
   container: {
     height: '100%',
     width: '100%',
+    marginTop: 'auto',
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',

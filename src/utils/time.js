@@ -5,6 +5,16 @@ import utc from 'dayjs/plugin/utc';
 
 dayjs.extend(utc);
 
+export function getToday() {
+  const today = dayjs();
+  return {
+    year: today.year(),
+    month: today.month(),
+    date: today.date(),
+    day: today.day(),
+  };
+}
+
 export function getUTCNow() {
   return convertYYYYMMDDtoUTC();
 }

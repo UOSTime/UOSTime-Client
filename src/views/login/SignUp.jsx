@@ -100,7 +100,7 @@ export default function SignUpDialog({onClose, open}) {
 
     const errorMessage = result.error ? <Typography className={fontClasses.warning}>{result.error}</Typography> : null;
     const resultMessage = result.send ? <Typography className={fontClasses.blue}>회원가입이 완료되었어요!</Typography> : null;
-    const loading = isLoading ? <Loading /> : null;
+    const loading = isLoading ? <Loading bg={false} size='lg' /> : null;
     return (
         <UosDialog fullWidth onClose={onCustomClose} open={open}>
           <DialogTitle className={classes.title}>회원가입</DialogTitle>

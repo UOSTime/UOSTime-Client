@@ -10,6 +10,8 @@ import Login from './views/login/index';
 import PrivacyPolicy from './views/PrivacyPolicy';
 import Admin from './views/admin';
 import EmailAuth from './views/EmailAuth';
+import Popup from './components/Popup';
+import Notice from './views/notice';
 
 function ErrorPage() {
   return <h1>404 Not Found</h1>;
@@ -24,6 +26,7 @@ function App() {
             <Switch>
               <Route exact path="/" component={Timetable} />
               <Route exact path="/login" component={Login} />
+              <Route exact path="/notice" component={Notice} />
               <Route exact path="/admin" component={Admin} />
               <Route path="/privacy_policy" component={PrivacyPolicy} />
               <Route exact path="/auth" component={EmailAuth} />
@@ -31,6 +34,7 @@ function App() {
             </Switch>
           </Router>
           <Footer />
+          <Popup />
         </RecoilRoot>
       </CssBaseline>
     </div>

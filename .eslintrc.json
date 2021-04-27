@@ -17,6 +17,7 @@
   "rules": {
     "arrow-parens": ["error", "as-needed"],
     "no-param-reassign": "off",
+    "no-plusplus": "off",
     "no-use-before-define": "off",
     "object-curly-newline": "off",
     "import/no-cycle": "off",

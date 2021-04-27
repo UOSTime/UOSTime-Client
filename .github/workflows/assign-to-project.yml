@@ -12,7 +12,7 @@ jobs:
   assign_to_project:
     runs-on: ubuntu-latest
     steps:
-    - name: Assign to Project: UOSTime-Client
+    - name: Assign to Project - UOSTime-Client
       uses: srggrs/assign-one-project-github-action@1.2.1
       with:
         project: 'https://github.com/UOSTime/UOSTime-Client/projects/1'
