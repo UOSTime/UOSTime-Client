@@ -1,30 +1,28 @@
 import StatusCodes from 'http-status-codes';
 import React, { useRef, useState } from 'react';
 import { Redirect } from 'react-router-dom';
-import { useRecoilState, useSetRecoilState } from 'recoil';
+import { useRecoilState } from 'recoil';
 import { Button, Box, makeStyles, Container, Typography, Link } from '@material-ui/core';
-import { semesterState } from '@states/Semester';
 import { userIDState } from '@states/User';
 import Loading from '@components/Loading';
 import UosInput from '@components/UosInput';
 import FindIdDialog from '@views/login/FindId';
 import FindPWDialog from '@views/login/FindPw';
-import { API_LOGIN, requestAPI } from '@utils/api';
+import { API_LOGIN, API_GET_SEMESTER, requestAPI } from '@utils/api';
 import { foregroundColor } from '@utils/styles/Colors';
 import useLogoLayoutStyles from '@utils/styles/login/LogoLayout';
 import useLoginLabelStyles from '@utils/styles/login/LoginLabel';
 import useButtonStyles from '@utils/styles/Button';
 import theme from '@utils/styles/Theme';
 import Logo from '@views/login/Logo';
+import { getSocket } from '@utils/socket';
 import useLinkStyles from '../../utils/styles/Link';
 import SignUpDialog from './SignUp';
-import Footer from '../../components/Footer'
 
 
 
 export default function Login() {
   const [userID, setUserID] = useRecoilState(userIDState);
-  const setSemester = useSetRecoilState(semesterState);
   const [loginInfo, setLoginInfo] = useState({uid: '', pw: ''});
   const [loading, setLoading] = useState(false);
   const [warning, setWarning] = useState('');
@@ -39,6 +37,16 @@ export default function Login() {
 
   const loginBtn = useRef();
 
+  const callSemester = async () => {
+    const response = await requestAPI(API_GET_SEMESTER());
+
+    if(response.status !== StatusCodes.OK) {
+      alert(response.data.message);
+    }
+    const semester = response.data;
+    window.localStorage.setItem('semester', JSON.stringify(semester));
+  }
+
   const login = () => {
     if(!(loginInfo.uid.length && loginInfo.pw.length)) {
       setWarning('아이디와 비밀번호를 입력해주세요!');
@@ -52,11 +60,7 @@ export default function Login() {
       
       const response = await requestAPI(API_LOGIN(), loginInfo);
 
-      if(response.status === StatusCodes.OK) {
-        window.localStorage.setItem('token', response.data.token);
-        window.localStorage.setItem('userID', response.data.userId);
-        setUserID(response.data.userId);
-      } else {
+      if(response.status !== StatusCodes.OK) {
         switch(response.status) {
           case StatusCodes.UNAUTHORIZED:
             setWarning('아이디 혹은 비밀번호가 틀렸어요!');
@@ -74,12 +78,22 @@ export default function Login() {
             setWarning('서버에서 오류가 났어요. 계속 시도해도 안되면 UOSTime 팀에게 문의해주세요!');
             break;
         }
+        setLoading(false);
+        return;
       }
+      
+      window.localStorage.setItem('token', response.data.token);
+      window.localStorage.setItem('userID', response.data.userId);
+      setUserID(response.data.userId);
+
+      await callSemester();
+      getSocket()
+
       setLoading(false);
     }
     callLogin();
   };
-
+  
   const dialogOnClose = () => {
     setFindOpen({id: false, pw: false, signUp: false});
   };
@@ -118,7 +132,10 @@ export default function Login() {
     }
   };
 
-  if (userID) return <Redirect path='/' />;
+  if (userID) {
+    getSocket();
+    return <Redirect path='/' />;
+  }
   if (error) return <Box>에러가 발생했어요...</Box>
   return (
       <Container className={classes.container}>

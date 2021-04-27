@@ -55,6 +55,7 @@ export const API_SIGN_UP = makeAPI(POST, '/user');
 export const API_FIND_ID = makeAPI(GET, '/user/id');
 export const API_FIND_PW = makeAPI(GET, '/user/password');
 export const API_GET_SEMESTERS = makeAPI(GET, '/semesters');
+export const API_GET_SEMESTER = makeAPI(GET, '/semester');
 export const API_GET_ALL_NOTICES = makeAPI(GET, '/notice/all');
 export const API_CREATE_NOTICE = makeAPI(POST, '/notice');
 export const API_UPDATE_NOTICE = makeAPI(PATCH, '/notice');
