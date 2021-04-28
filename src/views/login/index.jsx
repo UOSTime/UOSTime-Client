@@ -153,7 +153,7 @@ export default function Login() {
           <FindPWDialog onClose={dialogOnClose} open={findOpen.pw}/>
           <SignUpDialog onClose={dialogOnClose} open={findOpen.signUp}/>
         </Container>
-        {loading ? <Loading /> : null}
+        {loading ? <Loading bg={false} size='lg' /> : null}
       </Container>
   );
 }
@@ -162,6 +162,7 @@ const useStyles = makeStyles({
   container: {
     height: '96vh',
     width: '100%',
+    marginTop: 'auto',
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',

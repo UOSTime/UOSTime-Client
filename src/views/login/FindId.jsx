@@ -71,7 +71,7 @@ export default function FindIdDialog({onClose, open}) {
   
   const resultMessage = result.send ? <Typography className={fontClass.blue}>이메일로 아이디를 전송했어요!</Typography> : null;
   const errorMessage = result.error ? <Typography className={fontClass.red}>{result.error}</Typography> : null;
-  const loading = isLoading ? <Loading /> : null;
+  const loading = isLoading ? <Loading bg={false} size='lg' /> : null;
 
   return (
     <UosDialog onClose={onCustomClose} open={open}>

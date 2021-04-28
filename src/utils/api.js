@@ -66,6 +66,9 @@ export const API_PATCH_TIMETABLE_NAME = makeAPI(PATCH, '/timetable/name');
 export const API_GET_TIMETABLES = makeAPI(GET, '/timetable');
 export const API_DELETE_TLECTURE = makeAPI(DELETE, '/timetable/tlecture');
 export const API_ADD_TLECTURE = makeAPI(POST, '/timetable/tlecture');
+export const API_UPDATE_LECTURES = makeAPI(PATCH, '/lecture');
+export const API_GET_HISTORIES = makeAPI(GET, '/history');
+
 
 
 const axiosInstance = axios.create({

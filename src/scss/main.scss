@@ -6,6 +6,8 @@ $fnt-gray: #9e9494;
 $fnt-black: #4e4e4e;
 
 .background-container {
+  width: 100vw;
+  min-height: 100vh;
   position: relative;
   background-color: $bg-white;
   color: $fnt-black;
