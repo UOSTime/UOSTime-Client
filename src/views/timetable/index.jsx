@@ -17,7 +17,7 @@ import {
 import { Button, Container, makeStyles, Typography } from '@material-ui/core';
 import MyLectureList from '@components/home/MyLectureList';
 import TimeTableCard from '@components/home/TimeTableCard';
-import CreateTimeTable from '@/components/home/CreateTimeTable';
+import CreateTimeTable from '@components/home/CreateTimeTable';
 import useButtonStyles from '@utils/styles/Button';
 
 export default function Home() {
