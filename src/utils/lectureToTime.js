@@ -1,22 +1,14 @@
 import { day2Num } from '@components/home/TimeTable';
 
-export default function lectureToTime(lecture, idx) {
-    const name = lecture.subject_nm;
-                
-    const dayStrings = lecture.class_nm.split(', ');
+export default function lectureToTime(lecture, index) {
+  const { _id: id, subject_nm: name } = lecture;
 
-    const lectureInfos = dayStrings.map(dayStr => {
-        const parts = dayStr.split('/');
-        const time = parts[0];
-        const place = parts.slice(1).join('/');
-
-        const day = day2Num[time.charAt(0)];
-        const times = time.substring(1).split(',').map(t => parseInt(t));
-        const color = idx!==undefined ? String(idx) : 'preview';
-        const id = lecture._id;
-
-        return { id, day, times, place, name, color };
-    });
-
-    return lectureInfos;
+  return lecture.class_nm.split(', ').map(s => {
+    const time = s.match(/^[^/]*/)[0];
+    const day = day2Num[time[0]];
+    const hours = time.slice(1).split(',').map(t => parseInt(t));
+    const place = s.slice(time.length + 1);
+    const color = index || 'preview';
+    return { id, name, day, hours, place, color };
+  });
 }
