@@ -5,7 +5,7 @@ import { RecoilRoot } from 'recoil';
 import { CssBaseline } from '@material-ui/core';
 import Footer from './components/Footer';
 
-import Home from '@views/home';
+import Timetable from './views/timetable';
 import Login from './views/login/index';
 import PrivacyPolicy from './views/PrivacyPolicy';
 import Admin from './views/admin';
@@ -21,7 +21,7 @@ function App() {
         <RecoilRoot>
           <Router>
             <Switch>
-              <Route exact path="/" component={Home} />
+              <Route exact path="/" component={Timetable} />
               <Route exact path="/login" component={Login} />
               <Route exact path="/admin" component={Admin} />
               <Route path="/privacy_policy" component={PrivacyPolicy} />
