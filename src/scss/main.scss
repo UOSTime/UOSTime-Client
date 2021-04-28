@@ -1,0 +1,23 @@
+$bg-white: #f6f6f6;
+$fnt-red: #f68b7d;
+$fnt-yellow: #f7c978;
+$fnt-blue: #a6c0fe;
+$fnt-gray: #9e9494;
+$fnt-black: #4e4e4e;
+
+.background-container {
+  width: 100vw;
+  min-height: 100vh;
+  position: relative;
+  background-color: $bg-white;
+  color: $fnt-black;
+  background-size: cover;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow-y: auto;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}

@@ -1,11 +1,28 @@
 import React, { useState } from 'react';
 import { useSpring, animated } from 'react-spring';
 import { easeElasticOut } from 'd3-ease';
+import { Box, makeStyles } from '@material-ui/core';
 
 
-export default function Loading() {
-    const scale = 1.1
+const sizeMap = {
+    'sm': { width: '20px', height: '20px' },
+    'md': { width: '50px', height: '50px' },
+    'lg': { width: '80px', height: '80px' },
+    'xl': { width: '100px', height: '100px' }
+};
 
+const scaleMap = {
+    'sm': 0.3,
+    'md': 0.7,
+    'lg': 1.1,
+    'xl': 1.7
+};
+
+export default function Loading({size, bg}) {
+    const scale = size ? scaleMap[size] : scaleMap['lg'];
+
+    const sizeStyle = size ? sizeMap[size] : sizeMap['lg'];
+    const bgPanel = bg ? { backgroundColor : 'gray' } : {};
     const setLoopState = useState(true)[1];
 
     const getProp = (scale, height, top, order) => {
@@ -46,20 +63,22 @@ export default function Loading() {
           return prop;
     }
 
+    const classes = useStyles();
+
     const firstBar = getProp(scale, 1.7, -0.4, 1, setLoopState);
     const secondBar = getProp(scale, 1.5, 0.3, 2, setLoopState);
     const thridBar = getProp(scale, 1.2, -0.2, 3, setLoopState);
     const fourthBar = getProp(scale, 0.8, 0.27, 4, setLoopState);
 
-    return <animated.div style={{
-        width: `80px`,
-        height: `80px`,
+    return (<Box className={classes.background}>
+        <animated.div style={{
+        ...sizeStyle,
+        ...bgPanel,
         opacity: 0.6,
         display: `flex`, 
         flexDirection: `row`,
         alignItems: `center`,
         justifyContent: `center`,
-        backgroundColor: `gray`,
         borderRadius: `1.2rem`,
         gap: `${0.2 * scale}rem`}} >
         <animated.div style={firstBar}></animated.div>
@@ -67,8 +86,21 @@ export default function Loading() {
         <animated.div style={thridBar}></animated.div>
         <animated.div style={fourthBar}></animated.div>
     </animated.div>
+    </Box>);
 }
 
-
-
-
+const useStyles = makeStyles({
+    background: {
+        position: 'fixed',
+        width: '100%',
+        left: 0,
+        right: 0,
+        top: 0,
+        bottom: 0,
+        backgroundColor: 'rgba(0, 0, 0, 0.3)',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        zIndex: 9999
+    }
+});
