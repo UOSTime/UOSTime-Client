@@ -8,7 +8,7 @@ import { StatusCodes } from 'http-status-codes';
 import ChatMessage from './chatMessage';
 import { getSocket } from '../../utils/socket';
 
-export default function Chatroom({location}) {
+export default function Chatroom({location, history}) {
     const [chatRoom, setChatRoom] = useState({});
     const [input, setInput] = useState('');
     const [messages, setMessages] = useState([]);
@@ -16,10 +16,6 @@ export default function Chatroom({location}) {
     const [emptyMsg, setEmptyMsg] = useState('');
 
     const chatRoomId = queryString.parse(location.search).id;
-
-    if(chatRoom === null) {
-        return <Redirect to='/chatrooms' />;
-    }
 
     const range = useRef({start: 0, end: 0});
     const messageRef = useRef([]);
@@ -49,7 +45,7 @@ export default function Chatroom({location}) {
         } else {
             newMessages = messageRef.current.concat(message);
         }
-        console.log(newMessages)
+
         setMessages(newMessages);
         messageRef.current = newMessages;
 
@@ -84,9 +80,10 @@ export default function Chatroom({location}) {
 
             if(response.status !== StatusCodes.OK) {
                 setEmptyMsg('데이터를 불러오는데 실패했습니다.');
-                setChatRoom(null);
-                chatRoomRef.current = null;
-                return;
+                
+                history.push('/chatrooms');
+                
+                throw new Error();
             }
 
             setChatRoom(response.data);
@@ -133,6 +130,9 @@ export default function Chatroom({location}) {
                 userId: userId,
                 messageIdx: range.current.end
             });
+        })
+        .catch(() => {
+            return;
         });
     }, []);
     
