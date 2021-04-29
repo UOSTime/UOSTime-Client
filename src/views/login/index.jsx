@@ -87,7 +87,7 @@ export default function Login() {
       setUserID(response.data.userId);
 
       await callSemester();
-      getSocket()
+      getSocket();
 
       setLoading(false);
     }

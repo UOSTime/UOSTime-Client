@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-dom';
 import './scss/main.scss';
 import { RecoilRoot } from 'recoil';
 import { CssBaseline } from '@material-ui/core';
@@ -7,6 +7,8 @@ import Footer from './components/Footer';
 
 import Timetable from './views/Timetable';
 import Login from './views/login/index';
+import Chatrooms from './views/chatrooms';
+import Chat from './views/chat';
 import PrivacyPolicy from './views/PrivacyPolicy';
 import Admin from './views/admin';
 
@@ -23,9 +25,12 @@ function App() {
             <Switch>
               <Route exact path="/" component={Timetable} />
               <Route exact path="/login" component={Login} />
+              <Route exact path="/chatrooms" component={Chatrooms} />
+              <Route path="/chat" component={Chat} />
               <Route exact path="/admin" component={Admin} />
-              <Route path="/privacy_policy" component={PrivacyPolicy} />
-              <Route path="*" component={ErrorPage} />
+              <Route exact path="/privacy_policy" component={PrivacyPolicy} />
+              <Route exact path="/404_not_found" component={ErrorPage} />
+              <Redirect from="*" to="/404_not_found" />
             </Switch>
           </Router>
           <Footer />
