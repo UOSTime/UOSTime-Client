@@ -93,7 +93,7 @@ export default function SignUpDialog({onClose, open}) {
         if(response.status === StatusCodes.CREATED) {
             setResult({send: true, error: ''});
         } else {
-            setResult({send: false, error: e.message});
+            setResult({send: false, error: response.data.message});
         }
         setIsLoading(false);
     }
