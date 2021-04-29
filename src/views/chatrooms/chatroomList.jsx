@@ -24,7 +24,7 @@ function Chatroom({info, onClick}) {
           <Typography>{ participants }</Typography>
           <Box>
             <Typography>{ info.topMessage }</Typography>
-            <Typography>{ info.new }</Typography>
+            <Typography>{ info.new > 0 ? info.new : null }</Typography>
           </Box>
         </Container>
       </Link>

@@ -172,8 +172,9 @@ export default function Chatroom({location, history}) {
     
     const messageList = messages.map((m, idx) => {
         const index = range.current.start + idx;
-        const from = chatRoom.participants.find(p => p._id == m.from).name;
-        const readCnt = readPoints.filter(point => point.id != m.from)
+        const from = chatRoom.participants.find(p => p._id === m.from).name;
+        const readCnt = readPoints.filter(point => point.id !== userId)
+                                  .filter(point => point.id !== m.from)
                                   .filter(point => point.read < index)
                                   .length;
         return <ChatMessage key={index} from={from} message={m} readCnt={readCnt} idx={index} />;

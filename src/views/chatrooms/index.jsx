@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { Box, Container, Link, Typography } from '@material-ui/core';
 import { Redirect } from 'react-router';
-import { requestAPI, API_FIND_CHATROOMS, API_GET_MESSAGES } from '../../utils/api';
+import { requestAPI, API_FIND_CHATROOMS, API_GET_MESSAGES, API_GET_POINTS } from '../../utils/api';
 import { useRecoilState } from 'recoil';
 import { chatroomState } from '../../states/Chatroom';
 import { StatusCodes } from 'http-status-codes';
@@ -12,6 +12,8 @@ export default function Chatrooms() {
   const [chatrooms, setChatrooms] = useRecoilState(chatroomState);
   const chatroomsRef = useRef([]);
   
+  const userId = window.localStorage.getItem('userID');
+
   const socket = getSocket();
 
   const onMessageEvent = (event) => {
@@ -41,17 +43,27 @@ export default function Chatrooms() {
       }
 
       const promises = response.data.map(async room => {
-        const res = await requestAPI(API_GET_MESSAGES().setQuery({chatRoomId: room._id, start: -1, end: -1}));
+        const topMsgRes = await requestAPI(API_GET_MESSAGES().setQuery({chatRoomId: room._id, start: -1, end: -1}));
+
         let topMessage = '';
-        if(res.status === StatusCodes.OK && res.data.length === 1) {
-          topMessage = res.data[0].content;
+        if(topMsgRes.status === StatusCodes.OK && topMsgRes.data.length === 1) {
+          topMessage = topMsgRes.data[0].content;
+        }
+
+        const readRes = await requestAPI(API_GET_POINTS().setQuery({chatRoomId: room._id}));
+
+        let newCnt = 0;
+        if(readRes.status === StatusCodes.OK) {
+          const cur = readRes.data.find(user => user.id === userId)?.read;
+          newCnt = (room.length - 1) - cur;
+          console.log(cur, room.length)
         }
 
         return {
           id: room._id,
           participants: room.participants,
           name: room.name,
-          new: 0,
+          new: newCnt,
           topMessage: topMessage
         };
       })
