@@ -17,7 +17,6 @@ export default function Chatrooms() {
   const socket = getSocket();
 
   const onMessageEvent = (event) => {
-    console.log(event)
     const newChatrooms = chatroomsRef.current.map(room => {
       if(room.id === event.chatRoom) {
         const newRoom = { ...room };
@@ -56,7 +55,6 @@ export default function Chatrooms() {
         if(readRes.status === StatusCodes.OK) {
           const cur = readRes.data.find(user => user.id === userId)?.read;
           newCnt = (room.length - 1) - cur;
-          console.log(cur, room.length)
         }
 
         return {
@@ -70,7 +68,6 @@ export default function Chatrooms() {
 
       const rooms = await Promise.all(promises);
 
-      console.log(rooms)
       setChatrooms(rooms);
       chatroomsRef.current = rooms;
     };

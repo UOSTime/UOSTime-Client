@@ -130,9 +130,12 @@ export default function Chatroom({id}) {
                 messageIdx: range.current.end
             });
         })
-        .catch(() => {
-            return;
-        });
+        .catch(() => {});
+
+        return () => {
+            socket.off('read');
+            socket.off('message');
+        }
     }, []);
     
 
