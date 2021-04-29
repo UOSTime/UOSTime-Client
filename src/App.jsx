@@ -8,7 +8,7 @@ import Footer from './components/Footer';
 import Timetable from './views/Timetable';
 import Login from './views/login/index';
 import Chatrooms from './views/chatrooms';
-import Chat from './views/chat';
+import ChatroomPage from './views/chat';
 import PrivacyPolicy from './views/PrivacyPolicy';
 import Admin from './views/admin';
 
@@ -26,7 +26,7 @@ function App() {
               <Route exact path="/" component={Timetable} />
               <Route exact path="/login" component={Login} />
               <Route exact path="/chatrooms" component={Chatrooms} />
-              <Route path="/chat" component={Chat} />
+              <Route path="/chat" component={ChatroomPage} />
               <Route exact path="/admin" component={Admin} />
               <Route exact path="/privacy_policy" component={PrivacyPolicy} />
               <Route exact path="/404_not_found" component={ErrorPage} />
