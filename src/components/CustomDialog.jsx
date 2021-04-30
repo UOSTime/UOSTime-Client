@@ -34,7 +34,7 @@ export default function CustomDialog(props) {
 
   return (
     <Dialog open={open} onClose={onClose} aria-labelledby={dialogTitleID} {...dialogProps}>
-      <DialogTitle id={dialogTitleID}>{title}</DialogTitle>
+      {title && <DialogTitle id={dialogTitleID}>{title}</DialogTitle>}
       { isForm ? (
         <form onSubmit={onSubmit}>
           {dialogContent}
