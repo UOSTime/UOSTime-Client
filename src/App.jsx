@@ -11,6 +11,8 @@ import Chatrooms from './views/chatrooms';
 import ChatroomPage from './views/chat';
 import PrivacyPolicy from './views/PrivacyPolicy';
 import Admin from './views/admin';
+import Popup from './components/Popup';
+import Notice from './views/notice';
 
 function ErrorPage() {
   return <h1>404 Not Found</h1>;
@@ -27,6 +29,7 @@ function App() {
               <Route exact path="/login" component={Login} />
               <Route exact path="/chatrooms" component={Chatrooms} />
               <Route path="/chat" component={ChatroomPage} />
+              <Route exact path="/notice" component={Notice} />
               <Route exact path="/admin" component={Admin} />
               <Route exact path="/privacy_policy" component={PrivacyPolicy} />
               <Route exact path="/404_not_found" component={ErrorPage} />
@@ -34,6 +37,7 @@ function App() {
             </Switch>
           </Router>
           <Footer />
+          <Popup />
         </RecoilRoot>
       </CssBaseline>
     </div>
