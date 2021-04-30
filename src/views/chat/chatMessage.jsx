@@ -11,9 +11,13 @@ export default function ChatMessage({isMine, isSeq, from, message, readCnt}) {
     const messageStyle = isMine ? classes.mine : classes.other;
     const iconStyle = classes.icon + ' ' + (isSeq ? classes.hidden : ''); 
 
+    const onClick = () => {
+        
+    }
+
     return (
         <Container className={classes.root}>
-            { isMine ? null : <img className={iconStyle} src={userIcon} />}
+            { isMine ? null : <img className={iconStyle} onClick={onClick} src={userIcon} />}
             <Container className={classes.container}>
                 { isMine || isSeq ? null : <Typography className={classes.from}>{from}</Typography> }
                 <Container className={messageStyle}>
@@ -31,6 +35,7 @@ const useStyles = makeStyles({
         display: 'flex',
         alignItems: 'center',
         margin: '3px 0px 0px 0px',
+        padding: '0px'
     },
     container: {
         display: 'flex',
@@ -72,9 +77,10 @@ const useStyles = makeStyles({
         margin: '0px 1px 0px 1px'
     },
     content: {
+        maxWidth: '90%',
         fontSize: '0.9rem',
         margin: '0px 1px 0px 1px',
-        padding: '0px 4px 0px 4px',
+        padding: '0px 6px 0px 6px',
         borderRadius: '5px'
     },
     from: {
@@ -83,7 +89,10 @@ const useStyles = makeStyles({
     icon: {
         width: '1.6rem',
         height: '1.6rem',
-        color: foregroundColor
+        color: foregroundColor,
+        '&:hover': {
+            cursor: 'pointer'
+        }
     },
     hidden: {
         visibility: 'hidden'

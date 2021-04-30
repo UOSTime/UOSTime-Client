@@ -1,12 +1,13 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Button, Container, makeStyles, Typography } from '@material-ui/core';
-import queryString from 'query-string';
 import { v4 as uuidv4 } from 'uuid';
 import { API_FIND_CHATROOM, API_GET_MESSAGES, API_GET_POINTS, requestAPI } from '../../utils/api';
 import { StatusCodes } from 'http-status-codes';
 import ChatMessage from './chatMessage';
 import { getSocket } from '../../utils/socket';
+import useButtonStyles from '@utils/styles/Button';
 import { Redirect } from 'react-router';
+import { uosYellow } from '@utils/styles/Colors';
 
 export default function Chatroom({id}) {
     const [chatRoom, setChatRoom] = useState({});
@@ -16,6 +17,15 @@ export default function Chatroom({id}) {
     const [emptyMsg, setEmptyMsg] = useState('');
 
     const classes = useStyles();
+    const btnClasses = useButtonStyles({
+        width: '10%',
+        height: '%',
+        borderRadius: '5px',
+        padding: '0px',
+        '& span': {
+            fontSize: '0.8rem'
+        }
+    });
 
     const range = useRef({start: 0, end: 0});
     const messageRef = useRef([]);
@@ -145,8 +155,8 @@ export default function Chatroom({id}) {
     }, []);
     
 
-    const onChange = ({target}) => {
-        setInput(target.value);
+    const onChange = ({currentTarget}) => {
+        setInput(currentTarget.innerHTML);
     }
 
     const onEnterPress = (e) => {
@@ -199,26 +209,48 @@ export default function Chatroom({id}) {
     
     return (
         <Container>
-            <Container>
-                <Typography variant="h2">{chatRoom.name}</Typography>
-                <Container className={classes.msgContainer}>
-                    { messageList.length > 0 ? messageList : <Typography>{emptyMsg}</Typography> }
+            <Typography variant="h2">{chatRoom.name}</Typography>
+            <Container className={classes.msgContainer}>
+                { messageList.length > 0 ? messageList : <Typography>{emptyMsg}</Typography> }
+                <Container className={classes.inputContainer}>
+                    <div className={classes.input} contentEditable="true" suppressContentEditableWarning="true" onInput={onChange} onKeyPress={onEnterPress}>{input}</div>
+                    <Button className={classes.sendBtn} onClick={send}>전송</Button>
                 </Container>
-            </Container>
-            <Container>
-                <input type='text' value={input} onChange={onChange} onKeyPress={onEnterPress} />
-                <Button onClick={send}>전송</Button>
             </Container>
         </Container>
     );
 }
 
 const useStyles = makeStyles({
+    
     msgContainer: {
         margin: '0px',
         padding: '0px',
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'flex-end'
+    },
+    inputContainer: {
+        display: 'flex',
+        padding: '5px',
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    input: {
+        maxWidth: '90%',
+        minHeight: '2rem',
+        padding: '3px 12px 3px 12px',
+        flexGrow: 1,
+        border: '2px solid #D3D3D3',
+        borderRadius: '15px',
+        overflowWrap: 'break-word',
+        '&:focus': {
+            outline: 'none',
+            border: `3px solid ${uosYellow}`,
+        }
+    },
+    sendBtn: {
+        width: '10%',
+        height: '100%'
     }
 })

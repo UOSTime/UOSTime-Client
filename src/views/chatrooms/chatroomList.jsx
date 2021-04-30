@@ -23,7 +23,7 @@ function Chatroom({info, onClick}) {
           <Typography>{ info.name }</Typography>
           <Typography>{ participants }</Typography>
           <Box>
-            <Typography>{ info.topMessage }</Typography>
+            <Typography>{ info.topMessage.length > 35 ? info.topMessage.substring(0, 35) + '...' : info.topMessage }</Typography>
             <Typography>{ info.new > 0 ? info.new : null }</Typography>
           </Box>
         </Container>
