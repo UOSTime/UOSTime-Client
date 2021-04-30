@@ -3,21 +3,28 @@ import { Container, makeStyles, Typography } from '@material-ui/core';
 import dayjs from 'dayjs';
 import { uosRed, uosYellow, foregroundColor } from '@utils/styles/Colors';
 import userIcon from '@img/fontawesome/chat-user.svg';
+import { useSetRecoilState } from 'recoil';
+import { userInfoDialogState } from '../../states/UserInfoDialog';
 
 export default function ChatMessage({isMine, isSeq, from, message, readCnt}) {
+    const setUserInfoDialog = useSetRecoilState(userInfoDialogState);
+
     const classes = useStyles();
 
     const time = dayjs(message.date).format('HH:mm');
     const messageStyle = isMine ? classes.mine : classes.other;
     const iconStyle = classes.icon + ' ' + (isSeq ? classes.hidden : ''); 
 
-    const onClick = () => {
-        
+    const onIconClick = () => {
+        setUserInfoDialog({
+            userId: message.from,
+            open: true
+        });
     }
 
     return (
         <Container className={classes.root}>
-            { isMine ? null : <img className={iconStyle} onClick={onClick} src={userIcon} />}
+            { isMine ? null : <img className={iconStyle} onClick={onIconClick} src={userIcon} />}
             <Container className={classes.container}>
                 { isMine || isSeq ? null : <Typography className={classes.from}>{from}</Typography> }
                 <Container className={messageStyle}>
@@ -68,7 +75,7 @@ const useStyles = makeStyles({
         }
     },
     readCnt: {
-        fontSize: '0.6rem',
+        fontSize: '0.7rem',
         color: uosYellow,
         margin: '0px 1px 0px 1px'
     },

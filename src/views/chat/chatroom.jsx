@@ -1,36 +1,30 @@
 import React, { useEffect, useRef, useState } from 'react';
+import ContentEditable from "react-contenteditable";
 import { Button, Container, makeStyles, Typography } from '@material-ui/core';
 import { v4 as uuidv4 } from 'uuid';
 import { API_FIND_CHATROOM, API_GET_MESSAGES, API_GET_POINTS, requestAPI } from '../../utils/api';
 import { StatusCodes } from 'http-status-codes';
 import ChatMessage from './chatMessage';
 import { getSocket } from '../../utils/socket';
-import useButtonStyles from '@utils/styles/Button';
 import { Redirect } from 'react-router';
 import { uosYellow } from '@utils/styles/Colors';
+import UserInfoDialog from '../../components/UserInfoDialog';
 
 export default function Chatroom({id}) {
     const [chatRoom, setChatRoom] = useState({});
-    const [input, setInput] = useState('');
     const [messages, setMessages] = useState([]);
     const [readPoints, setReadPoints] = useState([]);
     const [emptyMsg, setEmptyMsg] = useState('');
+    const [input, setInput] = useState('');
 
     const classes = useStyles();
-    const btnClasses = useButtonStyles({
-        width: '10%',
-        height: '%',
-        borderRadius: '5px',
-        padding: '0px',
-        '& span': {
-            fontSize: '0.8rem'
-        }
-    });
 
     const range = useRef({start: 0, end: 0});
     const messageRef = useRef([]);
     const readPointRef = useRef([]);
     const chatRoomRef = useRef({});
+    const editableRef = useRef();
+    const sendBtnRef = useRef();
     
     const userId = window.localStorage.getItem('userID');
     
@@ -154,14 +148,20 @@ export default function Chatroom({id}) {
         }
     }, []);
     
+    const onPaste = (e) => {
+        e.preventDefault();
+        const text = e.clipboardData.getData("text");
+        document.execCommand("insertText", false, text);
+    }
 
-    const onChange = ({currentTarget}) => {
-        setInput(currentTarget.innerHTML);
+    const onChange = (e) => {
+        setInput(e.target.value);
     }
 
     const onEnterPress = (e) => {
-        if(e.key == 'Enter') {
-            send();
+        if(e.key === 'Enter') {
+            e.preventDefault();
+            sendBtnRef.current.click();
         } 
     }
 
@@ -185,7 +185,6 @@ export default function Chatroom({id}) {
 
             setInput('');
         }
-
     }
     
     let previous = '';
@@ -206,17 +205,26 @@ export default function Chatroom({id}) {
 
         return <ChatMessage key={index} from={from} message={m} readCnt={readCnt} isMine={isMine} isSeq={isSeq} />;
     });
-    
+
     return (
         <Container>
             <Typography variant="h2">{chatRoom.name}</Typography>
             <Container className={classes.msgContainer}>
                 { messageList.length > 0 ? messageList : <Typography>{emptyMsg}</Typography> }
                 <Container className={classes.inputContainer}>
-                    <div className={classes.input} contentEditable="true" suppressContentEditableWarning="true" onInput={onChange} onKeyPress={onEnterPress}>{input}</div>
-                    <Button className={classes.sendBtn} onClick={send}>전송</Button>
+                <ContentEditable
+                    className={classes.input}
+                    innerRef={editableRef}
+                    tagName="div"
+                    html={input}
+                    onPaste={onPaste}
+                    onChange={onChange}
+                    onKeyPress={onEnterPress}
+                />
+                    <Button className={classes.sendBtn} onClick={send} ref={sendBtnRef}>전송</Button>
                 </Container>
             </Container>
+            <UserInfoDialog />
         </Container>
     );
 }
@@ -239,6 +247,9 @@ const useStyles = makeStyles({
     input: {
         maxWidth: '90%',
         minHeight: '2rem',
+        maxHeight: '10rem',
+        display: 'inline-block',
+        overflow: 'auto',
         padding: '3px 12px 3px 12px',
         flexGrow: 1,
         border: '2px solid #D3D3D3',
