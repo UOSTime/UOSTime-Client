@@ -6,6 +6,7 @@ import { API_FIND_CHATROOM, API_GET_MESSAGES, API_GET_POINTS, requestAPI } from 
 import { StatusCodes } from 'http-status-codes';
 import ChatMessage from './chatMessage';
 import { getSocket } from '../../utils/socket';
+import { Redirect } from 'react-router';
 
 export default function Chatroom({id}) {
     const [chatRoom, setChatRoom] = useState({});
@@ -22,6 +23,10 @@ export default function Chatroom({id}) {
     const chatRoomRef = useRef({});
 
     const userId = window.localStorage.getItem('userID');
+
+    if(!userId) {
+        return <Redirect to='/login' />;
+    }
     const socket = getSocket();
 
     const onMessageEvent = (message) => {
@@ -186,7 +191,7 @@ export default function Chatroom({id}) {
         <Container>
             <Container>
                 <Typography variant="h2">{chatRoom.name}</Typography>
-                { messageList }
+                { messageList.length > 0 ? messageList : <Typography>{emptyMsg}</Typography> }
             </Container>
             <Container>
                 <input type='text' value={input} onChange={onChange} onKeyPress={onEnterPress} />
