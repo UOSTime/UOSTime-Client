@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Button, Container, Typography } from '@material-ui/core';
+import { Button, Container, makeStyles, Typography } from '@material-ui/core';
 import queryString from 'query-string';
 import { v4 as uuidv4 } from 'uuid';
 import { API_FIND_CHATROOM, API_GET_MESSAGES, API_GET_POINTS, requestAPI } from '../../utils/api';
@@ -15,18 +15,19 @@ export default function Chatroom({id}) {
     const [readPoints, setReadPoints] = useState([]);
     const [emptyMsg, setEmptyMsg] = useState('');
 
-    const chatRoomId = id;
+    const classes = useStyles();
 
     const range = useRef({start: 0, end: 0});
     const messageRef = useRef([]);
     const readPointRef = useRef([]);
     const chatRoomRef = useRef({});
-
+    
     const userId = window.localStorage.getItem('userID');
-
+    
     if(!userId) {
         return <Redirect to='/login' />;
     }
+    const chatRoomId = id;
     const socket = getSocket();
 
     const onMessageEvent = (message) => {
@@ -177,6 +178,7 @@ export default function Chatroom({id}) {
 
     }
     
+    let previous = '';
     const messageList = messages.map((m, idx) => {
         const index = range.current.start + idx;
         const from = chatRoom.participants.find(p => p._id === m.from).name;
@@ -184,14 +186,24 @@ export default function Chatroom({id}) {
                                   .filter(point => point.id !== m.from)
                                   .filter(point => point.read < index)
                                   .length;
-        return <ChatMessage key={index} from={from} message={m} readCnt={readCnt} idx={index} />;
+        const isMine = m.from === userId;
+
+        let isSeq = true;
+        if(previous !== m.from) {
+            previous = m.from;
+            isSeq = false;
+        }
+
+        return <ChatMessage key={index} from={from} message={m} readCnt={readCnt} isMine={isMine} isSeq={isSeq} />;
     });
     
     return (
         <Container>
             <Container>
                 <Typography variant="h2">{chatRoom.name}</Typography>
-                { messageList.length > 0 ? messageList : <Typography>{emptyMsg}</Typography> }
+                <Container className={classes.msgContainer}>
+                    { messageList.length > 0 ? messageList : <Typography>{emptyMsg}</Typography> }
+                </Container>
             </Container>
             <Container>
                 <input type='text' value={input} onChange={onChange} onKeyPress={onEnterPress} />
@@ -200,3 +212,13 @@ export default function Chatroom({id}) {
         </Container>
     );
 }
+
+const useStyles = makeStyles({
+    msgContainer: {
+        margin: '0px',
+        padding: '0px',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'flex-end'
+    }
+})
