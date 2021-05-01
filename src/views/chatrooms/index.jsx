@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { Box, Container, Link, Typography } from '@material-ui/core';
+import { Box, Container, Link, makeStyles, Typography } from '@material-ui/core';
 import { Redirect } from 'react-router';
 import { requestAPI, API_FIND_CHATROOMS, API_GET_MESSAGES, API_GET_POINTS } from '../../utils/api';
 import { useRecoilState } from 'recoil';
@@ -12,6 +12,8 @@ export default function Chatrooms() {
   const [chatrooms, setChatrooms] = useRecoilState(chatroomState);
   const chatroomsRef = useRef([]);
   
+  const classes = useStyles();
+
   const userId = window.localStorage.getItem('userID');
 
   const socket = getSocket();
@@ -77,31 +79,28 @@ export default function Chatrooms() {
     socket.on('message', onMessageEvent);
   }, []);
 
-  const onClickRoom = (e) => {
-    const chatRoomId = e.target.getAttribute('name');
-
-    const newChatrooms = chatroomsRef.current.map(room => {
-      if(room.id === chatRoomId) {
-        const newRoom = { ...room };
-        newRoom.new = 0;
-
-        return newRoom;
-      }
-      return room;
-    });
-
-    setChatrooms(newChatrooms);
-    chatroomsRef.current = newChatrooms;
-  }
-
   if(!window.localStorage.getItem('userID')) {
     return <Redirect to='/login' />;
   }
 
   return (
-    <Container>
-        <Typography>채팅방</Typography>
-        <ChatroomList rooms={chatrooms} onClick={onClickRoom} />
+    <Container className={classes.root}>
+        <Typography className={classes.title}>채팅</Typography>
+        <ChatroomList rooms={chatrooms} />
     </Container>
   );
 }
+
+const useStyles = makeStyles({
+  root: {
+    overflow: 'auto',
+    margin: '15px 0px 15px 0px',
+    padding: '0'
+    // padding: '0px 10px 0px 10px'
+  },
+  title: {
+    marginLeft: '5px',
+    fontWeight: '800',
+    fontSize: '1.5rem'
+  },
+});
