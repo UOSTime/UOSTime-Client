@@ -14,7 +14,8 @@ import { uosYellow } from '@utils/styles/Colors';
 import UserInfoDialog from '../../components/UserInfoDialog';
 import userIcon from '@img/fontawesome/chat-user.svg';
 import usersIcon from '@img/fontawesome/chat-users.svg';
-import RoomInfoMenu from './RoomInfoDialog';
+import RoomInfoMenu from './RoomInfoMenu';
+import MainMenu from './MainMenu';
 
 export default function Chatroom({id}) {
     const [chatRoom, setChatRoom] = useState({});
@@ -304,28 +305,7 @@ export default function Chatroom({id}) {
                 >
                     <MoreVertIcon />
                 </IconButton>
-                <Menu
-                    id="long-menu"
-                    anchorEl={menuAnchorEl}
-                    getContentAnchorEl={null}
-                    anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-                    transformOrigin={{ vertical: "top", horizontal: "right" }}
-                    keepMounted
-                    open={openMenu}
-                    onClose={onCloseMenu}
-                    PaperProps={{
-                    style: {
-                        maxHeight: 48 * 4.5,
-                        width: '20ch',
-                    },
-                    }}
-                >
-                    {menuOption.map((option) => (
-                    <MenuItem key={option} selected={option === 'Pyxis'}>
-                        {option}
-                    </MenuItem>
-                    ))}
-                </Menu>
+                <MainMenu open={openMenu} onClose={onCloseMenu} anchorEl={menuAnchorEl} options={menuOption} />
             </Container>
             <Container className={classes.msgContainer} onScroll={onScroll} ref={msgContainerRef}>
                 <ol className={classes.msgOl}>{ messageList.length > 0 ? messageList : <Typography>{emptyMsg}</Typography> }</ol>
