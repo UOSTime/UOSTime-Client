@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { Box, Container, Link, makeStyles, Typography } from '@material-ui/core';
+import { Container, makeStyles, Typography } from '@material-ui/core';
 import { Redirect } from 'react-router';
 import { requestAPI, API_FIND_CHATROOMS, API_GET_MESSAGES, API_GET_POINTS } from '../../utils/api';
 import { useRecoilState } from 'recoil';

@@ -23,7 +23,7 @@ export default function ChatMessage({isMine, isSeq, from, message, readCnt}) {
     }
 
     return (
-        <Container className={classes.root}>
+        <li className={classes.root}>
             { isMine ? null : <img className={iconStyle} onClick={onIconClick} src={userIcon} />}
             <Container className={classes.container}>
                 { isMine || isSeq ? null : <Typography className={classes.from}>{from}</Typography> }
@@ -33,7 +33,7 @@ export default function ChatMessage({isMine, isSeq, from, message, readCnt}) {
                     <Typography className={classes.readCnt}>{readCnt > 0 ? readCnt : null }</Typography>
                 </Container>
             </Container>
-        </Container>
+        </li>
     );
 }
 

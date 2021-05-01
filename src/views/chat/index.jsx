@@ -1,5 +1,5 @@
 import React from 'react';
-import { Container, Typography } from '@material-ui/core';
+import { Button, Container, makeStyles, Typography } from '@material-ui/core';
 import queryString from 'query-string';
 import Chatroom from './chatroom';
 
@@ -13,8 +13,16 @@ export default function ChatroomPage({location, history}) {
 
     return (
         <Container>
-            <button onClick={returnToList}>채팅방 목록</button>
             <Chatroom id={chatRoomId} />
         </Container>
     )
 }
+
+const useStyles = makeStyles({
+    root: {
+
+    },
+    backBtn: {
+
+    }
+});

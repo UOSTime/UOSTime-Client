@@ -1,20 +1,26 @@
 import React, { useEffect, useRef, useState } from 'react';
 import ContentEditable from "react-contenteditable";
-import { Button, Container, makeStyles, Typography } from '@material-ui/core';
+import { Menu, MenuItem, Button, Container, makeStyles, Typography } from '@material-ui/core';
+import IconButton from '@material-ui/core/IconButton';
+import MoreVertIcon from '@material-ui/icons/MoreVert';
+import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import { v4 as uuidv4 } from 'uuid';
 import { API_FIND_CHATROOM, API_GET_MESSAGES, API_GET_POINTS, requestAPI } from '../../utils/api';
 import { StatusCodes } from 'http-status-codes';
 import ChatMessage from './chatMessage';
 import { getSocket } from '../../utils/socket';
-import { Redirect } from 'react-router';
+import { Redirect, useHistory } from 'react-router';
 import { uosYellow } from '@utils/styles/Colors';
 import UserInfoDialog from '../../components/UserInfoDialog';
+import userIcon from '@img/fontawesome/chat-user.svg';
+import usersIcon from '@img/fontawesome/chat-users.svg';
 
 export default function Chatroom({id}) {
     const [chatRoom, setChatRoom] = useState({});
     const [messages, setMessages] = useState([]);
     const [readPoints, setReadPoints] = useState([]);
     const [emptyMsg, setEmptyMsg] = useState('');
+    const [menuAnchorEl, setMenuAnchorEl] = useState(null);
     const [input, setInput] = useState('');
 
     const classes = useStyles();
@@ -25,14 +31,20 @@ export default function Chatroom({id}) {
     const chatRoomRef = useRef({});
     const editableRef = useRef();
     const sendBtnRef = useRef();
+    const msgContainerRef = useRef();
+
+    const history = useHistory();
     
     const userId = window.localStorage.getItem('userID');
+    const openMenu = Boolean(menuAnchorEl);
     
     if(!userId) {
         return <Redirect to='/login' />;
     }
     const chatRoomId = id;
     const socket = getSocket();
+    const menuOption = ['채팅방 이름 변경', '참여자 목록', '채팅방 나가기'];
+    const loadUnit = 50;
 
     const onMessageEvent = (message) => {
         const newChatRoom = {
@@ -79,6 +91,12 @@ export default function Chatroom({id}) {
         setReadPoints(updatedReadPoints);
         readPointRef.current = updatedReadPoints;
     };
+
+    useEffect(() => {
+        if(range.current.end - range.current.start + 1 === loadUnit) {
+            msgContainerRef.current.scrollTop = msgContainerRef.current.scrollHeight;
+        }
+    })
 
     useEffect(() => {
         socket.on('message', onMessageEvent);
@@ -152,18 +170,18 @@ export default function Chatroom({id}) {
         e.preventDefault();
         const text = e.clipboardData.getData("text");
         document.execCommand("insertText", false, text);
-    }
+    };
 
     const onChange = (e) => {
         setInput(e.target.value);
-    }
+    };
 
     const onEnterPress = (e) => {
         if(e.key === 'Enter') {
             e.preventDefault();
             sendBtnRef.current.click();
         } 
-    }
+    };
 
     const send = () => {
         if(input.length > 0) {
@@ -185,8 +203,49 @@ export default function Chatroom({id}) {
 
             setInput('');
         }
-    }
+    };
+
+    const onClickMenuBtn = (e) => {
+        setMenuAnchorEl(e.currentTarget);
+    };
+
+    const onCloseMenu = () => {
+        setMenuAnchorEl(null);
+    };
     
+    const returnToList = () => {
+        history.push('/chatrooms');
+    };
+
+    const load = async () => {
+        if(range.current.start === 0) return;
+        const nextStart = range.current.start-1 > loadUnit ? range.current.start - loadUnit -1 : 0;
+
+        const response = await requestAPI(API_GET_MESSAGES().setQuery({chatRoomId, start: nextStart, end: range.current.start-1}));
+        if(response.status !== StatusCodes.OK) {
+            setEmptyMsg('채팅을 불러오는데 실패했습니다.');
+            return;
+        }
+
+        setMessages(response.data.concat(messages));
+
+        msgContainerRef.current.scrollTop = msgContainerRef.current.scrollHeight * (loadUnit -1) / (range.current.end - nextStart);
+
+        range.current.start = nextStart;
+    };
+
+    const onScroll = (e) => {
+        const scrollY = msgContainerRef.current.scrollHeight;
+        const scrollTop = msgContainerRef.current.scrollTop;
+        const clientHeight = msgContainerRef.current.clientHeight;
+        console.log(scrollY, scrollTop, clientHeight)
+        
+        if (scrollTop === 0) {
+            load();
+        }
+    };
+
+
     let previous = '';
     const messageList = messages.map((m, idx) => {
         const index = range.current.start + idx;
@@ -207,11 +266,48 @@ export default function Chatroom({id}) {
     });
 
     return (
-        <Container>
-            <Typography variant="h2">{chatRoom.name}</Typography>
-            <Container className={classes.msgContainer}>
-                { messageList.length > 0 ? messageList : <Typography>{emptyMsg}</Typography> }
-                <Container className={classes.inputContainer}>
+        <Container className={classes.root}>
+            <Container className={classes.header}>
+                <ExitToAppIcon className={classes.returnBtn} onClick={returnToList} />
+                <Container className={classes.titleContainer}>
+                    <img className={classes.usersIcon} src={chatRoom.participants?.length > 2 ? usersIcon : userIcon} />
+                    <Typography className={classes.title} variant="h2">{chatRoom.name}</Typography>
+                </Container>
+                <IconButton
+                    aria-label="more"
+                    aria-controls="long-menu"
+                    aria-haspopup="true"
+                    onClick={onClickMenuBtn}
+                >
+                    <MoreVertIcon />
+                </IconButton>
+                <Menu
+                    id="long-menu"
+                    anchorEl={menuAnchorEl}
+                    getContentAnchorEl={null}
+                    anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+                    transformOrigin={{ vertical: "top", horizontal: "right" }}
+                    keepMounted
+                    open={openMenu}
+                    onClose={onCloseMenu}
+                    PaperProps={{
+                    style: {
+                        maxHeight: 48 * 4.5,
+                        width: '20ch',
+                    },
+                    }}
+                >
+                    {menuOption.map((option) => (
+                    <MenuItem key={option} selected={option === 'Pyxis'}>
+                        {option}
+                    </MenuItem>
+                    ))}
+                </Menu>
+            </Container>
+            <Container className={classes.msgContainer} onScroll={onScroll} ref={msgContainerRef}>
+                <ol className={classes.msgOl}>{ messageList.length > 0 ? messageList : <Typography>{emptyMsg}</Typography> }</ol>
+            </Container>
+            <Container className={classes.inputContainer}>
                 <ContentEditable
                     className={classes.input}
                     innerRef={editableRef}
@@ -223,26 +319,69 @@ export default function Chatroom({id}) {
                 />
                     <Button className={classes.sendBtn} onClick={send} ref={sendBtnRef}>전송</Button>
                 </Container>
-            </Container>
             <UserInfoDialog />
         </Container>
     );
 }
 
 const useStyles = makeStyles({
-    
-    msgContainer: {
-        margin: '0px',
-        padding: '0px',
+    root: {
+        maxWidth: '700px'
+    },
+    header: {
+        padding: '0',
         display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'flex-end'
+        alignItems: 'center',
+        boxShadow: '0px 5px 5px -5px black'
+    },
+    titleContainer: {
+        height: '100%',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        textAlign: 'center'
+    },
+    returnBtn: {
+        width: '35px',
+        height: '35px',
+        padding: '5px',
+        borderRadius: '100%',
+        '&:hover': {
+            cursor: 'pointer',
+            backgroundColor: '#D0D0D0'
+        }
+    },
+    usersIcon: {
+        width: '35px',
+        height: '35px'
+    },
+    title: {
+        margin: 'auto 10px',
+        lineHeight: '100%',
+        fontSize: '1.5rem',
+        fontWeight: '700',
+        textAlign: 'center',
+        textOverflow: 'ellipsis',
+        overflow: 'hidden',
+        whiteSpace: 'nowrap'
+    },
+    msgContainer: {
+        height: '90vh',
+        margin: '0px',
+        overflowY: 'auto',
+        padding: '0px'
+    },
+    msgOl: {
+        padding: '0',
+        margin: '0'
     },
     inputContainer: {
         display: 'flex',
+        margin: '5px',
         padding: '5px',
         justifyContent: 'center',
-        alignItems: 'center'
+        alignItems: 'center',
+        boxShadow: '0px -5px 5px -5px black'
     },
     input: {
         maxWidth: '90%',
