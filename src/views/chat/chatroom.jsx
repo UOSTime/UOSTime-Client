@@ -29,6 +29,8 @@ export default function Chatroom({id}) {
     const messageRef = useRef([]);
     const readPointRef = useRef([]);
     const chatRoomRef = useRef({});
+    const previousHeightRef = useRef({});
+    const sendRef = useRef(false);
     const editableRef = useRef();
     const sendBtnRef = useRef();
     const msgContainerRef = useRef();
@@ -44,7 +46,7 @@ export default function Chatroom({id}) {
     const chatRoomId = id;
     const socket = getSocket();
     const menuOption = ['채팅방 이름 변경', '참여자 목록', '채팅방 나가기'];
-    const loadUnit = 50;
+    const loadUnit = 100;
 
     const onMessageEvent = (message) => {
         const newChatRoom = {
@@ -95,6 +97,12 @@ export default function Chatroom({id}) {
     useEffect(() => {
         if(range.current.end - range.current.start + 1 === loadUnit) {
             msgContainerRef.current.scrollTop = msgContainerRef.current.scrollHeight;
+            previousHeightRef.current = msgContainerRef.current.scrollHeight;
+        }
+        if(sendRef.current) {
+		    msgContainerRef.current.scrollTop = msgContainerRef.current.scrollHeight - msgContainerRef.current.clientHeight;
+
+            sendRef.current = false;
         }
     })
 
@@ -144,7 +152,7 @@ export default function Chatroom({id}) {
         }
 
         getChatRoom(chatRoomId).then((room) => {
-            const start = room.length > 50 ? room.length-50 : 0;
+            const start = room.length > loadUnit ? room.length-loadUnit : 0;
             const end = room.length > 0 ? room.length-1 : 0;
 
             range.current = {start, end};
@@ -202,6 +210,8 @@ export default function Chatroom({id}) {
             messageRef.current = newMessages;
 
             setInput('');
+
+            sendRef.current = true;
         }
     };
 
@@ -219,7 +229,7 @@ export default function Chatroom({id}) {
 
     const load = async () => {
         if(range.current.start === 0) return;
-        const nextStart = range.current.start-1 > loadUnit ? range.current.start - loadUnit -1 : 0;
+        const nextStart = range.current.start-1 > loadUnit ? range.current.start - loadUnit : 0;
 
         const response = await requestAPI(API_GET_MESSAGES().setQuery({chatRoomId, start: nextStart, end: range.current.start-1}));
         if(response.status !== StatusCodes.OK) {
@@ -229,16 +239,21 @@ export default function Chatroom({id}) {
 
         setMessages(response.data.concat(messages));
 
-        msgContainerRef.current.scrollTop = msgContainerRef.current.scrollHeight * (loadUnit -1) / (range.current.end - nextStart);
+        const scrollRatio = (range.current.start - nextStart) / (range.current.end - nextStart + 1);
+        console.log(previousHeightRef.current)
+        msgContainerRef.current.scrollTop = msgContainerRef.current.scrollHeight - previousHeightRef.current;
+
+        previousHeightRef.current = msgContainerRef.current.scrollHeight;
 
         range.current.start = nextStart;
     };
-
+    
     const onScroll = (e) => {
         const scrollY = msgContainerRef.current.scrollHeight;
         const scrollTop = msgContainerRef.current.scrollTop;
         const clientHeight = msgContainerRef.current.clientHeight;
         console.log(scrollY, scrollTop, clientHeight)
+        // console.log(scrollTop / scrollY)
         
         if (scrollTop === 0) {
             load();
