@@ -14,13 +14,16 @@ import { uosYellow } from '@utils/styles/Colors';
 import UserInfoDialog from '../../components/UserInfoDialog';
 import userIcon from '@img/fontawesome/chat-user.svg';
 import usersIcon from '@img/fontawesome/chat-users.svg';
+import RoomInfoMenu from './RoomInfoDialog';
 
 export default function Chatroom({id}) {
     const [chatRoom, setChatRoom] = useState({});
     const [messages, setMessages] = useState([]);
     const [readPoints, setReadPoints] = useState([]);
     const [emptyMsg, setEmptyMsg] = useState('');
+    const [infoOpen, setInfoOpen] = useState(false);
     const [menuAnchorEl, setMenuAnchorEl] = useState(null);
+    const [infoAnchorEl, setInfoAnchorEl] = useState(null);
     const [input, setInput] = useState('');
 
     const classes = useStyles();
@@ -222,6 +225,17 @@ export default function Chatroom({id}) {
     const onCloseMenu = () => {
         setMenuAnchorEl(null);
     };
+
+    const onClickInfoIcon = (e) => {
+        console.log('aaa')
+        setInfoOpen(true);
+        setInfoAnchorEl(e.currentTarget);
+    }
+
+    const onCloseInfo = () => {
+        setInfoAnchorEl(null);
+        setInfoOpen(false);
+    }
     
     const returnToList = () => {
         history.push('/chatrooms');
@@ -239,21 +253,14 @@ export default function Chatroom({id}) {
 
         setMessages(response.data.concat(messages));
 
-        const scrollRatio = (range.current.start - nextStart) / (range.current.end - nextStart + 1);
-        console.log(previousHeightRef.current)
         msgContainerRef.current.scrollTop = msgContainerRef.current.scrollHeight - previousHeightRef.current;
-
         previousHeightRef.current = msgContainerRef.current.scrollHeight;
 
         range.current.start = nextStart;
     };
     
     const onScroll = (e) => {
-        const scrollY = msgContainerRef.current.scrollHeight;
         const scrollTop = msgContainerRef.current.scrollTop;
-        const clientHeight = msgContainerRef.current.clientHeight;
-        console.log(scrollY, scrollTop, clientHeight)
-        // console.log(scrollTop / scrollY)
         
         if (scrollTop === 0) {
             load();
@@ -285,7 +292,8 @@ export default function Chatroom({id}) {
             <Container className={classes.header}>
                 <ExitToAppIcon className={classes.returnBtn} onClick={returnToList} />
                 <Container className={classes.titleContainer}>
-                    <img className={classes.usersIcon} src={chatRoom.participants?.length > 2 ? usersIcon : userIcon} />
+                    <img className={classes.usersIcon} src={chatRoom.participants?.length > 2 ? usersIcon : userIcon} onClick={onClickInfoIcon} />
+                    <RoomInfoMenu open={infoOpen} onClose={onCloseInfo} anchorEl={infoAnchorEl} chatRoom={chatRoom} />
                     <Typography className={classes.title} variant="h2">{chatRoom.name}</Typography>
                 </Container>
                 <IconButton
@@ -368,7 +376,10 @@ const useStyles = makeStyles({
     },
     usersIcon: {
         width: '35px',
-        height: '35px'
+        height: '35px',
+        '&:hover': {
+            cursor: 'pointer'
+        }
     },
     title: {
         margin: 'auto 10px',

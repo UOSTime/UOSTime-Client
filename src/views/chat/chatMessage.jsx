@@ -4,7 +4,7 @@ import dayjs from 'dayjs';
 import { uosRed, uosYellow, foregroundColor } from '@utils/styles/Colors';
 import userIcon from '@img/fontawesome/chat-user.svg';
 import { useSetRecoilState } from 'recoil';
-import { userInfoDialogState } from '../../states/UserInfoDialog';
+import { userInfoDialogState } from '@states/UserInfoDialog';
 
 export default function ChatMessage({isMine, isSeq, from, message, readCnt}) {
     const setUserInfoDialog = useSetRecoilState(userInfoDialogState);
