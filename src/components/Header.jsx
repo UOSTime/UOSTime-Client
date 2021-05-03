@@ -1,6 +1,6 @@
 import React from 'react';
 import { useHistory } from "react-router-dom";
-import { makeStyles, useTheme, AppBar, Tabs, Tab, Typography, Box, Link, Button, IconButton } from '@material-ui/core';
+import { makeStyles, useTheme, AppBar, Tabs, Tab, Typography, Box, Link, Button, IconButton, Menu, MenuItem } from '@material-ui/core';
 import ForumIcon from '@material-ui/icons/Forum';
 import ForumOutlinedIcon from '@material-ui/icons/ForumOutlined';
 import NotificationsActiveIcon from '@material-ui/icons/NotificationsActive';
@@ -81,6 +81,7 @@ export default function Header() {
   const classes = useStyles();
   const theme = useTheme();
   const [value, setValue] = React.useState(0);
+  const [anchorEl, setAnchorEl] = React.useState(null);
   const history = useHistory();
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -100,6 +101,12 @@ export default function Header() {
   };
   const handleChangeIndex = (index) => {
     setValue(index);
+  };
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
   };
 
   return (
@@ -128,11 +135,34 @@ export default function Header() {
           {/*<IconButton aria-label="notification"><NotificationsNoneOutlinedIcon className={classes.inactivedButton} /></IconButton>*/}
           <IconButton aria-label="notification"><NotificationsActiveIcon className={classes.activedButton} /></IconButton>
           <Button
+            aria-controls="userInfo-menu"
+            aria-haspopup="true"
             className={classes.userButton}
             startIcon={<PersonIcon className={classes.innerIcon} />}
+            onClick={handleClick}
           >
             ThisIsUser
           </Button>
+          <Menu
+            id="userInfo-menu"
+            anchorEl={anchorEl}
+            keepMounted
+            open={Boolean(anchorEl)}
+            onClose={handleClose}
+            getContentAnchorEl={null}
+            anchorOrigin={{
+              vertical: 'bottom',
+              horizontal: 'center',
+            }}
+            transformOrigin={{
+              vertical: 'top',
+              horizontal: 'center',
+            }}
+          >
+            <MenuItem onClick={handleClose}>My Account</MenuItem>
+            <MenuItem onClick={handleClose}>Settings</MenuItem>
+            <MenuItem onClick={handleClose}>Logout</MenuItem>
+          </Menu>
         </Box>
       </AppBar>
     </Box>
