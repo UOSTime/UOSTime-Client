@@ -167,7 +167,7 @@ function checkPwFormat(pw) {
 function checkNameFormat(name) {
     return 4<= name.length && name.length <= 20;
 }
-//test
+
 const useStyles = makeStyles({
     title: {
         color: uosRed,
