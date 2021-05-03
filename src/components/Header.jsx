@@ -43,10 +43,14 @@ const useStyles = makeStyles(theme => ({
     '&$selected':{
       color: '#f68b7d',
     },
+    '&:hover': {
+      color: '#f68b7d',
+    },
   },
   selected: {},
   indicator: {
     height: '4px',
+    backgroundColor: '#f68b7d',
   },
   buttonBox: {
     display: 'flex',
@@ -78,9 +82,9 @@ export default function Header() {
   const theme = useTheme();
   const [value, setValue] = React.useState(0);
   const history = useHistory();
-
   const handleChange = (event, newValue) => {
     setValue(newValue);
+    /* 라우팅 처리
     switch (newValue) {
       case 0:
           history.push("/");
@@ -91,7 +95,8 @@ export default function Header() {
       case 2:
           history.push("/notice");
           break;
-      }
+      }  
+      */
   };
   const handleChangeIndex = (index) => {
     setValue(index);
