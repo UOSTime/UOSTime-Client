@@ -37,20 +37,24 @@ const DELETE = url => ({ method: 'DELETE', url });
 
 // API CONFIG LIST
 export const API_LOGIN = makeConfig(POST('/user/login'));
+export const API_GET_SEMESTER = makeConfig(GET, '/semester');
 export const API_GET_SEMESTERS = makeConfig(GET('/semesters'));
 export const API_GET_ALL_NOTICES = makeConfig(GET('/notice/all'));
 export const API_CREATE_NOTICE = makeConfig(POST('/notice'));
 export const API_UPDATE_NOTICE = makeConfig(PATCH('/notice'));
 export const API_DELETE_NOTICE = makeConfig(DELETE('/notice'));
 export const API_GET_ALL_LECTURES = makeConfig(GET('/lecture'));
-export const API_CREATE_TIMETABLE = makeConfig(POST('/timetable'));
-export const API_DELETE_TIMETABLE = makeConfig(DELETE('/timetable'));
-export const API_PATCH_TIMETABLE_NAME = makeConfig(PATCH('/timetable/name'));
-export const API_GET_TIMETABLES = makeConfig(GET('/timetable'));
+export const API_UPDATE_LECTURES = makeConfig(PATCH('/lecture'));
 export const API_DELETE_TLECTURE = makeConfig(DELETE('/timetable/tlecture'));
 export const API_ADD_TLECTURE = makeConfig(POST('/timetable/tlecture'));
-export const API_UPDATE_LECTURES = makeConfig(PATCH('/lecture'));
+export const API_CREATE_TIMETABLE = makeConfig(POST('/timetable'));
+export const API_DELETE_TIMETABLE = makeConfig(DELETE('/timetable'));
+export const API_GET_TIMETABLES = makeConfig(GET('/timetable'));
+export const API_PATCH_TIMETABLE_NAME = makeConfig(PATCH('/timetable/name'));
 export const API_GET_HISTORIES = makeConfig(GET('/history'));
+export const API_SIGN_UP = makeConfig(POST('/user'));
+export const API_FIND_ID = makeConfig(GET('/user/id'));
+export const API_FIND_PW = makeConfig(GET('/user/password'));
 
 const axiosInstance = axios.create({
   baseURL: `${API_URL_BASE}/api`,
