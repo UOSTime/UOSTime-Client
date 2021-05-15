@@ -1,32 +1,27 @@
-import { atom, atomFamily } from 'recoil';
+import { atom } from 'recoil';
 
-const timeTableState = atomFamily({
-    key: 'timetable',
-    default: {
-        _id: null,
-        uid: null,
-        name: null,
-        year: null,
-        term: null,
-        tlecture_list: [],
-        createAt: [],
-        updateAt: [],
-        __v: null
-    }
+const timetableListState = atom({
+  key: 'timetableList',
+  default: [],
+  // {
+  //   _id: null,
+  //   uid: null,
+  //   name: null,
+  //   year: null,
+  //   term: null,
+  //   tlecture_list: [],
+  //   createAt: [],
+  //   updateAt: [],
+  //   __v: null,
+  // },
 });
 
-const highLightState = atom({
-  key: 'highlight',
-  default: [null]
-});
-
-const currentTimeTableState = atom({
-  key: 'currentTimeTable',
-  default: null
+const currentTimetableIndexState = atom({
+  key: 'currentTimetableIndex',
+  default: null,
 });
 
 export {
-  timeTableState,
-  highLightState,
-  currentTimeTableState
+  timetableListState,
+  currentTimetableIndexState,
 };
