@@ -53,7 +53,7 @@ export default function SearchBar() {
     // handle exception: no keyword
     if (!query.keyword) return;
 
-    const response = await requestAPI(API_GET_ALL_LECTURES().setQuery(query));
+    const response = await requestAPI(API_GET_ALL_LECTURES(query));
 
     if (!response) {
       // TODO: edit

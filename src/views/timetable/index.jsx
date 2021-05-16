@@ -25,7 +25,7 @@ export default function Home() {
   const classes = useStyles();
 
   const getTimetables = async () => {
-    const response = await requestAPI(API_GET_TIMETABLES().setQuery({
+    const response = await requestAPI(API_GET_TIMETABLES({
       year: 2021,
       term: 'A10',
     }));

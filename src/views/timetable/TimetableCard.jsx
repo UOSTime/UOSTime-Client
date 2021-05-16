@@ -46,9 +46,8 @@ export default function TimetableCard({ index, timetable }) {
   };
 
   const onDelete = async () => {
-    const response = await requestAPI(API_DELETE_TIMETABLE()
-      .setPathParam(timetable._id)
-      .setQuery({ year: 2021, term: 'A10' }));
+    const response = await requestAPI(API_DELETE_TIMETABLE({ year: 2021, term: 'A10' })
+      .setPath(timetable._id));
 
     if (response.status !== StatusCodes.NO_CONTENT) {
       alert('시간표를 삭제하지 못했어요...');
