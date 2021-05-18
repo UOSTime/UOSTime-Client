@@ -80,13 +80,15 @@ const useStyles = makeStyles(theme => ({
 export default function Header() {
   const classes = useStyles();
   const theme = useTheme();
-  const [value, setValue] = React.useState(0);
+  const [tabIndex, setTabIndex] = React.useState(0);
+  const [chatChecked, setChatChecked] = React.useState(false);
+  const [notiChecked, setNotiChecked] = React.useState(false);
   const [anchorEl, setAnchorEl] = React.useState(null);
   const history = useHistory();
-  const handleChange = (event, newValue) => {
-    setValue(newValue);
-    /* 라우팅 처리
-    switch (newValue) {
+  const handleTabChange = (event, newTabIndex) => {
+    setTabIndex(newTabIndex);
+    /*
+    switch (newTabIndex) {
       case 0:
           history.push("/");
           break;
@@ -99,13 +101,20 @@ export default function Header() {
       }  
       */
   };
-  const handleChangeIndex = (index) => {
-    setValue(index);
+  const handleChatClick = () => {
+    setChatChecked(true);
+    history.push("/chatRoom");
   };
-  const handleClick = (event) => {
+  const handleGrayChatClick = () => {
+    history.push("/chatRoom");
+  }
+  const handleNotiClick = () => {
+    setNotiChecked(true);
+  };
+  const handleUserButtonClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
-  const handleClose = () => {
+  const handleUserDialogClose = () => {
     setAnchorEl(null);
   };
 
@@ -119,8 +128,8 @@ export default function Header() {
           </Box>
         </Link>
         <Tabs
-          value={value}
-          onChange={handleChange}
+          value={tabIndex}
+          onChange={handleTabChange}
           classes={{ indicator: classes.indicator }}
           variant="fullWidth"
           aria-label="full width tabs"
@@ -130,16 +139,16 @@ export default function Header() {
           <Tab label="공지사항" classes={{ root: classes.tab, selected: classes.selected }} {...a11yProps(2)} />
         </Tabs>
         <Box className={classes.buttonBox}>
-          <IconButton aria-label="chat"><ForumOutlinedIcon className={classes.inactivedButton} /></IconButton>
-          {/*<IconButton aria-label="chat"><ForumIcon className={classes.activedButton} /></IconButton>*/}
-          {/*<IconButton aria-label="notification"><NotificationsNoneOutlinedIcon className={classes.inactivedButton} /></IconButton>*/}
-          <IconButton aria-label="notification"><NotificationsActiveIcon className={classes.activedButton} /></IconButton>
+          {chatChecked && <IconButton aria-label="grayChat" onClick={handleGrayChatClick}><ForumOutlinedIcon className={classes.inactivedButton} /></IconButton>}
+          {!chatChecked && <IconButton aria-label="chat" onClick={handleChatClick}><ForumIcon className={classes.activedButton} /></IconButton>}
+          {notiChecked && <IconButton aria-label="noti"><NotificationsNoneOutlinedIcon className={classes.inactivedButton} /></IconButton>}
+          {!notiChecked && <IconButton aria-label="grayNoti" onClick={handleNotiClick}><NotificationsActiveIcon className={classes.activedButton} /></IconButton>}
           <Button
             aria-controls="userInfo-menu"
             aria-haspopup="true"
             className={classes.userButton}
             startIcon={<PersonIcon className={classes.innerIcon} />}
-            onClick={handleClick}
+            onClick={handleUserButtonClick}
           >
             ThisIsUser
           </Button>
@@ -148,7 +157,7 @@ export default function Header() {
             anchorEl={anchorEl}
             keepMounted
             open={Boolean(anchorEl)}
-            onClose={handleClose}
+            onClose={handleUserDialogClose}
             getContentAnchorEl={null}
             anchorOrigin={{
               vertical: 'bottom',
@@ -159,9 +168,9 @@ export default function Header() {
               horizontal: 'center',
             }}
           >
-            <MenuItem onClick={handleClose}>My Account</MenuItem>
-            <MenuItem onClick={handleClose}>Settings</MenuItem>
-            <MenuItem onClick={handleClose}>Logout</MenuItem>
+            <MenuItem onClick={handleUserDialogClose}>My Account</MenuItem>
+            <MenuItem onClick={handleUserDialogClose}>Settings</MenuItem>
+            <MenuItem onClick={handleUserDialogClose}>Logout</MenuItem>
           </Menu>
         </Box>
       </AppBar>
