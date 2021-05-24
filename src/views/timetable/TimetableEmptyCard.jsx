@@ -1,11 +1,11 @@
 import React from 'react';
-import { Container, makeStyles } from '@material-ui/core';
+import { Box, makeStyles } from '@material-ui/core';
 
 export default function TimetableEmptyCard() {
   const classes = useStyles();
 
   return (
-    <Container className={classes.root} />
+    <Box className={classes.root} />
   );
 }
 
