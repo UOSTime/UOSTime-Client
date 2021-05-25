@@ -16,7 +16,7 @@ export default function CustomTable(props) {
         {columns && (
           <TableHead>
             <TableRow>
-              {columns.map(([text]) => <TableCell key={text}>{text}</TableCell>)}
+              {columns.map(([columnName]) => <TableCell key={columnName}>{columnName}</TableCell>)}
             </TableRow>
           </TableHead>
         )}
@@ -24,8 +24,8 @@ export default function CustomTable(props) {
           {rows.length
             ? rows.map(row => (
               <TableRow key={row}>
-                {columns.map(([, prop]) => (
-                  <TableCell key={prop}>{String(getValue(row, ...prop))}</TableCell>
+                {columns.map(([, props]) => (
+                  <TableCell key={props}>{String(getValue(row, ...props))}</TableCell>
                 ))}
               </TableRow>
             )) : (
