@@ -9,7 +9,11 @@ import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import InfoIcon from '@material-ui/icons/Info';
 import PersonIcon from '@material-ui/icons/Person';
 import SettingsIcon from '@material-ui/icons/Settings';
+import AnnouncementOutlinedIcon from '@material-ui/icons/AnnouncementOutlined';
+import EmailOutlinedIcon from '@material-ui/icons/EmailOutlined';
 import Logo from './Logo';
+
+//TODO : 뱃지로 변경, 리팩토링
 
 function a11yProps(index) {
   return {
@@ -87,6 +91,7 @@ export default function Header() {
   const [chatChecked, setChatChecked] = React.useState(false);
   const [notiChecked, setNotiChecked] = React.useState(false);
   const [anchorEl, setAnchorEl] = React.useState(null);
+  const [notiAnchorEl, setNotiAnchorEl] = React.useState(null);
   const history = useHistory();
   const handleTabChange = (event, newTabIndex) => {
     setTabIndex(newTabIndex);
@@ -120,14 +125,21 @@ export default function Header() {
   const handleLogOutClick = () => {
     history.push("/login");
   }
-  const handleNotiClick = () => {
+  const handleNotiClick = (event) => {
+    setNotiAnchorEl(event.currentTarget);
     setNotiChecked(true);
   };
+  const handleGrayNotiClick = (event) => {
+    setNotiAnchorEl(event.currentTarget);
+  }
   const handleUserButtonClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
   const handleUserDialogClose = () => {
     setAnchorEl(null);
+  };
+  const handleNotiDialogClose = () => {
+    setNotiAnchorEl(null);
   };
 
   return (
@@ -153,8 +165,47 @@ export default function Header() {
         <Box className={classes.buttonBox}>
           {chatChecked && <IconButton aria-label="grayChat" onClick={handleGrayChatClick}><ForumOutlinedIcon className={classes.inactivedButton} /></IconButton>}
           {!chatChecked && <IconButton aria-label="chat" onClick={handleChatClick}><ForumIcon className={classes.activedButton} /></IconButton>}
-          {notiChecked && <IconButton aria-label="noti"><NotificationsNoneOutlinedIcon className={classes.inactivedButton} /></IconButton>}
-          {!notiChecked && <IconButton aria-label="grayNoti" onClick={handleNotiClick}><NotificationsActiveIcon className={classes.activedButton} /></IconButton>}
+          {notiChecked && 
+            <IconButton aria-label="noti" onClick={handleGrayNotiClick}>
+              <NotificationsNoneOutlinedIcon
+                className={classes.inactivedButton} 
+                aria-controls="notification-menu"
+                aria-haspopup="true"/>
+            </IconButton>}
+          {!notiChecked && 
+            <IconButton aria-label="grayNoti" onClick={handleNotiClick}>
+                <NotificationsActiveIcon 
+                  className={classes.activedButton}
+                  aria-controls="notification-menu"
+                  aria-haspopup="true" />
+              </IconButton>}
+          <Menu
+            id="userInfo-menu"
+            anchorEl={notiAnchorEl}
+            keepMounted
+            open={Boolean(notiAnchorEl)}
+            onClose={handleNotiDialogClose}
+            getContentAnchorEl={null}
+            anchorOrigin={{
+              vertical: 'bottom',
+              horizontal: 'center',
+            }}
+            transformOrigin={{
+              vertical: 'top',
+              horizontal: 'center',
+            }}
+          >
+            <MenuItem>
+              <ListItemIcon><AnnouncementOutlinedIcon fontSize="small" /></ListItemIcon>
+              <ListItemText primary="공지사항" />
+              <ListItemText secondary="이것은 공지사항 내용입니다." />
+            </MenuItem>
+            <MenuItem>
+              <ListItemIcon><EmailOutlinedIcon fontSize="small" /></ListItemIcon>
+              <ListItemText primary="메시지" />
+              <ListItemText secondary="이것은 메시지 내용입니다." />
+            </MenuItem>
+          </Menu>
           <Button
             aria-controls="userInfo-menu"
             aria-haspopup="true"
