@@ -116,19 +116,22 @@ export default function Timetable() {
 
   return (
     <Box className={classes.root}>
-      <Box className={classes.topbar}>
-        <InputBase
-          onChange={onChangeNameField}
-          defaultValue={timetable.name}
-          className={classes.timetableNameInput}
-        />
-        {/* <Button onClick={onSubmitName}>변경</Button> */}
-        <Button onClick={openTimetableSetting}>설정</Button>
-        <Button onClick={shareTimetable}>공유</Button>
-      </Box>
-      <Paper className={classes.dayContainer}>
-        <Box className={classes.timeBox} />
-        {days.map(day => <Box key={day} className={classes.dayBox}>{day}</Box>)}
+      <Paper>
+        <Box className={classes.topbar}>
+          <InputBase
+            onChange={onChangeNameField}
+            defaultValue={timetable.name}
+            className={classes.timetableNameInput}
+            placeholder="Timetable Name"
+          />
+          {/* <Button onClick={onSubmitName}>변경</Button> */}
+          <Button onClick={openTimetableSetting}>설정</Button>
+          <Button onClick={shareTimetable}>공유</Button>
+        </Box>
+        <Box className={classes.dayContainer}>
+          <Box className={classes.timeBox} />
+          {days.map(day => <Box key={day} className={classes.dayBox}>{day}</Box>)}
+        </Box>
       </Paper>
       <Container className={classes.timeContainer}>
         {timeArr.map((time, r) => (
@@ -180,6 +183,7 @@ const useStyles = makeStyles({
   topbar: {
     display: 'flex',
     flexDirection: 'row',
+    padding: '0.5em 1em',
   },
   timetableNameInput: {
     flexGrow: '1',

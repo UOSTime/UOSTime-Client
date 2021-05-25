@@ -3,8 +3,6 @@ import { Redirect } from 'react-router';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { StatusCodes } from 'http-status-codes';
 import { Box, Button, Container, makeStyles } from '@material-ui/core';
-import NavigateNextIcon from '@material-ui/icons/NavigateNext';
-import NavigateBeforeIcon from '@material-ui/icons/NavigateBefore';
 import { timetableListState, currentTimetableIndexState } from '@states/Timetable';
 import { searchLectureListState } from '@states/Lecture';
 import {
@@ -18,9 +16,9 @@ import SearchBar from './SearchBar';
 
 export default function Home() {
   const [timetableList, setTimetableList] = useRecoilState(timetableListState);
-  const setCurrentTimetableIndex = useSetRecoilState(currentTimetableIndexState);
+  const [lectureListType, setLectureListType] = useState('search');
+  const [currentTimetableIndex, setCurrentTimetableIndex] = useRecoilState(currentTimetableIndexState);
   const searchLectureList = useRecoilValue(searchLectureListState);
-  const [rightSideType, setRightSideType] = useState('timetables');
 
   const classes = useStyles();
 
@@ -51,26 +49,33 @@ export default function Home() {
 
   return (
     <Container className={classes.root}>
-      <Box className={classes.mainContent}>
-        {timetableList.length && <Timetable />}
-      </Box>
-      <Box className={classes.mainContent}>
-        {rightSideType === 'search' && (
-          <>
-            <Button onClick={() => setRightSideType('timetables')}><NavigateBeforeIcon /> 시간표 목록</Button>
-            <SearchBar />
-            <LectureList
-              lectureList={searchLectureList}
-              emptyText="(검색결과 없음)"
-            />
-          </>
-        )}
-        {rightSideType === 'timetables' && (
-          <>
-            <Button onClick={() => setRightSideType('search')}>검색 <NavigateNextIcon /></Button>
-            <TimetableCardList />
-          </>
-        )}
+      <SearchBar />
+
+      <Box className={classes.innerRoot}>
+        <Box className={classes.mainContent}>
+          {lectureListType === 'search' && (
+            <>
+              <Button onClick={() => setLectureListType('timetable')}>내 강의 보기</Button>
+              <LectureList
+                lectureList={searchLectureList}
+                emptyText="(검색결과 없음)"
+              />
+            </>
+          )}
+          {lectureListType === 'timetable' && (
+            <>
+              <Button onClick={() => setLectureListType('search')}>검색결과 보기</Button>
+              <LectureList
+                lectureList={timetableList.length ? timetableList[currentTimetableIndex].tlecture_list.map(tlecture => tlecture.lecture) : []}
+                emptyText="(빈 시간표)"
+              />
+            </>
+          )}
+        </Box>
+        <Box className={classes.mainContent}>
+          <TimetableCardList />
+          {timetableList.length && <Timetable />}
+        </Box>
       </Box>
     </Container>
   );
@@ -79,12 +84,20 @@ export default function Home() {
 const useStyles = makeStyles({
   root: {
     display: 'flex',
-    flexDirection: 'row',
+    flexDirection: 'column',
+  },
+  innerRoot: {
+    display: 'grid',
+    gridTemplateRows: 'minmax(50em, auto)',
+    gridTemplateColumns: 'repeat(2, minmax(50%, 50%))',
+    flex: '1',
+    // flexDirection: 'row',
     flexGrow: '1',
     margin: '1em 0',
   },
   mainContent: {
-    flex: '1',
+    gridRow: '1',
+    // flex: '1',
     padding: '1em',
   },
   timetableTitle: {

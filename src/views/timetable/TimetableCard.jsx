@@ -4,6 +4,7 @@ import { StatusCodes } from 'http-status-codes';
 import {
   Box,
   Button,
+  Grid,
   makeStyles,
   Paper,
   Typography,
@@ -55,6 +56,7 @@ export default function TimetableCard({ index, timetable }) {
   };
 
   return (
+    // <Grid item xs>
     <Paper className={classes.root} onClick={onClick}>
       <Box className={classes.innerRoot}>
         <CloseIcon aria-label="delete" className={classes.deleteBtn} onClick={onDelete} />
@@ -65,7 +67,7 @@ export default function TimetableCard({ index, timetable }) {
           교양 {cultureCredit}학점({cultureCnt}과목) */}
         </Typography>
       </Box>
-      {isSelected && (
+      {/* {isSelected && (
         <>
           <Button className={classes.showListButton} onClick={() => setShowList(!showList)}>
             {showList ? '강의목록 숨기기' : '강의목록 펼치기'}
@@ -78,15 +80,16 @@ export default function TimetableCard({ index, timetable }) {
             />
           )}
         </>
-      )}
+      )} */}
     </Paper>
+    // </Grid>
   );
 }
 
 const useStyles = makeStyles({
   root: {
     cursor: 'pointer',
-    width: '100%',
+    // height: '100%',
     padding: '1em',
   },
   innerRoot: {
