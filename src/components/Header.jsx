@@ -1,11 +1,14 @@
 import React from 'react';
 import { useHistory } from "react-router-dom";
-import { makeStyles, useTheme, AppBar, Tabs, Tab, Typography, Box, Link, Button, IconButton, Menu, MenuItem } from '@material-ui/core';
+import { makeStyles, useTheme, AppBar, Tabs, Tab, Typography, Box, Link, Button, IconButton, Menu, MenuItem, ListItemIcon, ListItemText } from '@material-ui/core';
 import ForumIcon from '@material-ui/icons/Forum';
 import ForumOutlinedIcon from '@material-ui/icons/ForumOutlined';
 import NotificationsActiveIcon from '@material-ui/icons/NotificationsActive';
 import NotificationsNoneOutlinedIcon from '@material-ui/icons/NotificationsNoneOutlined';
+import ExitToAppIcon from '@material-ui/icons/ExitToApp';
+import InfoIcon from '@material-ui/icons/Info';
 import PersonIcon from '@material-ui/icons/Person';
+import SettingsIcon from '@material-ui/icons/Settings';
 import Logo from './Logo';
 
 function a11yProps(index) {
@@ -108,6 +111,15 @@ export default function Header() {
   const handleGrayChatClick = () => {
     history.push("/chatRoom");
   }
+  const handleMyInfoClick = () => {
+    history.push("/user");
+  }
+  const handleSettingsClick = () => {
+    history.push("/settings");
+  }
+  const handleLogOutClick = () => {
+    history.push("/login");
+  }
   const handleNotiClick = () => {
     setNotiChecked(true);
   };
@@ -168,9 +180,18 @@ export default function Header() {
               horizontal: 'center',
             }}
           >
-            <MenuItem onClick={handleUserDialogClose}>My Account</MenuItem>
-            <MenuItem onClick={handleUserDialogClose}>Settings</MenuItem>
-            <MenuItem onClick={handleUserDialogClose}>Logout</MenuItem>
+            <MenuItem onClick={handleMyInfoClick}>
+              <ListItemIcon><InfoIcon fontSize="small" /></ListItemIcon>
+              <ListItemText primary="My Info" />
+            </MenuItem>
+            <MenuItem onClick={handleSettingsClick}>
+              <ListItemIcon><SettingsIcon fontSize="small" /></ListItemIcon>
+              <ListItemText primary="Settings" />
+            </MenuItem>
+            <MenuItem onClick={handleLogOutClick}>
+              <ListItemIcon><ExitToAppIcon fontSize="small" /></ListItemIcon>
+              <ListItemText primary="Logout" />
+            </MenuItem>
           </Menu>
         </Box>
       </AppBar>
