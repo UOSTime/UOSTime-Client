@@ -115,24 +115,22 @@ export default function Timetable() {
   const shareTimetable = noop;
 
   return (
-    <Box className={classes.root}>
-      <Paper>
-        <Box className={classes.topbar}>
-          <InputBase
-            onChange={onChangeNameField}
-            defaultValue={timetable.name}
-            className={classes.timetableNameInput}
-            placeholder="Timetable Name"
-          />
-          {/* <Button onClick={onSubmitName}>변경</Button> */}
-          <Button onClick={openTimetableSetting}>설정</Button>
-          <Button onClick={shareTimetable}>공유</Button>
-        </Box>
-        <Box className={classes.dayContainer}>
-          <Box className={classes.timeBox} />
-          {days.map(day => <Box key={day} className={classes.dayBox}>{day}</Box>)}
-        </Box>
-      </Paper>
+    <Paper className={classes.root}>
+      <Box className={classes.topbar}>
+        <InputBase
+          onChange={onChangeNameField}
+          defaultValue={timetable.name}
+          className={classes.timetableNameInput}
+          placeholder="Timetable Name"
+        />
+        {/* <Button onClick={onSubmitName}>변경</Button> */}
+        <Button onClick={openTimetableSetting}>설정</Button>
+        <Button onClick={shareTimetable}>공유</Button>
+      </Box>
+      <Box className={classes.dayContainer}>
+        <Box className={classes.timeBox} />
+        {days.map(day => <Box key={day} className={classes.dayBox}>{day}</Box>)}
+      </Box>
       <Container className={classes.timeContainer}>
         {timeArr.map((time, r) => (
           <Container key={r.toString()} className={classes.rowContainer}>
@@ -163,15 +161,18 @@ export default function Timetable() {
           </Container>
         ))}
       </Container>
-    </Box>
+    </Paper>
   );
 }
 
 const useStyles = makeStyles({
   root: {
     display: 'flex',
-    height: '100%',
+    position: 'relative',
     flexDirection: 'column',
+    borderRadius: '1em',
+    overflow: 'hidden',
+    border: '1px solid #F0F0F0',
   },
   timeContainer: {
     padding: '0',
@@ -193,10 +194,12 @@ const useStyles = makeStyles({
     flexDirection: 'row',
     padding: '0.5em 0',
     margin: '0.5em 0',
+    borderBottom: '1px solid #EAEAEA',
   },
   rowContainer: {
     borderBottom: '1px solid #FFFFFF',
-    maxHeight: '7.7%', // TODO - refactoring
+    // maxHeight: '7.7%', // TODO - refactoring
+    minHeight: '3.5em',
     flex: '1',
     display: 'flex',
     flexDirection: 'row',

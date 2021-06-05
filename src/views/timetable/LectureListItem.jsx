@@ -10,7 +10,7 @@ import {
 } from '@material-ui/core';
 import { requestAPI, API_ADD_TLECTURE, API_DELETE_TLECTURE } from '@utils/api';
 import useButtonStyles from '@utils/styles/Button';
-import { currentTimetableIndexState, timetableListState } from '@states/TimeTable';
+import { currentTimetableIndexState, timetableListState } from '@states/Timetable';
 import { highLightLectureState } from '@states/Lecture';
 
 export default function LectureListItem(props) {

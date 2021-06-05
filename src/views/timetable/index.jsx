@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { Redirect } from 'react-router';
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { StatusCodes } from 'http-status-codes';
 import { Box, Button, Container, makeStyles } from '@material-ui/core';
-import { timetableListState, currentTimetableIndexState } from '@states/Timetable';
+import { currentTimetableIndexState, timetableListState } from '@states/Timetable';
 import { searchLectureListState } from '@states/Lecture';
 import {
   requestAPI,
@@ -57,6 +57,7 @@ export default function Home() {
             <>
               <Button onClick={() => setLectureListType('timetable')}>내 강의 보기</Button>
               <LectureList
+                className={classes.lectureList}
                 lectureList={searchLectureList}
                 emptyText="(검색결과 없음)"
               />
@@ -66,6 +67,7 @@ export default function Home() {
             <>
               <Button onClick={() => setLectureListType('search')}>검색결과 보기</Button>
               <LectureList
+                className={classes.lectureList}
                 lectureList={timetableList.length ? timetableList[currentTimetableIndex].tlecture_list.map(tlecture => tlecture.lecture) : []}
                 emptyText="(빈 시간표)"
               />
@@ -74,31 +76,40 @@ export default function Home() {
         </Box>
         <Box className={classes.mainContent}>
           <TimetableCardList />
-          {timetableList.length && <Timetable />}
+          {!!timetableList.length && <Timetable />}
         </Box>
       </Box>
     </Container>
   );
 }
 
-const useStyles = makeStyles({
+const useStyles = makeStyles(theme => ({
   root: {
     display: 'flex',
     flexDirection: 'column',
   },
   innerRoot: {
-    display: 'grid',
-    gridTemplateRows: 'minmax(50em, auto)',
-    gridTemplateColumns: 'repeat(2, minmax(50%, 50%))',
     flex: '1',
-    // flexDirection: 'row',
     flexGrow: '1',
     margin: '1em 0',
+    [theme.breakpoints.down('lg')]: {
+      display: 'flex',
+      flexDirection: 'column',
+    },
+    [theme.breakpoints.up('lg')]: {
+      display: 'grid',
+      gridTemplateRows: 'minmax(50em, 1fr)',
+      gridTemplateColumns: '50% 50%',
+    },
   },
   mainContent: {
     gridRow: '1',
-    // flex: '1',
+    display: 'flex',
+    flexDirection: 'column',
     padding: '1em',
+  },
+  lectureList: {
+    height: '100%',
   },
   timetableTitle: {
     display: 'flex',
@@ -139,4 +150,4 @@ const useStyles = makeStyles({
     fontSize: '1.5rem',
     width: '60%',
   },
-});
+}));

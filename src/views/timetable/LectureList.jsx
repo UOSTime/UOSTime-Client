@@ -3,6 +3,7 @@ import {
   Container,
   List,
   makeStyles,
+  Paper,
   Typography,
 } from '@material-ui/core';
 import LectureListItem from './LectureListItem';
@@ -33,7 +34,7 @@ export default function LectureList(props) {
   ));
 
   return (
-    <>
+    <Paper className={classes.root}>
       <Container className={classes.titles}>
         <Typography className={classes.title_1}>학부(과)</Typography>
         <Typography className={classes.title_2}>과목명</Typography>
@@ -43,17 +44,21 @@ export default function LectureList(props) {
       <List className={scrollList ? classes.scrollList : null}>
         {lectures.length ? lectures : <Typography>{emptyText}</Typography>}
       </List>
-    </>
+    </Paper>
   );
 }
 
 const useStyles = makeStyles({
   root: {
     padding: '0',
+    flexGrow: '1',
+    borderRadius: '1em',
   },
   titles: {
     display: 'flex',
     textAlign: 'center',
+    padding: '0.5em 1em',
+    borderBottom: '1px solid #EAEAEA',
   },
   title_1: {
     fontSize: '0.8rem',

@@ -1,15 +1,15 @@
 import React from 'react';
 import StatusCodes from 'http-status-codes';
 import { useRecoilValue } from 'recoil';
-import { timetableListState } from '@states/Timetable';
-import { Box, Grid, makeStyles } from '@material-ui/core';
+import { timetableListState, currentTimetableIndexState } from '@states/Timetable';
+import AddIcon from '@material-ui/icons/Add';
+import { Box, Button, Icon, makeStyles } from '@material-ui/core';
 import { API_CREATE_TIMETABLE, requestAPI } from '@utils/api';
 import { useShowPopup } from '@components/Popup';
 import TimetableCard from './TimetableCard';
-import TimetableButtonCard from './TimetableButtonCard';
-import TimetableEmptyCard from './TimetableEmptyCard';
 
 export default function TimetableCardList() {
+  const currentTimetableIndex = useRecoilValue(currentTimetableIndexState);
   const timetableList = useRecoilValue(timetableListState);
   const classes = useStyles();
 
@@ -29,44 +29,53 @@ export default function TimetableCardList() {
     // TODO: request updated list
   };
 
-  const timetableComponents = (timetableList || []).map((timetable, i) => (
-    <TimetableCard key={timetable._id} index={i} timetable={timetable} />
-  ));
-  timetableComponents.push(
-    <TimetableButtonCard onClick={onCreate} />,
-    // <TimetableEmptyCard />,
-    // <TimetableEmptyCard />,
-    // <TimetableEmptyCard />,
-  );
+  const timetableCards = (timetableList || []).map((timetable, i) => (
+    i !== currentTimetableIndex
+    && (
+      <TimetableCard key={String(timetable._id + i)} index={i} timetable={timetable} />
+    )));
 
   return (
-    <Box className={classes.root}>
-      {/* {timetableComponents.slice(0, 4)} */}
-      {timetableComponents}
-    </Box>
+    <>
+      <Button
+        // variant="contained"
+        // color="primary"
+        className={classes.button}
+        endIcon={<AddIcon />}
+        onClick={onCreate}
+      />
+      <Box className={classes.root}>
+        {timetableCards}
+      </Box>
+    </>
   );
 }
 
 const useStyles = makeStyles({
   root: {
     display: 'grid',
-    gridGap: '0.5em',
-    // gridTemplateColumns: 'minmax(15em, 20em)',
-    // grid -template-columns: repeat(3, 1fr);
-    // grid-template-rows: repeat(3, minmax(100px, auto));
-    // display: 'flex',
-    // flexDirection: 'row',
-    // alignItems: 'center',
-    // justifyContent: 'center',
-    // width: '100%',
-    margin: '0 -0.5em',
-    padding: '0.5em',
-    '& > *': {
-      // margin: '0.5em',
-      gridRow: '1',
-      minWidth: '15em',
-      // maxWidth: '20em',
+    margin: '1em -1em -1em -1em',
+    padding: '0 1em',
+    overflowY: 'hidden',
+
+    '&:hover': {
+      paddingBottom: '1em',
     },
-    overflowX: 'scroll',
+
+    '& > *': {
+      gridColumn: '1',
+      transition: 'margin 0.15s, color 0.15s',
+      '& .timetable-card-title': {
+        transition: 'margin 0.15s ease',
+      },
+    },
+    '&:not(:hover) > *': {
+      '&:not(:first-child)': {
+        marginTop: '-1em',
+      },
+      '& .timetable-card-title': {
+        margin: '-0.5em 0',
+      },
+    },
   },
 });

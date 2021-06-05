@@ -1,10 +1,7 @@
-import React, { useState } from 'react';
-import { useRecoilState } from 'recoil';
+import React from 'react';
+import { useSetRecoilState } from 'recoil';
 import { StatusCodes } from 'http-status-codes';
 import {
-  Box,
-  Button,
-  Grid,
   makeStyles,
   Paper,
   Typography,
@@ -12,35 +9,10 @@ import {
 import CloseIcon from '@material-ui/icons/Close';
 import { currentTimetableIndexState } from '@states/Timetable';
 import { requestAPI, API_DELETE_TIMETABLE } from '@utils/api';
-import LectureList from './LectureList';
 
 export default function TimetableCard({ index, timetable }) {
-  const [currentTimetableIndex, setCurrentTimetableIndex] = useRecoilState(currentTimetableIndexState);
-  const [showList, setShowList] = useState(false);
-  const isSelected = index === currentTimetableIndex;
-
+  const setCurrentTimetableIndex = useSetRecoilState(currentTimetableIndexState);
   const classes = useStyles();
-
-  const totalCredits = timetable.tlecture_list
-    .map(tlecture => tlecture.lecture.credit)
-    .reduce((acc, cur) => acc + cur, 0);
-
-  let majorCredit = 0;
-  let cultureCredit = 0;
-  let majorCnt = 0;
-  let cultureCnt = 0;
-  timetable.tlecture_list
-    .map(t => t.lecture)
-    .forEach(lecture => {
-      const div = lecture.subject_div.substring(0, 2);
-      if (div === '교양') {
-        cultureCnt++;
-        cultureCredit += lecture.credit;
-      } else if (div === '전공') {
-        majorCnt++;
-        majorCredit += lecture.credit;
-      }
-    });
 
   const onClick = () => {
     setCurrentTimetableIndex(index);
@@ -56,58 +28,37 @@ export default function TimetableCard({ index, timetable }) {
   };
 
   return (
-    // <Grid item xs>
     <Paper className={classes.root} onClick={onClick}>
-      <Box className={classes.innerRoot}>
-        <CloseIcon aria-label="delete" className={classes.deleteBtn} onClick={onDelete} />
-        <Typography>{timetable.name || 'Name'}</Typography>
-        <Typography className={classes.credit}>
-          {totalCredits}학점<br />
-          {/* 전공 {majorCredit}학점({majorCnt}과목)
-          교양 {cultureCredit}학점({cultureCnt}과목) */}
-        </Typography>
-      </Box>
-      {/* {isSelected && (
-        <>
-          <Button className={classes.showListButton} onClick={() => setShowList(!showList)}>
-            {showList ? '강의목록 숨기기' : '강의목록 펼치기'}
-          </Button>
-          {showList && (
-            <LectureList
-              lectureList={timetable.tlecture_list.map(tlecture => tlecture.lecture)}
-              emptyText="(빈 시간표)"
-              // scrollList
-            />
-          )}
-        </>
-      )} */}
+      <CloseIcon aria-label="delete" className={classes.deleteBtn} onClick={onDelete} />
+      <Typography className="timetable-card-title">{timetable.name || 'Name'}</Typography>
     </Paper>
-    // </Grid>
   );
 }
 
 const useStyles = makeStyles({
   root: {
+    borderTopLeftRadius: '1em',
+    borderTopRightRadius: '1em',
+    borderBottomLeftRadius: '0',
+    borderBottomRightRadius: '0',
+    border: '1px solid #F0F0F0',
+    overflow: 'hidden',
     cursor: 'pointer',
-    // height: '100%',
-    padding: '1em',
-  },
-  innerRoot: {
+    padding: '1em 1em 2em 1em',
+    marginBottom: '-1em',
     position: 'relative',
+    transition: 'color 0.5s',
+    color: '#A0A0A0',
+    '&:hover': {
+      color: '#313131',
+    },
   },
   deleteBtn: {
     position: 'absolute',
-    top: '0',
-    right: '0',
+    top: '0.5em',
+    right: '0.5em',
     '$root:not(:hover) &': {
       display: 'none',
     },
-  },
-  credit: {
-    fontSize: '90%',
-    color: '#afafaf',
-  },
-  showListButton: {
-    margin: '0.5em 0',
   },
 });
