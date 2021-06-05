@@ -60,6 +60,7 @@ export default function Home() {
                 className={classes.lectureList}
                 lectureList={searchLectureList}
                 emptyText="(검색결과 없음)"
+                type={lectureListType}
               />
             </>
           )}
@@ -70,6 +71,7 @@ export default function Home() {
                 className={classes.lectureList}
                 lectureList={timetableList.length ? timetableList[currentTimetableIndex].tlecture_list.map(tlecture => tlecture.lecture) : []}
                 emptyText="(빈 시간표)"
+                type={lectureListType}
               />
             </>
           )}

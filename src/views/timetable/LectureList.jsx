@@ -13,6 +13,7 @@ export default function LectureList(props) {
     lectureList,
     emptyText,
     scrollList,
+    type,
   } = props;
 
   const [expandedId, setExpandedId] = useState(null);
@@ -26,7 +27,7 @@ export default function LectureList(props) {
   const lectures = lectureList.map(lecture => (
     <LectureListItem
       key={lecture._id}
-      type="search"
+      type={type}
       lecture={lecture}
       expand={expandedId === lecture._id}
       toggleExpand={toggleExpand}
