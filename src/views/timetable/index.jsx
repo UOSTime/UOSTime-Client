@@ -50,7 +50,6 @@ export default function Home() {
   return (
     <Container className={classes.root}>
       <SearchBar />
-
       <Box className={classes.innerRoot}>
         <Box className={classes.mainContent}>
           {lectureListType === 'search' && (
@@ -108,7 +107,17 @@ const useStyles = makeStyles(theme => ({
     gridRow: '1',
     display: 'flex',
     flexDirection: 'column',
-    padding: '1em',
+    [theme.breakpoints.down('lg')]: {
+      padding: '0',
+    },
+    [theme.breakpoints.up('lg')]: {
+      '&:first-child': {
+        paddingRight: '1em',
+      },
+      '&:last-child': {
+        paddingLeft: '1em',
+      },
+    },
   },
   lectureList: {
     height: '100%',

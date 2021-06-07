@@ -89,6 +89,7 @@ const useStyles = makeStyles({
   root: {
     display: 'flex',
     margin: '0.5em 0',
+    padding: '0',
   },
   select: {
     flexGrow: '1',

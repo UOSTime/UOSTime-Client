@@ -105,8 +105,8 @@ export default function Timetable() {
         >
           ×
         </button>
-        <Typography>{name}</Typography>
-        <Typography>{place}</Typography>
+        <Typography className={classes.lectureBoxName}>{name}</Typography>
+        <Typography className={classes.lectureBoxPlace}>{place}</Typography>
       </Box>
     );
   };
@@ -228,15 +228,21 @@ const useStyles = makeStyles({
   },
   lectureBox: {
     position: 'absolute',
-    width: '95%',
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
     textAlign: 'center',
     borderRadius: '5px',
-    padding: '2%',
+    padding: '0.2em',
+    margin: '0.2em',
     zIndex: '10',
+  },
+  lectureBoxName: {
+    fontSize: 'small',
+  },
+  lectureBoxPlace: {
+    fontSize: 'small',
   },
   deleteBtn: {
     width: '15px',

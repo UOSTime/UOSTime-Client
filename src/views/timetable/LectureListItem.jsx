@@ -105,8 +105,8 @@ export default function LectureListItem(props) {
           </Box>
           {
             type === 'search'
-              ? <Button className={buttonClasses.linearRed} onClick={addLecture}>추가</Button>
-              : <Button className={buttonClasses.blue} onClick={deleteLecture}>삭제</Button>
+              ? <Button onClick={addLecture}>추가</Button>
+              : <Button onClick={deleteLecture}>삭제</Button>
           }
         </Container>
       )}
@@ -129,6 +129,9 @@ const useStyles = makeStyles({
   detail: {
     display: 'flex',
     width: '100%',
+    paddingTop: '1em',
+    paddingBottom: '1em',
+    borderBottom: '1px solid #EAEAEA',
   },
   detailText: {
     display: 'flex',
