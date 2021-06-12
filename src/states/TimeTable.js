@@ -18,7 +18,7 @@ const timetableListState = atom({
 
 const currentTimetableIndexState = atom({
   key: 'currentTimetableIndex',
-  default: null,
+  default: 0,
 });
 
 export {
