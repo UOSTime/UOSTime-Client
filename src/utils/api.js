@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 /* eslint-disable no-unused-vars */
 import axios from 'axios';
-import { useShowPopup } from '@components/Popup';
+import usePopup from '@components/usePopup';
 
 const { API_URL_BASE } = process.env;
 
@@ -67,8 +67,9 @@ axiosInstance.interceptors.request.use(
     return config;
   },
   error => {
+    const [, showPopup] = usePopup();
     console.error(error);
-    useShowPopup('에러', '서버를 찾을 수 없어요...');
+    showPopup('에러', '서버를 찾을 수 없어요...');
     return null;
   },
 );
