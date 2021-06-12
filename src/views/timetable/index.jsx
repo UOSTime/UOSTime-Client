@@ -77,7 +77,7 @@ export default function Home() {
         </Box>
         <Box className={classes.mainContent}>
           <TimetableCardList />
-          {!!timetableList.length && <Timetable />}
+          {currentTimetableIndex < timetableList.length && <Timetable />}
         </Box>
       </Box>
     </Container>

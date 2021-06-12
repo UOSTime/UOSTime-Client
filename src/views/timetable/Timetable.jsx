@@ -85,34 +85,50 @@ export default function Timetable() {
     // TODO: request new data
   };
 
-  const LectureBox = ({ r, c }) => {
-    const lecture = timetableMap[r][c];
+  const openTimetableSetting = noop;
+  const shareTimetable = noop;
+
+  const highlightables = lectureToTime(highlightLecture).filter(h => h?.hours && h.day);
+
+  const HighlightBox = ({ r, c }) => {
+    const highlightable = highlightables.filter(({ hours, day }) => r === hours[0] - 1 && c === day)[0];
+    return <LectureBox lecture={highlightable} isHighlight />;
+  };
+
+  const LectureBox = ({ lecture, isHighlight = false }) => {
     if (!lecture) return null;
 
     const { id, name, place, color, hours } = lecture;
     return (
       <Box
         className={[
-          colorClass[color],
-          sizeClass[hours.length],
           classes.lectureBox,
+          sizeClass[hours.length],
+          isHighlight ? classes.highlightLectureBox : '',
         ].join(' ')}
       >
-        <button
-          name={id}
-          className={classes.deleteBtn}
-          onClick={onDelete}
+        <Box className={[
+          classes.innerLectureBox,
+          colorClass[color],
+        ].join(' ')}
         >
-          ×
-        </button>
-        <Typography className={classes.lectureBoxName}>{name}</Typography>
-        <Typography className={classes.lectureBoxPlace}>{place}</Typography>
+          {!isHighlight && (
+            <>
+              <button
+                name={id}
+                className={classes.deleteBtn}
+                onClick={onDelete}
+              >
+                ×
+              </button>
+              <Typography className={classes.lectureBoxName}>{name}</Typography>
+              <Typography className={classes.lectureBoxPlace}>{place}</Typography>
+            </>
+          )}
+        </Box>
       </Box>
     );
   };
-
-  const openTimetableSetting = noop;
-  const shareTimetable = noop;
 
   return (
     <Paper className={classes.root}>
@@ -142,20 +158,8 @@ export default function Timetable() {
                 key={c.toString()}
                 className={classes.box}
               >
-                <LectureBox r={r} c={c} />
-                {lectureToTime(highlightLecture)
-                  .filter(h => h && h.hours && h.day)
-                  .filter(h => h.hours[0] - 1 === r && c === h.day)
-                  .map(({ id, hours, color }) => (
-                    <Box
-                      key={id}
-                      className={[
-                        sizeClass[hours.length],
-                        colorClass[color],
-                        classes.lectureBox,
-                      ].join(' ')}
-                    />
-                  ))}
+                <LectureBox lecture={timetableMap[r][c]} />
+                <HighlightBox r={r} c={c} />
               </Box>
             ))}
           </Container>
@@ -198,7 +202,6 @@ const useStyles = makeStyles({
   },
   rowContainer: {
     borderBottom: '1px solid #FFFFFF',
-    // maxHeight: '7.7%', // TODO - refactoring
     minHeight: '3.5em',
     flex: '1',
     display: 'flex',
@@ -228,15 +231,22 @@ const useStyles = makeStyles({
   },
   lectureBox: {
     position: 'absolute',
+    padding: '0.2em',
+    zIndex: '10',
+    width: '100%',
+  },
+  highlightLectureBox: {
+    zIndex: '12',
+  },
+  innerLectureBox: {
+    borderRadius: '5px',
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
     textAlign: 'center',
-    borderRadius: '5px',
-    padding: '0.2em',
-    margin: '0.2em',
-    zIndex: '10',
+    height: '100%',
+    width: '100%',
   },
   lectureBoxName: {
     fontSize: 'small',
@@ -252,7 +262,7 @@ const useStyles = makeStyles({
     position: 'absolute',
     fontWeight: '700',
     fontSize: '1rem',
-    zIndex: '100',
+    zIndex: '11',
     top: '0px',
     right: '0px',
     padding: '0',
@@ -289,8 +299,6 @@ const useLectureColor = makeStyles({
   preview: {
     backgroundColor: 'gray',
     opacity: 0.3,
-    position: 'absolute',
-    zIndex: 100,
   },
 });
 
