@@ -55,7 +55,7 @@ export default function Timetable() {
     });
 
     if (response.status !== StatusCodes.OK) {
-      alert('시간표를 삭제하지 못했어요...');
+      alert('강의를 삭제하지 못했어요...');
     }
 
     // TODO: request new data

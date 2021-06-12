@@ -50,7 +50,7 @@ export default function LectureListItem(props) {
     const response = await requestAPI(API_ADD_TLECTURE(), body);
 
     if (response.status !== StatusCodes.OK) {
-      alert('시간표를 추가하는데 실패했어요...');
+      alert('강의를 추가하는데 실패했어요...');
     }
     // TODO: load new data
   };
