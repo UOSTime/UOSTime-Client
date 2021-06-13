@@ -80,7 +80,7 @@ export function useTimetableList() {
 
 export default function TimetableCardList() {
   const [TimetableList] = useTimetableList();
-  return TimetableList;
+  return <TimetableList />;
 }
 
 const useStyles = makeStyles({
