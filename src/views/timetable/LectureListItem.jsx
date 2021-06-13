@@ -9,9 +9,9 @@ import {
   ListItem,
 } from '@material-ui/core';
 import { requestAPI, API_ADD_TLECTURE, API_DELETE_TLECTURE } from '@utils/api';
-import useButtonStyles from '@utils/styles/Button';
 import { currentTimetableIndexState, timetableListState } from '@states/Timetable';
 import { highLightLectureState } from '@states/Lecture';
+import { useTimetableList } from './TimetableCardList';
 
 export default function LectureListItem(props) {
   const {
@@ -20,19 +20,14 @@ export default function LectureListItem(props) {
     expand,
     toggleExpand,
   } = props;
-
   const timetableList = useRecoilValue(timetableListState);
   const currentTimetableIndex = useRecoilValue(currentTimetableIndexState);
   const setHighlightLecture = useSetRecoilState(highLightLectureState);
-  const timetable = timetableList[currentTimetableIndex];
+  const [, fetchTimetables] = useTimetableList();
 
   const classes = useStyles();
-  const buttonClasses = useButtonStyles({
-    width: '20px',
-    fontSize: '0.8rem',
-    borderRadius: '10px',
-    padding: '0',
-  });
+
+  const timetable = timetableList[currentTimetableIndex];
 
   const addLecture = async () => {
     if (timetable.year !== lecture.year || timetable.term !== lecture.term) {
@@ -52,7 +47,8 @@ export default function LectureListItem(props) {
     if (response.status !== StatusCodes.OK) {
       alert('강의를 추가하는데 실패했어요...');
     }
-    // TODO: load new data
+
+    fetchTimetables();
   };
 
   const onMouseEnter = () => {
@@ -75,9 +71,7 @@ export default function LectureListItem(props) {
       alert('강의를 버리지 못했어요..');
     }
 
-    // TODO: request new data
-
-    // setTimetable(response.data);
+    fetchTimetables();
   };
 
   return (

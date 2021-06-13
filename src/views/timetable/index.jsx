@@ -1,46 +1,27 @@
 import React, { useEffect, useState } from 'react';
 import { Redirect } from 'react-router';
-import { useRecoilState, useRecoilValue } from 'recoil';
-import { StatusCodes } from 'http-status-codes';
+import { useRecoilValue } from 'recoil';
 import { Box, Button, Container, makeStyles } from '@material-ui/core';
 import { currentTimetableIndexState, timetableListState } from '@states/Timetable';
 import { searchLectureListState } from '@states/Lecture';
-import {
-  requestAPI,
-  API_GET_TIMETABLES,
-} from '@utils/api';
 import Timetable from './Timetable';
 import LectureList from './LectureList';
-import TimetableCardList from './TimetableCardList';
+import TimetableCardList, { useTimetableList } from './TimetableCardList';
 import SearchBar from './SearchBar';
 
 export default function Home() {
-  const [timetableList, setTimetableList] = useRecoilState(timetableListState);
+  const timetableList = useRecoilValue(timetableListState);
   const [lectureListType, setLectureListType] = useState('search');
-  const [currentTimetableIndex, setCurrentTimetableIndex] = useRecoilState(currentTimetableIndexState);
+  const currentTimetableIndex = useRecoilValue(currentTimetableIndexState);
   const searchLectureList = useRecoilValue(searchLectureListState);
+  const [, fetchTimetables] = useTimetableList();
 
   const classes = useStyles();
 
-  const getTimetables = async () => {
-    const response = await requestAPI(API_GET_TIMETABLES({
-      year: 2021,
-      term: 'A10',
-    }));
-
-    if (!response || response.status !== StatusCodes.OK) {
-      alert('시간표를 가져오는데 실패했어요');
-      return;
-    }
-
-    const timetables = response.data;
-    setTimetableList(timetables);
-    setCurrentTimetableIndex(0);
-  };
-
   useEffect(() => {
     if (!localStorage.getItem('userID')) return;
-    getTimetables();
+
+    fetchTimetables();
   }, []);
 
   if (!localStorage.getItem('userID')) {

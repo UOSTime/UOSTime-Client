@@ -1,54 +1,86 @@
 import React from 'react';
 import StatusCodes from 'http-status-codes';
-import { useRecoilValue } from 'recoil';
-import { timetableListState, currentTimetableIndexState } from '@states/Timetable';
+import { useRecoilState } from 'recoil';
 import AddIcon from '@material-ui/icons/Add';
-import { Box, Button, Icon, makeStyles } from '@material-ui/core';
-import { API_CREATE_TIMETABLE, requestAPI } from '@utils/api';
-import { useShowPopup } from '@components/Popup';
+import { Box, Button, makeStyles } from '@material-ui/core';
+import { timetableListState, currentTimetableIndexState } from '@states/Timetable';
+import { requestAPI, API_GET_TIMETABLES, API_CREATE_TIMETABLE } from '@utils/api';
 import TimetableCard from './TimetableCard';
 
-export default function TimetableCardList() {
-  const currentTimetableIndex = useRecoilValue(currentTimetableIndexState);
-  const timetableList = useRecoilValue(timetableListState);
-  const classes = useStyles();
+export function useTimetableList() {
+  const [timetableList, setTimetableList] = useRecoilState(timetableListState);
+  const [
+    currentTimetableIndex,
+    setCurrentTimetableIndex,
+  ] = useRecoilState(currentTimetableIndexState);
 
-  const onCreate = async () => {
-    const body = {
+  const fetchTimetables = async () => {
+    const response = await requestAPI(API_GET_TIMETABLES({
       year: 2021,
       term: 'A10',
-      name: '시간표',
-    };
+    }));
 
-    const response = await requestAPI(API_CREATE_TIMETABLE(), body);
-
-    if (response.status !== StatusCodes.CREATED) {
-      useShowPopup('시간표 생성에 실패했어요...');
+    if (!response || response.status !== StatusCodes.OK) {
+      alert('시간표를 가져오는데 실패했어요');
+      return;
     }
 
-    // TODO: request updated list
+    const timetables = response.data;
+    setTimetableList(timetables);
+    if (currentTimetableIndex >= timetables.length) {
+      setCurrentTimetableIndex(0);
+    }
   };
 
-  const timetableCards = (timetableList || []).map((timetable, i) => (
-    i !== currentTimetableIndex
-    && (
-      <TimetableCard key={String(timetable._id + i)} index={i} timetable={timetable} />
-    )));
+  const TimetableList = () => {
+    const classes = useStyles();
 
-  return (
-    <>
-      <Button
-        // variant="contained"
-        // color="primary"
-        className={classes.button}
-        endIcon={<AddIcon />}
-        onClick={onCreate}
-      />
-      <Box className={classes.root}>
-        {timetableCards}
-      </Box>
-    </>
-  );
+    const onCreate = async () => {
+      const body = {
+        year: 2021,
+        term: 'A10',
+        name: '시간표',
+      };
+
+      const response = await requestAPI(API_CREATE_TIMETABLE(), body);
+
+      if (response.status !== StatusCodes.CREATED) {
+        alert('시간표 생성에 실패했어요...');
+      }
+
+      fetchTimetables();
+
+      // setCurrentTimetableIndex(timetableList.length);
+    };
+
+    const timetableCards = (timetableList || []).map((timetable, i) => (
+      i !== currentTimetableIndex
+      && (
+        <TimetableCard key={String(timetable._id + i)} index={i} timetable={timetable} />
+      )));
+
+    return (
+      <>
+        <Button
+          // variant="contained"
+          // color="primary"
+          className={classes.button}
+          endIcon={<AddIcon />}
+          onClick={onCreate}
+        />
+        <Box className={classes.root}>
+          {timetableCards}
+        </Box>
+      </>
+    );
+  };
+
+  return [TimetableList, fetchTimetables];
+}
+
+export default function TimetableCardList() {
+  const [TimetableList] = useTimetableList();
+  return TimetableList;
 }
 
 const useStyles = makeStyles({

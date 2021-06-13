@@ -7,6 +7,7 @@ import { highLightLectureState } from '@states/Lecture';
 import { lectureToTime, days } from '@utils/timetable';
 import { uosRed } from '@utils/styles/Colors';
 import { requestAPI, API_DELETE_TLECTURE, API_PATCH_TIMETABLE_NAME } from '@utils/api';
+import { useTimetableList } from './TimetableCardList';
 
 const timeArr = [9, 10, 11, 12, 1, 2, 3, 4, 5, 6, 7, 8, 9];
 
@@ -16,6 +17,7 @@ export default function Timetable() {
   const [timetableList, setTimetableList] = useRecoilState(timetableListState);
   const currentTimetableIndex = useRecoilValue(currentTimetableIndexState);
   const highlightLecture = useRecoilValue(highLightLectureState);
+  const [, fetchTimetables] = useTimetableList();
 
   const timetable = timetableList[currentTimetableIndex];
 
@@ -58,7 +60,7 @@ export default function Timetable() {
       alert('강의를 삭제하지 못했어요...');
     }
 
-    // TODO: request new data
+    fetchTimetables();
   };
 
   const onChangeNameField = ({ target }) => {
@@ -82,7 +84,7 @@ export default function Timetable() {
       alert('시간표 명을 변경하지 못 했어요...');
     }
 
-    // TODO: request new data
+    fetchTimetables();
   };
 
   const openTimetableSetting = noop;

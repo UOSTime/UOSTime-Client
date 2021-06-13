@@ -9,9 +9,12 @@ import {
 import CloseIcon from '@material-ui/icons/Close';
 import { currentTimetableIndexState } from '@states/Timetable';
 import { requestAPI, API_DELETE_TIMETABLE } from '@utils/api';
+import { useTimetableList } from './TimetableCardList';
 
 export default function TimetableCard({ index, timetable }) {
   const setCurrentTimetableIndex = useSetRecoilState(currentTimetableIndexState);
+  const [, fetchTimetables] = useTimetableList();
+
   const classes = useStyles();
 
   const onClick = () => {
@@ -25,6 +28,8 @@ export default function TimetableCard({ index, timetable }) {
     if (response.status !== StatusCodes.NO_CONTENT) {
       alert('시간표를 삭제하지 못했어요...');
     }
+
+    fetchTimetables();
   };
 
   return (
