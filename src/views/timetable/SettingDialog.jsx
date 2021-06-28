@@ -3,9 +3,7 @@ import { useRecoilState } from 'recoil';
 import CustomDialog from '@components/CustomDialog';
 import { Checkbox, FormControl, FormControlLabel, FormLabel, Radio, RadioGroup } from '@material-ui/core';
 import { showNightTimesState, showSaturdayState, timeFormatState } from '@states/TimeTable';
-
-const TIME_FORMAT_12 = '12';
-const TIME_FORMAT_24 = '24';
+import { TIME_FORMAT_12, TIME_FORMAT_24 } from '@utils/time';
 
 export default function SettingDialog(props) {
   // props
