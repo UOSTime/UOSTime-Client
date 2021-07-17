@@ -1,23 +1,32 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useRecoilValue, useRecoilState } from 'recoil';
 import { StatusCodes } from 'http-status-codes';
 import { Box, Button, Container, InputBase, makeStyles, Paper, Typography } from '@material-ui/core';
-import { timetableListState, currentTimetableIndexState } from '@states/Timetable';
+import { timetableListState, currentTimetableIndexState, showNightTimesState, showSaturdayState, timeFormatState } from '@states/Timetable';
 import { highLightLectureState } from '@states/Lecture';
-import { lectureToTime, days } from '@utils/timetable';
+import { lectureToTime, days, times } from '@utils/timetable';
 import { uosRed } from '@utils/styles/Colors';
 import { requestAPI, API_DELETE_TLECTURE, API_PATCH_TIMETABLE_NAME } from '@utils/api';
+import { getFormattedHour } from '@utils/time';
+import SettingDialog from './SettingDialog';
+import ShareDialog from './ShareDialog';
 import { useTimetableList } from './TimetableCardList';
 
-const timeArr = [9, 10, 11, 12, 1, 2, 3, 4, 5, 6, 7, 8, 9];
-
-const noop = () => {};
+export const TimetableElementID = 'timetable';
 
 export default function Timetable() {
   const [timetableList, setTimetableList] = useRecoilState(timetableListState);
   const currentTimetableIndex = useRecoilValue(currentTimetableIndexState);
   const highlightLecture = useRecoilValue(highLightLectureState);
+
+  // settings
+  const timeFormat = useRecoilValue(timeFormatState);
+  const showNightTimes = useRecoilValue(showNightTimesState);
+  const showSaturday = useRecoilValue(showSaturdayState);
+
   const [, fetchTimetables] = useTimetableList();
+  const [isOpenSettingDialog, setIsOpenSettingDialog] = useState(false);
+  const [isOpenShareDialog, setIsOpenShareDialog] = useState(false);
 
   const timetable = timetableList[currentTimetableIndex];
 
@@ -31,7 +40,7 @@ export default function Timetable() {
     .map((lecture, idx) => lectureToTime(lecture, idx))
     .flat();
 
-  const timetableMap = timeArr.map(() => Array(days.length).fill(null));
+  const timetableMap = times.map(() => Array(days.length).fill(null));
   lectureList.forEach(lecture => {
     const row = lecture.hours[0] - 1;
     const col = lecture.day;
@@ -87,15 +96,17 @@ export default function Timetable() {
     fetchTimetables();
   };
 
-  const openTimetableSetting = noop;
-  const shareTimetable = noop;
-
   const highlightables = lectureToTime(highlightLecture).filter(h => h?.hours && h.day);
 
-  const HighlightBox = ({ r, c }) => {
-    const highlightable = highlightables.filter(({ hours, day }) => r === hours[0] - 1 && c === day)[0];
-    return <LectureBox lecture={highlightable} isHighlight />;
-  };
+  const HighlightBox = ({ r, c }) => (
+    <LectureBox
+      isHighlight
+      lecture={
+        highlightables.filter(({ hours, day }) => (
+          r === hours[0] - 1 && c === day))[0]
+      }
+    />
+  );
 
   const LectureBox = ({ lecture, isHighlight = false }) => {
     if (!lecture) return null;
@@ -142,31 +153,50 @@ export default function Timetable() {
           placeholder="Timetable Name"
         />
         {/* <Button onClick={onSubmitName}>변경</Button> */}
-        <Button onClick={openTimetableSetting}>설정</Button>
-        <Button onClick={shareTimetable}>공유</Button>
+        <Button onClick={() => setIsOpenSettingDialog(true)}>설정</Button>
+        <Button onClick={() => setIsOpenShareDialog(true)}>공유</Button>
       </Box>
-      <Box className={classes.dayContainer}>
-        <Box className={classes.timeBox} />
-        {days.map(day => <Box key={day} className={classes.dayBox}>{day}</Box>)}
+      <Box id={TimetableElementID} className={classes.timetable}>
+        <Box className={classes.dayContainer}>
+          <Box className={classes.timeBox} />
+          {days.slice(0, showSaturday ? 6 : 5).map((day, i) => (
+            <Box key={day} className={classes.dayBox} data-day={i}>{day}</Box>
+          ))}
+        </Box>
+        <Container className={classes.timeContainer}>
+          {times.map((time, r) => {
+            if (time >= 18 && !showNightTimes) {
+              return null;
+            }
+
+            return (
+              <Container key={r.toString()} className={classes.rowContainer}>
+                <Box className={classes.timeBox}>
+                  <Typography>{getFormattedHour(time, timeFormat)}</Typography>
+                </Box>
+                {days.slice(0, showSaturday ? 6 : 5).map((_, c) => (
+                  <Box
+                    key={c.toString()}
+                    className={classes.box}
+                    data-day={c}
+                  >
+                    <LectureBox lecture={timetableMap[r][c]} />
+                    <HighlightBox r={r} c={c} />
+                  </Box>
+                ))}
+              </Container>
+            );
+          })}
+        </Container>
       </Box>
-      <Container className={classes.timeContainer}>
-        {timeArr.map((time, r) => (
-          <Container key={r.toString()} className={classes.rowContainer}>
-            <Box className={classes.timeBox}>
-              <Typography>{time}</Typography>
-            </Box>
-            {days.map((_, c) => (
-              <Box
-                key={c.toString()}
-                className={classes.box}
-              >
-                <LectureBox lecture={timetableMap[r][c]} />
-                <HighlightBox r={r} c={c} />
-              </Box>
-            ))}
-          </Container>
-        ))}
-      </Container>
+      <SettingDialog
+        open={isOpenSettingDialog}
+        onClose={() => setIsOpenSettingDialog(false)}
+      />
+      <ShareDialog
+        open={isOpenShareDialog}
+        onClose={() => setIsOpenShareDialog(false)}
+      />
     </Paper>
   );
 }
@@ -179,6 +209,9 @@ const useStyles = makeStyles({
     borderRadius: '1em',
     overflow: 'hidden',
     border: '1px solid #F0F0F0',
+  },
+  timetable: {
+    backgroundColor: '#FFFFFF',
   },
   timeContainer: {
     padding: '0',

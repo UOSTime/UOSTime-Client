@@ -1,4 +1,5 @@
 export const days = ['월', '화', '수', '목', '금', '토', '일'];
+export const times = [9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21];
 
 export function lectureToTime(lecture, colorIndex = 'preview') {
   if (!lecture) return [];
