@@ -112,13 +112,13 @@ const useStyles = makeStyles({
   root: {
     display: 'flex',
     flexDirection: 'column',
-    paddingLeft: '0',
-    paddingRight: '0',
+    padding: '0',
   },
   row: {
     display: 'flex',
     textAlign: 'center',
     cursor: 'pointer',
+    padding: '1em',
   },
   detail: {
     display: 'flex',
