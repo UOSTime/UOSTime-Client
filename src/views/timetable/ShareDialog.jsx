@@ -87,7 +87,7 @@ export default function ShareDialog(props) {
             color="primary"
             variant="contained"
             size="large"
-            className={classes.btnSave}
+            className={classes.saveButton}
             href={imageSrc}
             download="timetable.png"
             onClick={onClose}
@@ -135,7 +135,7 @@ const useStyles = makeStyles(theme => ({
     flexDirection: 'column',
     [theme.breakpoints.down('sm')]: {
       width: '100%',
-      marginTop: '1.5em',
+      marginTop: '3em',
     },
     [theme.breakpoints.up('md')]: {
       width: '40%',
@@ -150,9 +150,14 @@ const useStyles = makeStyles(theme => ({
       width: '50%',
     },
   },
-  btnSave: {
+  saveButton: {
     display: 'block',
     width: '100%',
-    marginTop: 'auto',
+    [theme.breakpoints.down('sm')]: {
+      marginTop: '2em',
+    },
+    [theme.breakpoints.up('md')]: {
+      marginTop: 'auto',
+    },
   },
 }));

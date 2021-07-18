@@ -5,7 +5,6 @@ import { Box, Button, Container, InputBase, makeStyles, Paper, Typography } from
 import { timetableListState, currentTimetableIndexState, showNightTimesState, showSaturdayState, timeFormatState } from '@states/Timetable';
 import { highLightLectureState } from '@states/Lecture';
 import { lectureToTime, days, times } from '@utils/timetable';
-import { uosRed } from '@utils/styles/Colors';
 import { requestAPI, API_DELETE_TLECTURE, API_PATCH_TIMETABLE_NAME } from '@utils/api';
 import { getFormattedHour } from '@utils/time';
 import SettingDialog from './SettingDialog';
@@ -128,6 +127,7 @@ export default function Timetable() {
           {!isHighlight && (
             <>
               <button
+                type="button"
                 name={id}
                 className={classes.deleteBtn}
                 onClick={onDelete}
@@ -290,25 +290,25 @@ const useStyles = makeStyles({
     fontSize: 'small',
   },
   deleteBtn: {
-    width: '15px',
-    height: '15px',
+    cursor: 'pointer',
+    width: '1em',
+    height: '1em',
     lineHeight: '0rem',
     textAlign: 'center',
     position: 'absolute',
     fontWeight: '700',
     fontSize: '1rem',
     zIndex: '11',
-    top: '0px',
-    right: '0px',
+    top: '0.5em',
+    right: '0.5em',
     padding: '0',
-    margin: '1px',
+    margin: '0',
     background: 'none',
-    color: uosRed,
+    color: '#000000',
     border: 'none',
+    opacity: '0.3',
     '&:hover': {
-      color: 'white',
-      background: uosRed,
-      borderRadius: '100px',
+      opacity: '0.7',
     },
     '&:focus': {
       outline: 'none',

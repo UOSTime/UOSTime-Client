@@ -43,7 +43,9 @@ export default function LectureList(props) {
         <Typography className={classes.title_4}>교수명</Typography>
       </Container>
       <List className={[classes.list, scrollList ? classes.scrollList : null].join(' ')}>
-        {lectures.length ? lectures : <Typography>{emptyText}</Typography>}
+        {lectures.length
+          ? lectures
+          : <Typography className={classes.emptyListMessage}>{emptyText}</Typography>}
       </List>
     </Paper>
   );
@@ -83,5 +85,10 @@ const useStyles = makeStyles({
   scrollList: {
     maxHeight: '10em',
     overflow: 'scroll',
+  },
+  emptyListMessage: {
+    padding: '1em',
+    textAlign: 'center',
+    opacity: '0.5',
   },
 });
