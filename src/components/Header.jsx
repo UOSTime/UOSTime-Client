@@ -13,7 +13,7 @@ import AnnouncementOutlinedIcon from '@material-ui/icons/AnnouncementOutlined';
 import EmailOutlinedIcon from '@material-ui/icons/EmailOutlined';
 import Logo from './Logo';
 
-//TODO : 뱃지로 변경, 리팩토링
+//TODO : 로그아웃 구현, 반응형 구현, 리팩토링
 
 function a11yProps(index) {
   return {
