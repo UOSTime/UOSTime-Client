@@ -1,19 +1,14 @@
 import React from 'react';
 import { useHistory } from "react-router-dom";
-import { makeStyles, useTheme, AppBar, Tabs, Tab, Typography, Box, Link, Button, IconButton, Menu, MenuItem, ListItemIcon, ListItemText } from '@material-ui/core';
+import { makeStyles, useTheme, AppBar, Tabs, Tab, Typography, Box, Link, Button, IconButton, Menu, MenuItem, ListItemIcon, ListItemText, Badge } from '@material-ui/core';
 import ForumIcon from '@material-ui/icons/Forum';
-import ForumOutlinedIcon from '@material-ui/icons/ForumOutlined';
-import NotificationsActiveIcon from '@material-ui/icons/NotificationsActive';
-import NotificationsNoneOutlinedIcon from '@material-ui/icons/NotificationsNoneOutlined';
+import NotificationIcon from '@material-ui/icons/Announcement';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import InfoIcon from '@material-ui/icons/Info';
 import PersonIcon from '@material-ui/icons/Person';
 import SettingsIcon from '@material-ui/icons/Settings';
 import AnnouncementOutlinedIcon from '@material-ui/icons/AnnouncementOutlined';
-import EmailOutlinedIcon from '@material-ui/icons/EmailOutlined';
 import Logo from './Logo';
-
-//TODO : 로그아웃 구현, 반응형 구현, 리팩토링
 
 function a11yProps(index) {
   return {
@@ -22,7 +17,7 @@ function a11yProps(index) {
   };
 }
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   root: {
     width: '100%',
     margin: '0 0 0 0',
@@ -66,12 +61,9 @@ const useStyles = makeStyles(theme => ({
     marginLeft: 'auto',
     marginRight: '4px'
   },
-  inactivedButton: {
+  grayButton: {
     color: '#C4C4C4',
-    fontSize: '28px',
-  },
-  activedButton: {
-    color: '#f68b7d',
+    backgroundColor: '#f6f6f6',
     fontSize: '28px',
   },
   userButton: {
@@ -110,11 +102,7 @@ export default function Header() {
       */
   };
   const handleChatClick = () => {
-    setChatChecked(true);
-    history.push("/chatRoom");
-  };
-  const handleGrayChatClick = () => {
-    history.push("/chatRoom");
+    setChatChecked(!chatChecked);
   }
   const handleMyInfoClick = () => {
     history.push("/user");
@@ -127,10 +115,7 @@ export default function Header() {
   }
   const handleNotiClick = (event) => {
     setNotiAnchorEl(event.currentTarget);
-    setNotiChecked(true);
-  };
-  const handleGrayNotiClick = (event) => {
-    setNotiAnchorEl(event.currentTarget);
+    setNotiChecked(!notiChecked);
   }
   const handleUserButtonClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -159,26 +144,22 @@ export default function Header() {
           aria-label="full width tabs"
         >
           <Tab label="시간표" classes={{ root: classes.tab, selected: classes.selected }} {...a11yProps(0)} />
-          <Tab label="게시판" classes={{ root: classes.tab, selected: classes.selected }} {...a11yProps(1)} />
-          <Tab label="공지사항" classes={{ root: classes.tab, selected: classes.selected }} {...a11yProps(2)} />
+          <Tab label="강의교환" classes={{ root: classes.tab, selected: classes.selected }} {...a11yProps(1)} />
         </Tabs>
         <Box className={classes.buttonBox}>
-          {chatChecked && <IconButton aria-label="grayChat" onClick={handleGrayChatClick}><ForumOutlinedIcon className={classes.inactivedButton} /></IconButton>}
-          {!chatChecked && <IconButton aria-label="chat" onClick={handleChatClick}><ForumIcon className={classes.activedButton} /></IconButton>}
-          {notiChecked && 
-            <IconButton aria-label="noti" onClick={handleGrayNotiClick}>
-              <NotificationsNoneOutlinedIcon
-                className={classes.inactivedButton} 
+          <IconButton aria-label="grayChat" onClick={handleChatClick}>
+            <Badge badgeContent={3} color="secondary" invisible={chatChecked}>
+              <ForumIcon className={classes.grayButton} />
+            </Badge>
+          </IconButton>
+          <IconButton aria-label="noti" onClick={handleNotiClick}>
+            <Badge badgeContent={2} color="secondary" invisible={notiChecked}>
+              <NotificationIcon
+                className={classes.grayButton} 
                 aria-controls="notification-menu"
                 aria-haspopup="true"/>
-            </IconButton>}
-          {!notiChecked && 
-            <IconButton aria-label="grayNoti" onClick={handleNotiClick}>
-                <NotificationsActiveIcon 
-                  className={classes.activedButton}
-                  aria-controls="notification-menu"
-                  aria-haspopup="true" />
-              </IconButton>}
+              </Badge>
+            </IconButton>
           <Menu
             id="userInfo-menu"
             anchorEl={notiAnchorEl}
@@ -201,9 +182,9 @@ export default function Header() {
               <ListItemText secondary="이것은 공지사항 내용입니다." />
             </MenuItem>
             <MenuItem>
-              <ListItemIcon><EmailOutlinedIcon fontSize="small" /></ListItemIcon>
-              <ListItemText primary="메시지" />
-              <ListItemText secondary="이것은 메시지 내용입니다." />
+              <ListItemIcon><AnnouncementOutlinedIcon fontSize="small" /></ListItemIcon>
+              <ListItemText primary="공지사항2" />
+              <ListItemText secondary="이것은 공지사항2 내용입니다." />
             </MenuItem>
           </Menu>
           <Button
@@ -233,15 +214,15 @@ export default function Header() {
           >
             <MenuItem onClick={handleMyInfoClick}>
               <ListItemIcon><InfoIcon fontSize="small" /></ListItemIcon>
-              <ListItemText primary="My Info" />
+              <ListItemText primary="내 계정" />
             </MenuItem>
             <MenuItem onClick={handleSettingsClick}>
               <ListItemIcon><SettingsIcon fontSize="small" /></ListItemIcon>
-              <ListItemText primary="Settings" />
+              <ListItemText primary="설정" />
             </MenuItem>
             <MenuItem onClick={handleLogOutClick}>
               <ListItemIcon><ExitToAppIcon fontSize="small" /></ListItemIcon>
-              <ListItemText primary="Logout" />
+              <ListItemText primary="로그아웃" />
             </MenuItem>
           </Menu>
         </Box>
