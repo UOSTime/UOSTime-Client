@@ -1,15 +1,33 @@
 /* eslint-disable no-nested-ternary */
 import React from 'react';
-import { useRecoilState, useSetRecoilState } from 'recoil';
+import { useRecoilState } from 'recoil';
 import { Button } from '@material-ui/core';
 import { popupState } from '@states/App';
 import CustomDialog from './CustomDialog';
 
 const noop = () => {};
 
-export default function Popup() {
+export default function usePopup() {
   const [popup, setPopup] = useRecoilState(popupState);
   const { open, title, content, isConfirm = false, onConfirm = noop, onCancel = noop } = popup;
+
+  function showPopup(title, content) {
+    setPopup({
+      open: true,
+      title,
+      content,
+    });
+  }
+
+  function showConfirm(content, onConfirm, onCancel) {
+    setPopup({
+      open: true,
+      isConfirm: true,
+      content,
+      onConfirm,
+      onCancel,
+    });
+  }
 
   const closePopup = () => setPopup({ ...popup, open: false });
 
@@ -27,7 +45,7 @@ export default function Popup() {
     confirmButtonText: '확인',
   };
 
-  return (
+  const Popup = () => (
     <CustomDialog
       open={open}
       {...dialogProps}
@@ -35,24 +53,6 @@ export default function Popup() {
       {content}
     </CustomDialog>
   );
-}
 
-export function useShowPopup(title, content) {
-  const setPopup = useSetRecoilState(popupState);
-  setPopup({
-    open: true,
-    title,
-    content,
-  });
-}
-
-export function useShowConfirm(content, onConfirm, onCancel) {
-  const setPopup = useSetRecoilState(popupState);
-  setPopup({
-    open: true,
-    isConfirm: true,
-    content,
-    onConfirm,
-    onCancel,
-  });
+  return [Popup, showPopup, showConfirm];
 }

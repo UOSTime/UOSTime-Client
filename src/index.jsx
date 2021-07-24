@@ -1,11 +1,19 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import App from './App';
+import { RecoilRoot } from 'recoil';
+import { CssBaseline } from '@material-ui/core';
 import reportWebVitals from './reportWebVitals';
+import App from './App';
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <div className="background-container">
+      <CssBaseline>
+        <RecoilRoot>
+          <App />
+        </RecoilRoot>
+      </CssBaseline>
+    </div>
   </React.StrictMode>,
   document.getElementById('root'),
 );
