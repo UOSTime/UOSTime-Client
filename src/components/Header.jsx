@@ -74,6 +74,12 @@ const useStyles = makeStyles((theme) => ({
   innerIcon: {
     transform: 'scale(1.4)',
   },
+  noticeMenu: {
+    flexDirection: 'column',
+  },
+  noticeMenuItem: {
+    flexDirection: 'row',
+  }
 }));
 
 export default function Header() {
@@ -102,7 +108,7 @@ export default function Header() {
       */
   };
   const handleChatClick = () => {
-    setChatChecked(!chatChecked);
+    !chatChecked && setChatChecked(true);
   }
   const handleMyInfoClick = () => {
     history.push("/user");
@@ -115,7 +121,7 @@ export default function Header() {
   }
   const handleNotiClick = (event) => {
     setNotiAnchorEl(event.currentTarget);
-    setNotiChecked(!notiChecked);
+    !notiChecked && setNotiChecked(true);
   }
   const handleUserButtonClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -161,7 +167,7 @@ export default function Header() {
               </Badge>
             </IconButton>
           <Menu
-            id="userInfo-menu"
+            id="notice-menu"
             anchorEl={notiAnchorEl}
             keepMounted
             open={Boolean(notiAnchorEl)}
@@ -179,12 +185,16 @@ export default function Header() {
             <MenuItem>
               <ListItemIcon><AnnouncementOutlinedIcon fontSize="small" /></ListItemIcon>
               <ListItemText primary="공지사항" />
-              <ListItemText secondary="이것은 공지사항 내용입니다." />
+            </MenuItem>
+            <MenuItem>
+              <ListItemText secondary="이것은 공지사항 내용입니다." inset="true" />
             </MenuItem>
             <MenuItem>
               <ListItemIcon><AnnouncementOutlinedIcon fontSize="small" /></ListItemIcon>
               <ListItemText primary="공지사항2" />
-              <ListItemText secondary="이것은 공지사항2 내용입니다." />
+            </MenuItem>
+            <MenuItem>
+              <ListItemText secondary="이것은 공지사항2 내용입니다." inset="true" />
             </MenuItem>
           </Menu>
           <Button
