@@ -1,13 +1,14 @@
 import React from 'react';
 import { useHistory } from "react-router-dom";
 import { makeStyles, useTheme, AppBar, Tabs, Tab, Typography, Box, Link, Button, IconButton, Menu, MenuItem, ListItemIcon, ListItemText, Badge } from '@material-ui/core';
-import ForumIcon from '@material-ui/icons/Forum';
+import ChatIcon from '@material-ui/icons/Forum';
 import NotificationIcon from '@material-ui/icons/Announcement';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import InfoIcon from '@material-ui/icons/Info';
 import PersonIcon from '@material-ui/icons/Person';
 import SettingsIcon from '@material-ui/icons/Settings';
 import AnnouncementOutlinedIcon from '@material-ui/icons/AnnouncementOutlined';
+import FaceIcon from '@material-ui/icons/Face';
 import Logo from './Logo';
 
 function a11yProps(index) {
@@ -90,6 +91,7 @@ export default function Header() {
   const [notiChecked, setNotiChecked] = React.useState(false);
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [notiAnchorEl, setNotiAnchorEl] = React.useState(null);
+  const [chatAnchorEl, setChatAnchorEl] = React.useState(null);
   const history = useHistory();
   const handleTabChange = (event, newTabIndex) => {
     setTabIndex(newTabIndex);
@@ -107,9 +109,6 @@ export default function Header() {
       }  
       */
   };
-  const handleChatClick = () => {
-    !chatChecked && setChatChecked(true);
-  }
   const handleMyInfoClick = () => {
     history.push("/user");
   }
@@ -123,6 +122,10 @@ export default function Header() {
     setNotiAnchorEl(event.currentTarget);
     !notiChecked && setNotiChecked(true);
   }
+  const handleChatClick = (event) => {
+    setChatAnchorEl(event.currentTarget);
+    !notiChecked && setChatChecked(true);
+  }
   const handleUserButtonClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -131,6 +134,9 @@ export default function Header() {
   };
   const handleNotiDialogClose = () => {
     setNotiAnchorEl(null);
+  };
+  const handleChatDialogClose = () => {
+    setChatAnchorEl(null);
   };
 
   return (
@@ -153,19 +159,52 @@ export default function Header() {
           <Tab label="강의교환" classes={{ root: classes.tab, selected: classes.selected }} {...a11yProps(1)} />
         </Tabs>
         <Box className={classes.buttonBox}>
-          <IconButton aria-label="grayChat" onClick={handleChatClick}>
+          <IconButton aria-label="chat" onClick={handleChatClick}>
             <Badge badgeContent={3} color="secondary" invisible={chatChecked}>
-              <ForumIcon className={classes.grayButton} />
+              <ChatIcon className={classes.grayButton} aria-controls="chat-menu" aria-haspopup="true" />
             </Badge>
           </IconButton>
+          <Menu
+            id="chat-menu"
+            anchorEl={chatAnchorEl}
+            keepMounted
+            open={Boolean(chatAnchorEl)}
+            onClose={handleChatDialogClose}
+            getContentAnchorEl={null}
+            anchorOrigin={{
+              vertical: 'bottom',
+              horizontal: 'center',
+            }}
+            transformOrigin={{
+              vertical: 'top',
+              horizontal: 'center',
+            }}
+          >
+            <MenuItem>
+              <ListItemIcon><FaceIcon fontSize="small" /></ListItemIcon>
+              <ListItemText primary="유저1" />
+              <ListItemText secondary="이것은 유저1의 메시지입니다." inset="true" />
+            </MenuItem>
+            <MenuItem>
+              <ListItemIcon><FaceIcon fontSize="small" /></ListItemIcon>
+              <ListItemText primary="유저2" />
+              <ListItemText secondary="이것은 유저2의 메시지입니다." inset="true" />
+            </MenuItem>
+            <MenuItem>
+              <ListItemIcon><FaceIcon fontSize="small" /></ListItemIcon>
+              <ListItemText primary="유저3" />
+              <ListItemText secondary="이것은 유저3의 메시지입니다." inset="true" />
+            </MenuItem>
+
+          </Menu>
           <IconButton aria-label="noti" onClick={handleNotiClick}>
             <Badge badgeContent={2} color="secondary" invisible={notiChecked}>
               <NotificationIcon
                 className={classes.grayButton} 
-                aria-controls="notification-menu"
+                aria-controls="notice-menu"
                 aria-haspopup="true"/>
-              </Badge>
-            </IconButton>
+            </Badge>
+          </IconButton>
           <Menu
             id="notice-menu"
             anchorEl={notiAnchorEl}
