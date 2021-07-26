@@ -1,5 +1,6 @@
 import React from 'react';
 import { useHistory } from "react-router-dom";
+import { useMediaQuery } from 'react-responsive'
 import { makeStyles, useTheme, AppBar, Tabs, Tab, Typography, Box, Link, Button, IconButton, Menu, MenuItem, ListItemIcon, ListItemText, Badge } from '@material-ui/core';
 import ChatIcon from '@material-ui/icons/Forum';
 import NotificationIcon from '@material-ui/icons/Announcement';
@@ -18,7 +19,7 @@ function a11yProps(index) {
   };
 }
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(theme => ({
   root: {
     width: '100%',
     margin: '0 0 0 0',
@@ -27,6 +28,7 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: '#f6f6f6',
     display: 'flex',
     flexDirection: 'row',
+    flexWrap: 'wrap',
   },
   logoBox: {
     display: 'flex',
@@ -34,10 +36,22 @@ const useStyles = makeStyles((theme) => ({
     color: '#4e4e4e',
     alignItems: 'center',
     padding: '6px 12px',
+    order: 0,
   },
-  font: {
+  uosFont: {
     fontSize: '32px',
     marginLeft: '12px',
+    [theme.breakpoints.down('sm')]: {
+      fontSize: '24px',
+      marginLeft: '9px'
+    },
+  },
+  tabBox: {
+    order: 1,
+    [theme.breakpoints.down('sm')]: {
+      order: 3,
+      flex: '100%'
+    },
   },
   tab: {
     height: '60px',
@@ -48,6 +62,9 @@ const useStyles = makeStyles((theme) => ({
     },
     '&:hover': {
       color: '#f68b7d',
+    },
+    [theme.breakpoints.down('sm')]: {
+      fontSize: '18px'
     },
   },
   selected: {},
@@ -60,17 +77,25 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: 'row',
     alignItems: 'center',
     marginLeft: 'auto',
-    marginRight: '4px'
+    marginRight: '4px',
+    order: 2,
   },
   grayButton: {
     color: '#C4C4C4',
     backgroundColor: '#f6f6f6',
     fontSize: '28px',
+    [theme.breakpoints.down('sm')]: {
+      fontSize: '20px'
+    },
   },
   userButton: {
     color: '#A6C0FE',
     fontSize: '18px',
     padding: '12px 12px 12px 24px',
+    [theme.breakpoints.down('sm')]: {
+      fontSize: '14px',
+      padding: '6px 6px 6px 12px',
+    },
   },
   innerIcon: {
     transform: 'scale(1.4)',
@@ -80,12 +105,13 @@ const useStyles = makeStyles((theme) => ({
   },
   noticeMenuItem: {
     flexDirection: 'row',
-  }
+  },
 }));
 
 export default function Header() {
   const classes = useStyles();
   const theme = useTheme();
+  const isDesktopOrLaptop = useMediaQuery({ minDeviceWidth: 1224 })
   const [tabIndex, setTabIndex] = React.useState(0);
   const [chatChecked, setChatChecked] = React.useState(false);
   const [notiChecked, setNotiChecked] = React.useState(false);
@@ -116,7 +142,9 @@ export default function Header() {
     history.push("/settings");
   }
   const handleLogOutClick = () => {
-    history.push("/login");
+    window.localStorage.removeItem('token');
+    window.localStorage.removeItem('userID');
+    window.location.href = "/login";
   }
   const handleNotiClick = (event) => {
     setNotiAnchorEl(event.currentTarget);
@@ -144,14 +172,15 @@ export default function Header() {
       <AppBar position="static" className={classes.appBar}>
         <Link href='/' underline='none'>
           <Box className={classes.logoBox}>
-            <Logo size='smd'/>
-            <Typography className={classes.font}>UOSTime</Typography>
+            <Logo size={isDesktopOrLaptop ? 'smd' : 'sm'}/>
+            <Typography className={classes.uosFont}>UOSTime</Typography>
           </Box>
         </Link>
         <Tabs
           value={tabIndex}
           onChange={handleTabChange}
           classes={{ indicator: classes.indicator }}
+          className={classes.tabBox}
           variant="fullWidth"
           aria-label="full width tabs"
         >
@@ -243,7 +272,7 @@ export default function Header() {
             startIcon={<PersonIcon className={classes.innerIcon} />}
             onClick={handleUserButtonClick}
           >
-            ThisIsUser
+            {isDesktopOrLaptop && 'ThisIsUser'}
           </Button>
           <Menu
             id="userInfo-menu"
