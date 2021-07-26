@@ -1,11 +1,11 @@
 import React from 'react';
 import { useHistory } from "react-router-dom";
 import { useMediaQuery } from 'react-responsive'
-import { makeStyles, useTheme, AppBar, Tabs, Tab, Typography, Box, Link, Button, IconButton, Menu, MenuItem, ListItemIcon, ListItemText, Badge } from '@material-ui/core';
+import { makeStyles, AppBar, Tabs, Tab, Typography, Box, Link, Button, IconButton, Menu, MenuItem, ListItemIcon, ListItemText, Badge } from '@material-ui/core';
 import ChatIcon from '@material-ui/icons/Forum';
 import NotificationIcon from '@material-ui/icons/Announcement';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
-import InfoIcon from '@material-ui/icons/Info';
+import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import PersonIcon from '@material-ui/icons/Person';
 import SettingsIcon from '@material-ui/icons/Settings';
 import AnnouncementOutlinedIcon from '@material-ui/icons/AnnouncementOutlined';
@@ -22,7 +22,6 @@ function a11yProps(index) {
 const useStyles = makeStyles(theme => ({
   root: {
     width: '100%',
-    margin: '0 0 0 0',
   },
   appBar: {
     backgroundColor: '#f6f6f6',
@@ -30,23 +29,25 @@ const useStyles = makeStyles(theme => ({
     flexDirection: 'row',
     flexWrap: 'wrap',
   },
-  logoBox: {
+  logoContainer: {
     display: 'flex',
     flexDirection: 'row',
     color: '#4e4e4e',
     alignItems: 'center',
     padding: '6px 12px',
     order: 0,
+    [theme.breakpoints.down('sm')]: {
+      flex: '50%'
+    },
   },
-  uosFont: {
+  uostimeFont: {
     fontSize: '32px',
     marginLeft: '12px',
     [theme.breakpoints.down('sm')]: {
-      fontSize: '24px',
-      marginLeft: '9px'
+      fontSize: '20px',
     },
   },
-  tabBox: {
+  tabContainer: {
     order: 1,
     [theme.breakpoints.down('sm')]: {
       order: 3,
@@ -57,14 +58,15 @@ const useStyles = makeStyles(theme => ({
     height: '60px',
     fontSize: '20px',
     color: '#c4c4c4',
+    [theme.breakpoints.down('sm')]: {
+      height: '40px',
+      fontSize: '18px'
+    },
     '&$selected':{
       color: '#f68b7d',
     },
     '&:hover': {
       color: '#f68b7d',
-    },
-    [theme.breakpoints.down('sm')]: {
-      fontSize: '18px'
     },
   },
   selected: {},
@@ -72,13 +74,17 @@ const useStyles = makeStyles(theme => ({
     height: '4px',
     backgroundColor: '#f68b7d',
   },
-  buttonBox: {
+  buttonContainer: {
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
     marginLeft: 'auto',
-    marginRight: '4px',
+    marginRight: '6px',
     order: 2,
+    [theme.breakpoints.down('sm')]: {
+      flex: '50%',
+      justifyContent: 'flex-end',
+    },
   },
   grayButton: {
     color: '#C4C4C4',
@@ -91,34 +97,26 @@ const useStyles = makeStyles(theme => ({
   userButton: {
     color: '#A6C0FE',
     fontSize: '18px',
-    padding: '12px 12px 12px 24px',
     [theme.breakpoints.down('sm')]: {
       fontSize: '14px',
-      padding: '6px 6px 6px 12px',
     },
   },
   innerIcon: {
     transform: 'scale(1.4)',
   },
-  noticeMenu: {
-    flexDirection: 'column',
-  },
-  noticeMenuItem: {
-    flexDirection: 'row',
-  },
 }));
 
 export default function Header() {
   const classes = useStyles();
-  const theme = useTheme();
   const isDesktopOrLaptop = useMediaQuery({ minDeviceWidth: 1224 })
   const [tabIndex, setTabIndex] = React.useState(0);
   const [chatChecked, setChatChecked] = React.useState(false);
   const [notiChecked, setNotiChecked] = React.useState(false);
-  const [anchorEl, setAnchorEl] = React.useState(null);
+  const [userAnchorEl, setUserAnchorEl] = React.useState(null);
   const [notiAnchorEl, setNotiAnchorEl] = React.useState(null);
   const [chatAnchorEl, setChatAnchorEl] = React.useState(null);
   const history = useHistory();
+
   const handleTabChange = (event, newTabIndex) => {
     setTabIndex(newTabIndex);
     /*
@@ -155,15 +153,15 @@ export default function Header() {
     !notiChecked && setChatChecked(true);
   }
   const handleUserButtonClick = (event) => {
-    setAnchorEl(event.currentTarget);
+    setUserAnchorEl(event.currentTarget);
   };
-  const handleUserDialogClose = () => {
-    setAnchorEl(null);
+  const handleUserMenuClose = () => {
+    setUserAnchorEl(null);
   };
-  const handleNotiDialogClose = () => {
+  const handleNotiMenuClose = () => {
     setNotiAnchorEl(null);
   };
-  const handleChatDialogClose = () => {
+  const handleChatMenuClose = () => {
     setChatAnchorEl(null);
   };
 
@@ -171,34 +169,53 @@ export default function Header() {
     <Box className={classes.root}>
       <AppBar position="static" className={classes.appBar}>
         <Link href='/' underline='none'>
-          <Box className={classes.logoBox}>
+          <Box className={classes.logoContainer}>
             <Logo size={isDesktopOrLaptop ? 'smd' : 'sm'}/>
-            <Typography className={classes.uosFont}>UOSTime</Typography>
+            <Typography className={classes.uostimeFont}>UOSTime</Typography>
           </Box>
         </Link>
         <Tabs
           value={tabIndex}
           onChange={handleTabChange}
           classes={{ indicator: classes.indicator }}
-          className={classes.tabBox}
+          className={classes.tabContainer}
           variant="fullWidth"
-          aria-label="full width tabs"
+          aria-label="full-width-tabs"
         >
           <Tab label="시간표" classes={{ root: classes.tab, selected: classes.selected }} {...a11yProps(0)} />
           <Tab label="강의교환" classes={{ root: classes.tab, selected: classes.selected }} {...a11yProps(1)} />
         </Tabs>
-        <Box className={classes.buttonBox}>
+        <Box className={classes.buttonContainer}>
           <IconButton aria-label="chat" onClick={handleChatClick}>
             <Badge badgeContent={3} color="secondary" invisible={chatChecked}>
               <ChatIcon className={classes.grayButton} aria-controls="chat-menu" aria-haspopup="true" />
             </Badge>
           </IconButton>
+          <IconButton aria-label="noti" onClick={handleNotiClick}>
+            <Badge badgeContent={2} color="secondary" invisible={notiChecked}>
+              <NotificationIcon
+                className={classes.grayButton} 
+                aria-controls="notice-menu"
+                aria-haspopup="true"/>
+            </Badge>
+          </IconButton>
+          <Button
+            aria-controls="userInfo-menu"
+            aria-haspopup="true"
+            className={classes.userButton}
+            startIcon={<PersonIcon className={classes.innerIcon} />}
+            onClick={handleUserButtonClick}
+          >
+            {isDesktopOrLaptop && 'ThisIsUser'}
+          </Button>
+          {/* <========== 아래는 메뉴 모음 ==========> */}
+           {/* <===== 채팅 메뉴 =====> */}
           <Menu
             id="chat-menu"
             anchorEl={chatAnchorEl}
             keepMounted
             open={Boolean(chatAnchorEl)}
-            onClose={handleChatDialogClose}
+            onClose={handleChatMenuClose}
             getContentAnchorEl={null}
             anchorOrigin={{
               vertical: 'bottom',
@@ -224,22 +241,14 @@ export default function Header() {
               <ListItemText primary="유저3" />
               <ListItemText secondary="이것은 유저3의 메시지입니다." inset="true" />
             </MenuItem>
-
           </Menu>
-          <IconButton aria-label="noti" onClick={handleNotiClick}>
-            <Badge badgeContent={2} color="secondary" invisible={notiChecked}>
-              <NotificationIcon
-                className={classes.grayButton} 
-                aria-controls="notice-menu"
-                aria-haspopup="true"/>
-            </Badge>
-          </IconButton>
+          {/* <===== 공지사항 메뉴 =====> */}
           <Menu
             id="notice-menu"
             anchorEl={notiAnchorEl}
             keepMounted
             open={Boolean(notiAnchorEl)}
-            onClose={handleNotiDialogClose}
+            onClose={handleNotiMenuClose}
             getContentAnchorEl={null}
             anchorOrigin={{
               vertical: 'bottom',
@@ -265,21 +274,13 @@ export default function Header() {
               <ListItemText secondary="이것은 공지사항2 내용입니다." inset="true" />
             </MenuItem>
           </Menu>
-          <Button
-            aria-controls="userInfo-menu"
-            aria-haspopup="true"
-            className={classes.userButton}
-            startIcon={<PersonIcon className={classes.innerIcon} />}
-            onClick={handleUserButtonClick}
-          >
-            {isDesktopOrLaptop && 'ThisIsUser'}
-          </Button>
+          {/* <===== 유저 정보 메뉴 =====> */}
           <Menu
             id="userInfo-menu"
-            anchorEl={anchorEl}
+            anchorEl={userAnchorEl}
             keepMounted
-            open={Boolean(anchorEl)}
-            onClose={handleUserDialogClose}
+            open={Boolean(userAnchorEl)}
+            onClose={handleUserMenuClose}
             getContentAnchorEl={null}
             anchorOrigin={{
               vertical: 'bottom',
@@ -291,7 +292,7 @@ export default function Header() {
             }}
           >
             <MenuItem onClick={handleMyInfoClick}>
-              <ListItemIcon><InfoIcon fontSize="small" /></ListItemIcon>
+              <ListItemIcon><AccountCircleIcon fontSize="small" /></ListItemIcon>
               <ListItemText primary="내 계정" />
             </MenuItem>
             <MenuItem onClick={handleSettingsClick}>
