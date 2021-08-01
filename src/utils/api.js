@@ -63,7 +63,10 @@ const axiosInstance = axios.create({
 
 axiosInstance.interceptors.request.use(
   config => {
-    config.headers.Authorization = localStorage.getItem('token');
+    const token = localStorage.getItem('token');
+    if (token) {
+      config.headers.Authorization = token;
+    }
     return config;
   },
   error => {
