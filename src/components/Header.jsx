@@ -79,26 +79,41 @@ const useStyles = makeStyles(theme => ({
     flexDirection: 'row',
     alignItems: 'center',
     marginLeft: 'auto',
-    marginRight: '6px',
     order: 2,
     [theme.breakpoints.down('sm')]: {
       flex: '50%',
       justifyContent: 'flex-end',
     },
   },
-  grayButton: {
+  iconButtons: {
+    '&:hover': {
+      backgroundColor: 'transparent',
+    }
+  },
+  grayIcons: {
     color: '#C4C4C4',
     backgroundColor: '#f6f6f6',
     fontSize: '28px',
     [theme.breakpoints.down('sm')]: {
       fontSize: '20px'
     },
+    '&:hover': {
+      color: '#4e4e4e',
+    },
+  },
+  badges: {
+    fontWeight: 900,
   },
   userButton: {
     color: '#A6C0FE',
     fontSize: '18px',
+    padding: '6px 12px',
     [theme.breakpoints.down('sm')]: {
       fontSize: '14px',
+    },
+    '&:hover': {
+      backgroundColor: 'transparent',
+      color: '#4c81fc',
     },
   },
   innerIcon: {
@@ -186,15 +201,15 @@ export default function Header() {
           <Tab label="강의교환" classes={{ root: classes.tab, selected: classes.selected }} {...a11yProps(1)} />
         </Tabs>
         <Box className={classes.buttonContainer}>
-          <IconButton aria-label="chat" onClick={handleChatClick}>
-            <Badge badgeContent={3} color="secondary" invisible={chatChecked}>
-              <ChatIcon className={classes.grayButton} aria-controls="chat-menu" aria-haspopup="true" />
+          <IconButton aria-label="chat" className={classes.iconButtons} onClick={handleChatClick}>
+            <Badge badgeContent={3} color="secondary" classes={{badge: classes.badges}} invisible={chatChecked}>
+              <ChatIcon className={classes.grayIcons} aria-controls="chat-menu" aria-haspopup="true" />
             </Badge>
           </IconButton>
-          <IconButton aria-label="noti" onClick={handleNotiClick}>
-            <Badge badgeContent={2} color="secondary" invisible={notiChecked}>
+          <IconButton aria-label="noti" className={classes.iconButtons} onClick={handleNotiClick}>
+            <Badge badgeContent={2} color="secondary" classes={{badge: classes.badges}} invisible={notiChecked}>
               <NotificationIcon
-                className={classes.grayButton} 
+                className={classes.grayIcons} 
                 aria-controls="notice-menu"
                 aria-haspopup="true"/>
             </Badge>
@@ -208,7 +223,7 @@ export default function Header() {
           >
             {isDesktopOrLaptop && 'ThisIsUser'}
           </Button>
-          {/* <========== 아래는 메뉴 모음 ==========> */}
+          {/* <========== 메뉴 모음 ==========> */}
            {/* <===== 채팅 메뉴 =====> */}
           <Menu
             id="chat-menu"
