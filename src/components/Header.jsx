@@ -124,6 +124,7 @@ const useStyles = makeStyles(theme => ({
 export default function Header() {
   const classes = useStyles();
   const isDesktopOrLaptop = useMediaQuery({ minDeviceWidth: 1224 })
+  const isSmallScreen = useMediaQuery({ maxDeviceWidth: 320 })
   const [tabIndex, setTabIndex] = React.useState(0);
   const [chatChecked, setChatChecked] = React.useState(false);
   const [notiChecked, setNotiChecked] = React.useState(false);
@@ -186,7 +187,7 @@ export default function Header() {
         <Link href='/' underline='none'>
           <Box className={classes.logoContainer}>
             <Logo size={isDesktopOrLaptop ? 'smd' : 'sm'}/>
-            <Typography className={classes.uostimeFont}>UOSTime</Typography>
+            <Typography className={classes.uostimeFont}>{!isSmallScreen && 'UOSTime'}</Typography>
           </Box>
         </Link>
         <Tabs
