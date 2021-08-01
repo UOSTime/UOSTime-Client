@@ -277,17 +277,17 @@ export default function Header() {
           >
             <MenuItem>
               <ListItemIcon><AnnouncementOutlinedIcon fontSize="small" /></ListItemIcon>
-              <ListItemText primary="공지사항" />
-            </MenuItem>
-            <MenuItem>
-              <ListItemText secondary="이것은 공지사항 내용입니다." inset="true" />
+              <Box>
+                <ListItemText primary="공지사항" />
+                <ListItemText secondary="이것은 공지사항 내용입니다." />
+              </Box>
             </MenuItem>
             <MenuItem>
               <ListItemIcon><AnnouncementOutlinedIcon fontSize="small" /></ListItemIcon>
-              <ListItemText primary="공지사항2" />
-            </MenuItem>
-            <MenuItem>
-              <ListItemText secondary="이것은 공지사항2 내용입니다." inset="true" />
+              <Box>
+                <ListItemText primary="공지사항2" />
+                <ListItemText secondary="이것은 공지사항2 내용입니다." />
+              </Box>
             </MenuItem>
           </Menu>
           {/* <===== 유저 정보 메뉴 =====> */}
