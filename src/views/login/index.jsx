@@ -60,7 +60,12 @@ export default function Login() {
       
       const response = await requestAPI(API_LOGIN(), loginInfo);
 
-      if(response.status !== StatusCodes.OK) {
+      if(response.status === StatusCodes.OK) {
+        window.localStorage.setItem('token', response.data.token);
+        window.localStorage.setItem('userID', response.data.userId);
+        setUserID(response.data.userId);
+        setSemester({year: '2021', term: 'A10'})
+      } else {
         switch(response.status) {
           case StatusCodes.UNAUTHORIZED:
             setWarning('아이디 혹은 비밀번호가 틀렸어요!');
@@ -176,7 +181,7 @@ export default function Login() {
 
 const useStyles = makeStyles({
   container: {
-    height: '100%',
+    height: '96vh',
     width: '100%',
     marginTop: 'auto',
     display: 'flex',

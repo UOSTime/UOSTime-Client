@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import './scss/main.scss';
 import Footer from './components/Footer';
 
-import Timetable from './views/Timetable';
+import Timetable from './views/timetable';
 import Login from './views/login/index';
 import PrivacyPolicy from './views/terms/PrivacyPolicy';
 import TermsOfService from './views/terms/TermsOfService';
