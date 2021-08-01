@@ -63,7 +63,7 @@ const axiosInstance = axios.create({
 
 axiosInstance.interceptors.request.use(
   config => {
-    const token = localStorage.getItem('token');
+    const token = getToken();
     if (token) {
       config.headers.Authorization = token;
     }
@@ -95,4 +95,16 @@ export async function requestAPI(config) {
     console.error(error);
     return null;
   }
+}
+
+export function setToken(token) {
+  localStorage.setItem('token', token);
+}
+
+export function getToken() {
+  return localStorage.getItem('token');
+}
+
+export function removeToken() {
+  localStorage.removeItem('token');
 }

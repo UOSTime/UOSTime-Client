@@ -1,4 +1,5 @@
 import io from 'socket.io-client';
+import { getToken } from './api';
 
 let socket;
 
@@ -8,7 +9,7 @@ export function getSocket() {
             path: '/websocket/entryPoint',
             transports: ['websocket'],
             query: {
-              token: window.localStorage.getItem('token')
+              token: getToken()
             },
             reconnectionAttempts: 10
           });

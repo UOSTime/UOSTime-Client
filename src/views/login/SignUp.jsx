@@ -5,7 +5,7 @@ import UosInput from '@components/UosInput';
 import useButtonStyles from '@utils/styles/Button';
 import useFontStyles from '@utils/styles/Font';
 import UosDialog from '@components/UosDialog';
-import { requestAPI, API_SIGN_UP } from '@utils/api';
+import { requestAPI, API_SIGN_UP, removeToken } from '@utils/api';
 import { uosRed } from '@utils/styles/Colors';
 import Loading from '@components/Loading';
 
@@ -87,6 +87,8 @@ export default function SignUpDialog({onClose, open}) {
         }
 
         setIsLoading(true);
+
+        removeToken();
 
         const response = await requestAPI(API_SIGN_UP(), newUser);
 

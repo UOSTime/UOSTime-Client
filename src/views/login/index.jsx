@@ -8,7 +8,7 @@ import Loading from '@components/Loading';
 import UosInput from '@components/UosInput';
 import FindIdDialog from '@views/login/FindId';
 import FindPWDialog from '@views/login/FindPw';
-import { API_LOGIN, API_GET_SEMESTER, requestAPI } from '@utils/api';
+import { API_LOGIN, API_GET_SEMESTER, requestAPI, removeToken, setToken } from '@utils/api';
 import { foregroundColor } from '@utils/styles/Colors';
 import useLogoLayoutStyles from '@utils/styles/login/LogoLayout';
 import useLoginLabelStyles from '@utils/styles/login/LoginLabel';
@@ -57,11 +57,13 @@ export default function Login() {
     const callLogin = async () => {
       setLoading(true);
       setError(null);
-      
-      const response = await requestAPI(API_LOGIN(), loginInfo);
+
+      removeToken();
+
+      const response = await requestAPI(API_LOGIN(loginInfo));
 
       if(response.status === StatusCodes.OK) {
-        window.localStorage.setItem('token', response.data.token);
+        setToken(response.data.token);
         window.localStorage.setItem('userID', response.data.userId);
         setUserID(response.data.userId);
         setSemester({year: '2021', term: 'A10'})
@@ -87,7 +89,7 @@ export default function Login() {
         return;
       }
       
-      window.localStorage.setItem('token', response.data.token);
+      setToken(response.data.token);
       window.localStorage.setItem('userID', response.data.userId);
       setUserID(response.data.userId);
 
