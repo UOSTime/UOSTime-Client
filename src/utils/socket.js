@@ -4,12 +4,18 @@ import { getToken } from './api';
 let socket;
 
 export function getSocket() {
+  const token = getToken();
+
+  if (!token) {
+    return null;
+  }
+
   if (!socket) {
     socket = io(process.env.API_URL_BASE, {
       path: '/websocket/entryPoint',
       transports: ['websocket'],
       query: {
-        token: getToken(),
+        token,
       },
       reconnectionAttempts: 10,
     });
