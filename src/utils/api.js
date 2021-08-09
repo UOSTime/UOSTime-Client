@@ -108,3 +108,15 @@ export function getToken() {
 export function removeToken() {
   localStorage.removeItem('token');
 }
+
+export function setUserID(userID) {
+  localStorage.setItem('userID', userID);
+}
+
+export function getUserID() {
+  return localStorage.getItem('userID');
+}
+
+export function removeUserID() {
+  localStorage.removeItem('userID');
+}
