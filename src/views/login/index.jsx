@@ -64,7 +64,6 @@ export function LoginBox() {
 
     setLoading(true);
     const response = await requestAPI(API_LOGIN({ uid, pw }));
-    setLoading(false);
 
     if (response.status !== StatusCodes.OK) {
       switch (response.status) {
@@ -153,9 +152,7 @@ export function LoginBox() {
             onKeyPress={onEnterPress}
             value={pw}
           />
-          {warning.length > 0 ? (
-            <Typography className={classes.warning}>{warning}</Typography>
-          ) : null}
+          {warning && <Typography className={classes.warning}>{warning}</Typography>}
         </Container>
         <Button
           className={buttonClass.linearRed}

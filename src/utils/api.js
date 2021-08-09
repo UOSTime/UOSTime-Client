@@ -37,7 +37,7 @@ const DELETE = url => ({ method: 'DELETE', url });
 
 // API CONFIG LIST
 export const API_LOGIN = makeConfig(POST('/user/login'));
-export const API_GET_SEMESTER = makeConfig(GET, '/semester');
+export const API_GET_SEMESTER = makeConfig(GET('/semester'));
 export const API_GET_SEMESTERS = makeConfig(GET('/semesters'));
 export const API_GET_ALL_NOTICES = makeConfig(GET('/notice/all'));
 export const API_CREATE_NOTICE = makeConfig(POST('/notice'));
