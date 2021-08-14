@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { Redirect } from 'react-router';
 import { useRecoilValue } from 'recoil';
 import { Box, Button, Container, makeStyles } from '@material-ui/core';
 import { currentTimetableIndexState, timetableListState } from '@states/Timetable';
@@ -19,14 +18,8 @@ export default function Home() {
   const classes = useStyles();
 
   useEffect(() => {
-    if (!localStorage.getItem('userID')) return;
-
     fetchTimetables();
   }, []);
-
-  if (!localStorage.getItem('userID')) {
-    return <Redirect to="/login" />;
-  }
 
   return (
     <Container className={classes.root}>
