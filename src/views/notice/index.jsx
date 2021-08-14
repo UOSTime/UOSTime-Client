@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import HtmlFromMarkdown from '@components/HtmlFromMarkdown';
 import { Box, Container, makeStyles, Typography } from '@material-ui/core';
 import { Timeline, TimelineConnector, TimelineContent, TimelineDot, TimelineItem, TimelineOppositeContent, TimelineSeparator } from '@material-ui/lab';
-import { API_GET_ALL_NOTICES, requestAPI } from '@utils/api';
+import { API_GET_USE_NOTICE, API_GET_HOT_NOTICE, requestAPI } from '@utils/api';
 import { convertUTCtoYYYYMMDD } from '@utils/time';
 import theme from '@utils/styles/Theme';
 
@@ -42,17 +42,21 @@ function NoticeListItem(props) {
 
 export default function Notice() {
   // state
-  const [notices, setNotices] = useState(null);
+  const [notices, setNotices] = useState([]);
 
   useEffect(async () => {
     // update notice list
-    const { data: allNotices } = await requestAPI(API_GET_ALL_NOTICES());
-    setNotices(allNotices);
+    const noticeList = (await Promise.all([
+      requestAPI(API_GET_USE_NOTICE()),
+      requestAPI(API_GET_HOT_NOTICE()),
+    ])).map(({ data }) => data).flat();
+
+    setNotices(noticeList);
   }, []);
 
-  const noticeList = notices?.filter(notice => notice.is_using).map((notice, i) => (
+  const noticeList = notices.filter(notice => notice.is_using).map(notice => (
     <NoticeListItem
-      key={notice.date}
+      key={notice._id}
       notice={notice}
     />
   ));

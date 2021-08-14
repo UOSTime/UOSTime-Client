@@ -16,14 +16,16 @@ export default function AddNoticeDialog(props) {
   const [isUsing, setIsUsing] = useState(true);
   const [isHot, setIsHot] = useState(false);
 
-  const onSubmit = () => {
-    requestAPI(API_CREATE_NOTICE(), {
+  const onSubmit = async e => {
+    e.preventDefault();
+    await requestAPI(API_CREATE_NOTICE({
       title,
       content,
       date,
       is_using: isUsing,
       is_hot: isHot,
-    });
+    }));
+    closeAddNoticeDialog();
   };
 
   return (
