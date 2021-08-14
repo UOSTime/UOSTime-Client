@@ -43,17 +43,17 @@ export default function SearchBar() {
   }, [searchType, keyword]);
 
   const onSearch = async () => {
-    const query = {
+    const trimmedKeyword = keyword.trim();
+
+    // handle exception: no keyword
+    if (!trimmedKeyword) return;
+
+    const response = await requestAPI(API_GET_ALL_LECTURES({
       year: 2021,
       term: 'A10',
       searchType,
-      keyword: keyword.trim(),
-    };
-
-    // handle exception: no keyword
-    if (!query.keyword) return;
-
-    const response = await requestAPI(API_GET_ALL_LECTURES(query));
+      keyword: trimmedKeyword,
+    }));
 
     if (!response) {
       // TODO: edit

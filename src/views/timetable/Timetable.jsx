@@ -57,12 +57,12 @@ export default function Timetable() {
     }
     const tlectureId = tlecture._id;
 
-    const response = await requestAPI(API_DELETE_TLECTURE(), {
+    const response = await requestAPI(API_DELETE_TLECTURE({
       year: 2021,
       term: 'A10',
       tLectureId: tlectureId,
       timetableId: timetable._id,
-    });
+    }));
 
     if (response.status !== StatusCodes.OK) {
       alert('강의를 삭제하지 못했어요...');
@@ -79,14 +79,12 @@ export default function Timetable() {
   };
 
   const onSubmitName = async () => {
-    const body = {
+    const response = await requestAPI(API_PATCH_TIMETABLE_NAME({
       year: timetable.year,
       term: timetable.term,
       name: timetable.name,
       timetableId: timetable._id,
-    };
-
-    const response = await requestAPI(API_PATCH_TIMETABLE_NAME(), body);
+    }));
 
     if (response.status !== StatusCodes.OK) {
       alert('시간표 명을 변경하지 못 했어요...');
