@@ -87,7 +87,7 @@ export async function requestAPI(config) {
   try {
     if (config.needToken && !getToken()) {
       // token required but not found: API wouldn't be requested
-      // TODO: redirect to login
+      window.location.href = '/login';
       return null;
     }
 
