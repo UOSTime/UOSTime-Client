@@ -27,8 +27,8 @@ function App() {
             <Switch>
               <Route exact path="/" component={Timetable} />
               <Route exact path="/login" component={Login} />
-              <Route exact path="/chatrooms" component={Chatrooms} />
-              <Route path="/chat" component={ChatroomPage} />
+              <Route exact path="/chatroom" component={Chatrooms} />
+              <Route path="/chatroom/:chatRoomId" component={ChatroomPage} />
               <Route exact path="/notice" component={Notice} />
               <Route exact path="/admin" component={Admin} />
               <Route exact path="/privacy_policy" component={PrivacyPolicy} />

@@ -84,10 +84,10 @@ const useStyles = makeStyles({
     margin: '0px 1px 0px 1px',
   },
   content: {
-    maxWidth: '90%',
-    fontSize: '0.9rem',
+    maxWidth: '40%',
+    fontSize: '1.1rem',
     margin: '0px 1px 0px 1px',
-    padding: '0px 6px 0px 6px',
+    padding: '5px 10px',
     borderRadius: '5px',
   },
   from: {

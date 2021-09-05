@@ -66,7 +66,7 @@ export const API_UPDATE_LECTURES = makeAPI(PATCH, '/lecture');
 export const API_GET_HISTORIES = makeAPI(GET, '/history');
 
 const axiosInstance = axios.create({
-  baseURL: 'http://localhost:2021/api',
+  baseURL: `${API_URL_BASE}/api`,
   timeout: 20000,
 });
 

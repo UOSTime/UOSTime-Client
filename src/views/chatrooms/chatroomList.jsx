@@ -7,31 +7,34 @@ import { chatroomState } from '../../states/Chatroom';
 import userIcon from '@img/fontawesome/chat-user.svg';
 import usersIcon from '@img/fontawesome/chat-users.svg';
 
-export default function ChatroomList({rooms, onClick}) {
+export default function ChatroomList({ rooms, onClick }) {
   const classes = useStyles();
 
   return (
     <Container className={classes.root}>
-      {rooms.map(room => <Chatroom key={room.id} info={room} onClick={onClick} />)}
+      {rooms.map(room => (
+        <Chatroom key={room.id} info={room} onClick={onClick} />
+      ))}
     </Container>
   );
 }
 
-function Chatroom({info}) {
+function Chatroom({ info }) {
   const [chatrooms, setChatrooms] = useRecoilState(chatroomState);
   const history = useHistory();
 
   const classes = useChatroomStyles();
 
   const userId = window.localStorage.getItem('userID');
-  const participants = info.participants.find(p => p._id !== userId).name 
-                        + (info.participants.length > 2 ? ` 외 ${info.participants.length-2}명` : '');                        
+  const participants =
+    info.participants.find(p => p._id !== userId).name +
+    (info.participants.length > 2 ? ` 외 ${info.participants.length - 2}명` : '');
 
-  const onClick = (e) => {
+  const onClick = e => {
     const chatRoomId = e.target.getAttribute('name');
 
     const newChatrooms = chatrooms.map(room => {
-      if(room.id === chatRoomId) {
+      if (room.id === chatRoomId) {
         const newRoom = { ...room };
         newRoom.new = 0;
 
@@ -42,23 +45,20 @@ function Chatroom({info}) {
 
     setChatrooms(newChatrooms);
 
-    history.push(`/chat?id=${info.id}`);
-  }
-                      
+    history.push(`/chatroom/${info.id}`);
+  };
 
   return (
     <Container className={classes.root} onClick={onClick}>
       <img className={classes.img} src={info.participants.length > 2 ? usersIcon : userIcon} />
       <Container className={classes.body}>
         <Container className={classes.title}>
-          <Typography className={classes.name}>{ info.name }</Typography>
-          <Typography className={classes.participants}>{ participants }</Typography>
+          <Typography className={classes.name}>{info.name}</Typography>
+          <Typography className={classes.participants}>{participants}</Typography>
         </Container>
         <Container className={classes.contents}>
-          <Typography className={classes.topMessage}>
-            { info.topMessage }
-          </Typography>
-          { info.new > 0 ? <Box className={classes.newCnt}>{info.new}</Box> : null }
+          <Typography className={classes.topMessage}>{info.topMessage}</Typography>
+          {info.new > 0 ? <Box className={classes.newCnt}>{info.new}</Box> : null}
         </Container>
       </Container>
     </Container>
@@ -67,8 +67,8 @@ function Chatroom({info}) {
 
 const useStyles = makeStyles({
   root: {
-    padding: '0'
-  }
+    padding: '0',
+  },
 });
 
 const useChatroomStyles = makeStyles({
@@ -80,26 +80,26 @@ const useChatroomStyles = makeStyles({
     alignItems: 'center',
     '&:hover': {
       cursor: 'pointer',
-      backgroundColor: '#DFDFDF'
+      backgroundColor: '#DFDFDF',
     },
     '&:active': {
-      backgroundColor: '#C0C0C0'
-    }
+      backgroundColor: '#C0C0C0',
+    },
   },
   img: {
     width: '40px',
     height: '40px',
-    marginLeft: '5px'
+    marginLeft: '5px',
   },
   body: {
-    padding: '0px 5px 0px 10px'
+    padding: '0px 5px 0px 10px',
   },
   title: {
     display: 'flex',
     marginBottom: '4px',
     padding: '0',
     justifyContent: 'space-between',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   name: {
     height: '1.2rem',
@@ -107,12 +107,12 @@ const useChatroomStyles = makeStyles({
     fontSize: '1rem',
     textOverflow: 'ellipsis',
     overflow: 'hidden',
-    whiteSpace: 'nowrap'
+    whiteSpace: 'nowrap',
   },
   participants: {
     fontSize: '0.6rem',
     whiteSpace: 'nowrap',
-    margin: '0px 5px 0px 5px'
+    margin: '0px 5px 0px 5px',
   },
   contents: {
     display: 'flex',
@@ -132,7 +132,7 @@ const useChatroomStyles = makeStyles({
     verticalAlign: 'middle',
     fontWeight: '700',
     fontSize: '0.7rem',
-    whiteSpace: 'nowrap'
+    whiteSpace: 'nowrap',
   },
   topMessage: {
     width: '85%',
@@ -143,6 +143,6 @@ const useChatroomStyles = makeStyles({
     fontSize: '0.8rem',
     textOverflow: 'ellipsis',
     overflow: 'hidden',
-    whiteSpace: 'nowrap'
-  }
-})
+    whiteSpace: 'nowrap',
+  },
+});
