@@ -1,31 +1,38 @@
 import React, { useEffect, useRef, useState } from 'react';
 import ContentEditable from 'react-contenteditable';
-import { Menu, MenuItem, Button, Container, makeStyles, Typography } from '@material-ui/core';
+import { Button, Container, makeStyles, Typography } from '@material-ui/core';
 import IconButton from '@material-ui/core/IconButton';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
+import { Redirect, useHistory, useParams } from 'react-router-dom';
+import { useRecoilValue } from 'recoil';
+import useInput from '@hooks/useInput';
 import { v4 as uuidv4 } from 'uuid';
-import { API_FIND_CHATROOM, API_GET_MESSAGES, API_GET_POINTS, requestAPI } from '../../utils/api';
-import { StatusCodes } from 'http-status-codes';
-import ChatMessage from './chatMessage';
-import { getSocket } from '../../utils/socket';
-import { Redirect, useHistory } from 'react-router';
-import { uosYellow } from '@utils/styles/Colors';
-import UserInfoDialog from '../../components/UserInfoDialog';
-import userIcon from '@img/fontawesome/chat-user.svg';
 import usersIcon from '@img/fontawesome/chat-users.svg';
+import userIcon from '@img/fontawesome/chat-user.svg';
+import { StatusCodes } from 'http-status-codes';
+import { uosYellow } from '@utils/styles/Colors';
+import ChatMessage from './chatMessage';
+import { API_GET_MESSAGES, requestAPI } from '../../utils/api';
+import { getSocket } from '../../utils/socket';
+import UserInfoDialog from '../../components/UserInfoDialog';
 import RoomInfoMenu from './RoomInfoMenu';
 import MainMenu from './MainMenu';
+import { currentChatRoom } from '../../states/Chatroom';
 
-export default function Chatroom({ id }) {
-  const [chatRoom, setChatRoom] = useState({});
-  const [messages, setMessages] = useState([]);
+export default function Chatroom() {
+  const { chatRoomId } = useParams();
+  const { chatRoom: initChatRoom, messages: initMessages } = useRecoilValue(
+    currentChatRoom(chatRoomId),
+  );
+  const [messages, setMessages] = useState(initMessages);
+  const [chatRoom, setChatRoom] = useState(initChatRoom);
   const [readPoints, setReadPoints] = useState([]);
   const [emptyMsg, setEmptyMsg] = useState('');
   const [infoOpen, setInfoOpen] = useState(false);
   const [menuAnchorEl, setMenuAnchorEl] = useState(null);
   const [infoAnchorEl, setInfoAnchorEl] = useState(null);
-  const [input, setInput] = useState('');
+  const [input, handleInput, setInput] = useInput('');
 
   const classes = useStyles();
 
@@ -47,7 +54,6 @@ export default function Chatroom({ id }) {
   if (!userId) {
     return <Redirect to="/login" />;
   }
-  const chatRoomId = id;
   const socket = getSocket();
   const menuOption = ['채팅방 이름 변경', '참여자 목록', '채팅방 나가기'];
   const loadUnit = 100;
@@ -77,8 +83,8 @@ export default function Chatroom({ id }) {
     messageRef.current = newMessages;
 
     socket.emit('read', {
-      chatRoomId: chatRoomId,
-      userId: userId,
+      chatRoomId,
+      userId,
       messageIdx: range.current.end,
     });
   };
@@ -115,64 +121,11 @@ export default function Chatroom({ id }) {
     socket.on('message', onMessageEvent);
     socket.on('read', onReadEvent);
 
-    const getChatRoom = async chatRoomId => {
-      const response = await requestAPI(API_FIND_CHATROOM().setPathParam(chatRoomId));
-
-      if (response.status !== StatusCodes.OK) {
-        setEmptyMsg('데이터를 불러오는데 실패했습니다.');
-
-        history.push('/chatrooms');
-
-        throw new Error();
-      }
-
-      setChatRoom(response.data);
-      chatRoomRef.current = response.data;
-
-      return response.data;
-    };
-
-    const getMessages = async (chatRoomId, start, end) => {
-      if (end < 0) return;
-
-      const response = await requestAPI(API_GET_MESSAGES().setQuery({ chatRoomId, start, end }));
-
-      if (response.status !== StatusCodes.OK) {
-        setEmptyMsg('채팅을 불러오는데 실패했습니다.');
-        return;
-      }
-      setMessages(response.data);
-      messageRef.current = response.data;
-    };
-
-    const getReadPoints = async chatRoomId => {
-      const response = await requestAPI(API_GET_POINTS().setQuery({ chatRoomId }));
-
-      if (response.status !== StatusCodes.OK) {
-        setEmptyMsg('데이터를 불러오는데 실패했습니다.');
-        return;
-      }
-      setReadPoints(response.data);
-      readPointRef.current = response.data;
-    };
-
-    getChatRoom(chatRoomId)
-      .then(room => {
-        const start = room.length > loadUnit ? room.length - loadUnit : 0;
-        const end = room.length > 0 ? room.length - 1 : 0;
-
-        range.current = { start, end };
-
-        getMessages(chatRoomId, start, end);
-        getReadPoints(chatRoomId);
-
-        socket.emit('read', {
-          chatRoomId: chatRoomId,
-          userId: userId,
-          messageIdx: range.current.end,
-        });
-      })
-      .catch(() => {});
+    socket.emit('read', {
+      chatRoomId,
+      userId,
+      messageIdx: 10,
+    });
 
     return () => {
       socket.off('read');
@@ -184,10 +137,6 @@ export default function Chatroom({ id }) {
     e.preventDefault();
     const text = e.clipboardData.getData('text');
     document.execCommand('insertText', false, text);
-  };
-
-  const onChange = e => {
-    setInput(e.target.value);
   };
 
   const onEnterPress = e => {
@@ -208,7 +157,6 @@ export default function Chatroom({ id }) {
         type: 'normal',
         content: input,
       };
-
       socket.emit('message', messageEvent);
 
       const newMessages = messageRef.current.concat(messageEvent);
@@ -348,7 +296,7 @@ export default function Chatroom({ id }) {
           tagName="div"
           html={input}
           onPaste={onPaste}
-          onChange={onChange}
+          onChange={handleInput}
           onKeyPress={onEnterPress}
         />
         <Button className={classes.sendBtn} onClick={send} ref={sendBtnRef}>
@@ -375,6 +323,7 @@ const useStyles = makeStyles({
   },
   titleContainer: {
     padding: '0',
+    marginBottom: '3px',
     height: '100%',
     display: 'flex',
     alignItems: 'center',
@@ -413,6 +362,8 @@ const useStyles = makeStyles({
     margin: '0px',
     overflowY: 'auto',
     padding: '0',
+    display: 'flex',
+    flexDirection: 'column-reverse',
   },
   msgOl: {
     padding: '0',
