@@ -26,3 +26,9 @@ export const getTermsAsArray = () => Object
   }));
 
 export const getTermNamebyCode = code => Terms[code]?.name;
+
+export const convertSemesterToString = ({ year, term }) => `${year}-${term}`;
+export const convertStringToSemester = str => {
+  const [year, term] = str.split('-');
+  return { year, term };
+};
