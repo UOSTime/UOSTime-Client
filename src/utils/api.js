@@ -16,9 +16,14 @@ const makeConfig = ({ method, url }, needToken = true) => (initialData = {}) => 
       return config;
     },
 
+    setQuery: query => {
+      config.params = query;
+      return config;
+    },
+
     setData: data => {
       if (method === 'GET') {
-        config.params = data;
+        config.setQuery(data);
       } else {
         config.data = data;
       }

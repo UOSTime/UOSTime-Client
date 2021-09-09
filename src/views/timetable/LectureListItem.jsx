@@ -35,14 +35,12 @@ export default function LectureListItem(props) {
       return;
     }
 
-    const body = {
+    const response = await requestAPI(API_ADD_TLECTURE({
       year: timetable.year,
       term: timetable.term,
       lectureId: lecture._id,
       timetableId: timetable._id,
-    };
-
-    const response = await requestAPI(API_ADD_TLECTURE(), body);
+    }));
 
     if (response.status !== StatusCodes.OK) {
       alert('강의를 추가하는데 실패했어요...');
@@ -60,12 +58,12 @@ export default function LectureListItem(props) {
   };
 
   const deleteLecture = async () => {
-    const response = await requestAPI(API_DELETE_TLECTURE(), {
+    const response = await requestAPI(API_DELETE_TLECTURE({
       year: timetable.year,
       term: timetable.term,
       tLectureId: lecture._id,
       timetableId: timetable._id,
-    });
+    }));
 
     if (response.status !== StatusCodes.OK) {
       alert('강의를 버리지 못했어요..');
