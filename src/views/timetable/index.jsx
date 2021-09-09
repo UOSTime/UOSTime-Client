@@ -67,6 +67,7 @@ const useStyles = makeStyles(theme => ({
     flex: '1',
     flexGrow: '1',
     margin: '1em 0',
+    maxHeight: '100vh', // TODO: 시간표 노출 제약 확인 필요
     [theme.breakpoints.down('lg')]: {
       display: 'flex',
       flexDirection: 'column',
@@ -92,9 +93,6 @@ const useStyles = makeStyles(theme => ({
         paddingLeft: '1em',
       },
     },
-  },
-  lectureList: {
-    height: '100%',
   },
   timetableTitle: {
     display: 'flex',
