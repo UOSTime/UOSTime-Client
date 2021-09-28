@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { Accordion, AccordionDetails, AccordionSummary, Box, Button, FormControl, FormControlLabel, Grid, Paper, Switch, TextField, Typography } from '@material-ui/core';
 import { ExpandMore } from '@material-ui/icons';
 import HtmlFromMarkdown from '@components/HtmlFromMarkdown';
-import { API_DELETE_NOTICE, API_GET_ALL_NOTICES, API_UPDATE_NOTICE, requestAPI } from '@utils/api';
+import usePopup from '@components/usePopup';
+import { API_DELETE_NOTICE, API_GET_NOTICE, API_UPDATE_NOTICE, requestAPI } from '@utils/api';
 import { convertUTCtoYYYYMMDD, convertYYYYMMDDtoUTC } from '@utils/time';
 import AddNoticeDialog from './AddNoticeDialog';
 
@@ -23,6 +24,8 @@ function NoticeListItem(props) {
   const [isHot, setIsHot] = useState(notice.is_hot);
   const [isUsing, setIsUsing] = useState(notice.is_using);
 
+  const [, , showConfirm] = usePopup();
+
   useEffect(() => {
     setIsEdited(title !== notice.title
       || content !== notice.content
@@ -32,18 +35,19 @@ function NoticeListItem(props) {
   }, [title, content, date, isHot, isUsing]);
 
   const deleteNotice = () => {
-    if (confirm('정말 삭제하시겠습니까?')) {
-      requestAPI(API_DELETE_NOTICE(), { _id: notice._id });
-    }
+    showConfirm('정말 삭제하시겠습니까?',
+      () => requestAPI(API_DELETE_NOTICE().setPath(notice._id)));
   };
 
   const updateNotice = () => {
-    notice.title = title;
-    notice.content = content;
-    notice.date = date;
-    notice.is_hot = isHot;
-    notice.is_using = isUsing;
-    requestAPI(API_UPDATE_NOTICE(), notice);
+    requestAPI(API_UPDATE_NOTICE({
+      _id: notice._id,
+      title,
+      content,
+      date,
+      is_hot: isHot,
+      is_using: isUsing,
+    }));
   };
 
   return (
@@ -151,8 +155,14 @@ export default function NoticeList() {
 
   useEffect(async () => {
     // update notice list
-    const { data: allNotices } = await requestAPI(API_GET_ALL_NOTICES());
-    setNotices(allNotices);
+    const noticeList = (await Promise.all([
+      requestAPI(API_GET_NOTICE({ use: true, hot: true })),
+      requestAPI(API_GET_NOTICE({ use: true, hot: false })),
+      requestAPI(API_GET_NOTICE({ use: false, hot: true })),
+      requestAPI(API_GET_NOTICE({ use: false, hot: false })),
+    ])).map(({ data }) => data).flat();
+
+    setNotices(noticeList);
   }, []);
 
   const toggleExpand = i => {
@@ -161,7 +171,7 @@ export default function NoticeList() {
 
   const noticeList = notices.map((notice, i) => (
     <NoticeListItem
-      key={notice.title}
+      key={notice._id}
       notice={notice}
       accordionIndex={i}
       onChange={toggleExpand}

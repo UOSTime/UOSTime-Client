@@ -1,44 +1,38 @@
 /* eslint-disable no-console */
 /* eslint-disable no-unused-vars */
-/* eslint-disable prefer-const */
 import axios from 'axios';
+import usePopup from '@components/usePopup';
 
-//test
-const { API_URL_BASE } =  process.env;
+const { API_URL_BASE } = process.env;
 
-const makeAPI = (method, path) => {
-  return () => {
-    const METHOD = method(path);
+const makeConfig = ({ method, url }, needToken = true) => (initialData = {}) => {
+  const config = {
+    method,
+    url,
+    needToken,
 
-    const API = {
-      ...METHOD,
-      data: {},
+    setPath: (...path) => {
+      config.url += ['', ...path].join('/');
+      return config;
+    },
 
-      setPathParam: (...pathParams) => {
-        const pathVars = pathParams.map(param => `/${param}`)
-                  .reduce((acc, cur) => acc + cur);
-    
-        API.url += pathVars;
-        return API;
-      },
-      setQuery: queries => {
-        const queryStr = Object.entries(queries)
-                              .map(([key, value]) => `${key}=${encodeURIComponent(value)}`)
-                              .join('&');
-        API.url = `${API.url}?${queryStr}`;
-        
-        return API;
-      },
-      setBody: body => {
-        API.data = body;
+    setQuery: query => {
+      config.params = query;
+      return config;
+    },
 
-        return API;
+    setData: data => {
+      if (method === 'GET') {
+        config.setQuery(data);
+      } else {
+        config.data = data;
       }
-    }
+      return config;
+    },
+  };
 
-    return API;
-  }
-}
+  return config.setData(initialData);
+};
 
 // API CONFIG OBJECT
 const GET = url => ({ method: 'GET', url });
@@ -47,65 +41,65 @@ const PUT = url => ({ method: 'PUT', url });
 const PATCH = url => ({ method: 'PATCH', url });
 const DELETE = url => ({ method: 'DELETE', url });
 
-
 // API CONFIG LIST
-
-export const API_LOGIN = makeAPI(POST, '/user/login');
-export const API_MY_INFO = makeAPI(GET, '/user');
-export const API_SIGN_UP = makeAPI(POST, '/user');
-export const API_FIND_ID = makeAPI(GET, '/user/id');
-export const API_FIND_PW = makeAPI(GET, '/user/password');
-export const API_SEND_CODE = makeAPI(POST, 'user/auth');
-export const API_AUTH_EMAIL = (userID, code) => makeAPI(POST, `user/auth/${userID}/${code}`);
-export const API_GET_SEMESTERS = makeAPI(GET, '/semesters');
-export const API_GET_ALL_NOTICES = makeAPI(GET, '/notice/all');
-export const API_CREATE_NOTICE = makeAPI(POST, '/notice');
-export const API_UPDATE_NOTICE = makeAPI(PATCH, '/notice');
-export const API_DELETE_NOTICE = makeAPI(DELETE, '/notice');
-export const API_GET_ALL_LECTURES = makeAPI(GET, '/lecture');
-export const API_UPDATE_LECTURES = makeAPI(PATCH, '/lecture');
-export const API_GET_HISTORIES = makeAPI(GET, '/history');
-
-
+export const API_LOGIN = makeConfig(POST('/user/login'), false);
+export const API_GET_SEMESTER = makeConfig(GET('/semester'));
+export const API_GET_SEMESTERS = makeConfig(GET('/semesters'));
+export const API_GET_NOTICE = makeConfig(GET('/notice'));
+export const API_GET_USE_NOTICE = makeConfig(GET('/notice/use'));
+export const API_GET_HOT_NOTICE = makeConfig(GET('/notice/hot'));
+export const API_CREATE_NOTICE = makeConfig(POST('/notice'));
+export const API_UPDATE_NOTICE = makeConfig(PATCH('/notice'));
+export const API_DELETE_NOTICE = makeConfig(DELETE('/notice'));
+export const API_GET_ALL_LECTURES = makeConfig(GET('/lecture'));
+export const API_UPDATE_LECTURES = makeConfig(PATCH('/lecture'));
+export const API_DELETE_TLECTURE = makeConfig(DELETE('/timetable/tlecture'));
+export const API_ADD_TLECTURE = makeConfig(POST('/timetable/tlecture'));
+export const API_CREATE_TIMETABLE = makeConfig(POST('/timetable'));
+export const API_DELETE_TIMETABLE = makeConfig(DELETE('/timetable'));
+export const API_GET_TIMETABLES = makeConfig(GET('/timetable'));
+export const API_PATCH_TIMETABLE_NAME = makeConfig(PATCH('/timetable/name'));
+export const API_GET_HISTORIES = makeConfig(GET('/history'));
+export const API_SIGN_UP = makeConfig(POST('/user'), false);
+export const API_FIND_ID = makeConfig(GET('/user/id'), false);
+export const API_FIND_PW = makeConfig(GET('/user/password'), false);
 
 const axiosInstance = axios.create({
   baseURL: `${API_URL_BASE}/api`,
-  timeout: 20000
+  timeout: 20000,
 });
 
 axiosInstance.interceptors.request.use(
   config => {
-    const token = window.localStorage.getItem('token');
-    if(token) {
-      config.headers.Authorization = localStorage.getItem('token');
+    const token = getToken();
+    if (token) {
+      config.headers.Authorization = token;
     }
     return config;
   },
   error => {
+    const [, showPopup] = usePopup();
     console.error(error);
-
-    alert('서버를 찾을 수 없어요...');
-    return null
-  }
-)
+    showPopup('에러', '서버를 찾을 수 없어요...');
+    return null;
+  },
+);
 
 axiosInstance.interceptors.response.use(
-  config => {
-    return config;
-  },
-  error => {
-    const failResponse = error.response;
-    return Promise.resolve(failResponse);
-  }
-)
+  config => config,
+  error => Promise.resolve(error.response),
+);
 
-export async function requestAPI(apiConfig, data) {
-  const config = {
-    url: apiConfig.url,
-    method: apiConfig.method,
-    data: data ? data : apiConfig.data
-  };
-  try{
+export async function requestAPI(config) {
+  try {
+    if (config.needToken && !getToken()) {
+      // token required but not found: API wouldn't be requested
+      window.location.href = '/login';
+      return null;
+    }
+
+    // request API
+    delete config.needToken;
     const response = await axiosInstance.request(config);
 
     // for test
@@ -114,8 +108,31 @@ export async function requestAPI(apiConfig, data) {
     // includes 3xx, 4xx responses
     return response;
   } catch (error) {
-    console.error('Error', error);
-    
+    console.error(error);
     return null;
   }
+}
+
+export function setToken(token) {
+  localStorage.setItem('token', token);
+}
+
+export function getToken() {
+  return localStorage.getItem('token');
+}
+
+export function removeToken() {
+  localStorage.removeItem('token');
+}
+
+export function setUserID(userID) {
+  localStorage.setItem('userID', userID);
+}
+
+export function getUserID() {
+  return localStorage.getItem('userID');
+}
+
+export function removeUserID() {
+  localStorage.removeItem('userID');
 }

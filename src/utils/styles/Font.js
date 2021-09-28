@@ -17,6 +17,11 @@ const useFontStyles = makeStyles({
         fontSize: '1rem',
         ...styles
     }),
+    white: styles => ({
+        color: 'white',
+        fontSize: '1rem',
+        ...styles
+    }),
     black: styles => ({
         color: '#4E4E4E',
         fontSize: '1rem',

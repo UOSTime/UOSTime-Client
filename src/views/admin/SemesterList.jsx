@@ -1,31 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Button, FormControl, InputLabel, List, ListItem, ListItemText, MenuItem, Paper, Select, TextField } from '@material-ui/core';
+import { Box, Button, FormControl, InputLabel, MenuItem, Select, TextField } from '@material-ui/core';
 import { API_UPDATE_LECTURES, API_GET_HISTORIES, requestAPI } from '@utils/api';
 import { getUniqueID } from '@utils/id';
 import { getAllTerms } from '@utils/semester';
 import { getToday } from '@utils/time';
-
-function UpdateHistoryListItem(props) {
-  // props
-  const {
-    history: {
-      // lastUpdatedAt = null, // TODO: where is the time?
-      by,
-      createCnt,
-      updateCnt,
-      deleteCnt,
-      maintainCnt,
-    },
-  } = props;
-
-  return (
-    <ListItem>
-      <ListItemText
-        primary={`by ${by}. +${createCnt}/-${deleteCnt}/*${updateCnt}/=${maintainCnt}`}
-      />
-    </ListItem>
-  );
-}
+import CustomTable from '@components/CustomTable';
 
 export default function SemesterList() {
   const today = getToday();
@@ -43,28 +22,20 @@ export default function SemesterList() {
 
   useEffect(async () => {
     // show update histories
-    const { data: histories } = await requestAPI(API_GET_HISTORIES(), {
+    const { data: histories } = await requestAPI(API_GET_HISTORIES({
       year: selectedYear,
       term: selectedTerm,
       page: 1, // TODO: make it selectable
-    });
+    }));
     setUpdateHistories(histories);
   }, [selectedYear, selectedTerm]);
 
   const updateLectures = () => {
-    requestAPI(API_UPDATE_LECTURES(), {
+    requestAPI(API_UPDATE_LECTURES({
       year: selectedYear,
       term: selectedTerm,
-      // isTest
-    });
+    }));
   };
-
-  const updateHistoryList = updateHistories.map(history => (
-    <UpdateHistoryListItem
-      key={history._id}
-      history={history}
-    />
-  ));
 
   return (
     <>
@@ -90,7 +61,7 @@ export default function SemesterList() {
             >
               {
                 allTerms.map(({ termCode, termName }) => (
-                  <MenuItem value={termCode}>{termName}</MenuItem>
+                  <MenuItem key={termCode} value={termCode}>{termName}</MenuItem>
                 ))
               }
             </Select>
@@ -100,13 +71,18 @@ export default function SemesterList() {
           <Button variant="contained" color="primary" onClick={() => updateLectures()}>업데이트</Button>
         </Box>
       </Box>
-      <Paper>
-        {
-          updateHistoryList.length
-            ? <List dense>{updateHistoryList}</List>
-            : <Box p={2}>(업데이트 이력 없음)</Box>
-        }
-      </Paper>
+      <CustomTable
+        columns={[
+          ['관리자', ['by', 'name']],
+          ['신규', ['createCnt']],
+          ['삭제', ['deleteCnt']],
+          ['변경', ['updateCnt']],
+          ['유지', ['maintainCnt']],
+          // TODO: add timestamp
+        ]}
+        rows={updateHistories}
+        emptyText="업데이트 이력 없음"
+      />
     </>
   );
 }
