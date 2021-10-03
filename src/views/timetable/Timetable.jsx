@@ -150,7 +150,6 @@ export default function Timetable() {
           className={classes.timetableNameInput}
           placeholder="Timetable Name"
         />
-        {/* <Button onClick={onSubmitName}>변경</Button> */}
         <Button onClick={() => setIsOpenSettingDialog(true)}>설정</Button>
         <Button onClick={() => setIsOpenShareDialog(true)}>공유</Button>
       </Box>
@@ -162,12 +161,8 @@ export default function Timetable() {
           ))}
         </Box>
         <Container className={classes.timeContainer}>
-          {times.map((time, r) => {
-            if (time >= 18 && !showNightTimes) {
-              return null;
-            }
-
-            return (
+          {times.map((time, r) => (
+            (time < 18 || showNightTimes) && (
               <Container key={r.toString()} className={classes.rowContainer}>
                 <Box className={classes.timeBox}>
                   <Typography>{getFormattedHour(time, timeFormat)}</Typography>
@@ -183,8 +178,8 @@ export default function Timetable() {
                   </Box>
                 ))}
               </Container>
-            );
-          })}
+            )
+          ))}
         </Container>
       </Box>
       <SettingDialog
