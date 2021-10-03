@@ -4,6 +4,7 @@ import { StatusCodes } from 'http-status-codes';
 import { Box, Button, Container, InputBase, makeStyles, Paper, Typography } from '@material-ui/core';
 import { timetableListState, currentTimetableIndexState, showNightTimesState, showSaturdayState, timeFormatState } from '@states/Timetable';
 import { highLightLectureState } from '@states/Lecture';
+import { semesterState } from '@states/Semester';
 import { lectureToTime, days, times } from '@utils/timetable';
 import { requestAPI, API_DELETE_TLECTURE, API_PATCH_TIMETABLE_NAME } from '@utils/api';
 import { getFormattedHour } from '@utils/time';
@@ -12,6 +13,74 @@ import ShareDialog from './ShareDialog';
 import { useTimetableList } from './TimetableCardList';
 
 export const TimetableElementID = 'timetable';
+
+const LectureBox = ({ lecture, isHighlight = false }) => {
+  const { id, name, place, color, hours } = lecture || {};
+  const timetableList = useRecoilValue(timetableListState);
+  const currentTimetableIndex = useRecoilValue(currentTimetableIndexState);
+  const selectedSemester = useRecoilValue(semesterState);
+
+  const [, fetchTimetables] = useTimetableList();
+
+  const timetable = timetableList[currentTimetableIndex];
+
+  const classes = useStyles();
+  const colorClass = useLectureColor();
+  const sizeClass = useLectureSize();
+
+  const onDelete = async () => {
+    const tlecture = timetable.tlecture_list.find(t => t.lecture._id === id);
+
+    if (!tlecture) {
+      alert('이미 삭제된 강의입니다.');
+      return;
+    }
+
+    // TODO: test
+    const response = await requestAPI(API_DELETE_TLECTURE({
+      year: selectedSemester.year,
+      term: selectedSemester.term,
+      tLectureId: id,
+      timetableId: timetable._id,
+    }));
+
+    if (response.status !== StatusCodes.OK) {
+      alert('강의를 삭제하지 못했어요...');
+    }
+
+    fetchTimetables();
+  };
+
+  return !!lecture && (
+    <Box
+      className={[
+        classes.lectureBox,
+        sizeClass[hours.length],
+        isHighlight ? classes.highlightLectureBox : '',
+      ].join(' ')}
+    >
+      <Box className={[
+        classes.innerLectureBox,
+        colorClass[color],
+      ].join(' ')}
+      >
+        {!isHighlight && (
+          <>
+            <button
+              type="button"
+              className={classes.deleteBtn}
+              onClick={onDelete}
+            >
+              ×
+            </button>
+            <Typography className={classes.lectureBoxName}>{name}</Typography>
+            <Typography className={classes.lectureBoxPlace}>{place}</Typography>
+          </>
+        )}
+      </Box>
+    </Box>
+  );
+};
 
 export default function Timetable() {
   const [timetableList, setTimetableList] = useRecoilState(timetableListState);
@@ -30,8 +99,6 @@ export default function Timetable() {
   const timetable = timetableList[currentTimetableIndex];
 
   const classes = useStyles();
-  const colorClass = useLectureColor();
-  const sizeClass = useLectureSize();
 
   const lectureList = timetable.tlecture_list
     .map(tlecture => tlecture.lecture)
@@ -46,30 +113,6 @@ export default function Timetable() {
 
     timetableMap[row][col] = lecture;
   });
-
-  const onDelete = async ({ target }) => {
-    const lectureId = target.getAttribute('name');
-    const tlecture = timetable.tlecture_list.find(t => t.lecture._id === lectureId);
-
-    if (!tlecture) {
-      alert('이미 삭제된 강의입니다.');
-      return;
-    }
-    const tlectureId = tlecture._id;
-
-    const response = await requestAPI(API_DELETE_TLECTURE({
-      year: 2021,
-      term: 'A10',
-      tLectureId: tlectureId,
-      timetableId: timetable._id,
-    }));
-
-    if (response.status !== StatusCodes.OK) {
-      alert('강의를 삭제하지 못했어요...');
-    }
-
-    fetchTimetables();
-  };
 
   const onChangeNameField = ({ target }) => {
     const name = target.value;
@@ -104,42 +147,6 @@ export default function Timetable() {
       }
     />
   );
-
-  const LectureBox = ({ lecture, isHighlight = false }) => {
-    if (!lecture) return null;
-
-    const { id, name, place, color, hours } = lecture;
-    return (
-      <Box
-        className={[
-          classes.lectureBox,
-          sizeClass[hours.length],
-          isHighlight ? classes.highlightLectureBox : '',
-        ].join(' ')}
-      >
-        <Box className={[
-          classes.innerLectureBox,
-          colorClass[color],
-        ].join(' ')}
-        >
-          {!isHighlight && (
-            <>
-              <button
-                type="button"
-                name={id}
-                className={classes.deleteBtn}
-                onClick={onDelete}
-              >
-                ×
-              </button>
-              <Typography className={classes.lectureBoxName}>{name}</Typography>
-              <Typography className={classes.lectureBoxPlace}>{place}</Typography>
-            </>
-          )}
-        </Box>
-      </Box>
-    );
-  };
 
   return (
     <Paper className={classes.root}>
