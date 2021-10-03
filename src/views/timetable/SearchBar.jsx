@@ -75,18 +75,17 @@ export default function SearchBar() {
   }, [selectedSemester, searchType, keyword]);
 
   const onSearch = async () => {
-    const [year, term] = selectedSemester.split('-');
-    const query = {
-      year,
-      term,
-      searchType,
-      keyword: keyword.trim(),
-    };
+    const trimmedKeyword = keyword.trim();
 
     // handle exception: no keyword
-    if (!query.keyword) return;
+    if (!trimmedKeyword) return;
 
-    const response = await requestAPI(API_GET_ALL_LECTURES(query));
+    const response = await requestAPI(API_GET_ALL_LECTURES({
+      year: 2021,
+      term: 'A10',
+      searchType,
+      keyword: trimmedKeyword,
+    }));
 
     if (!response) {
       // TODO: edit

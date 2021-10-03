@@ -8,54 +8,65 @@ import {
 } from '@material-ui/core';
 import LectureListItem from './LectureListItem';
 
-export default function LectureList(props) {
+const Titles = () => {
+  const classes = useStyles();
+
+  return (
+    <Container className={classes.titles}>
+      <Typography className={classes.title_1}>학부(과)</Typography>
+      <Typography className={classes.title_2}>과목명</Typography>
+      <Typography className={classes.title_3}>분반</Typography>
+      <Typography className={classes.title_4}>교수명</Typography>
+    </Container>
+  );
+};
+
+const ListBody = props => {
   const {
     lectureList,
     emptyText,
-    scrollList,
     type,
   } = props;
 
   const [expandedId, setExpandedId] = useState(null);
-
   const classes = useStyles();
 
-  const toggleExpand = id => {
-    setExpandedId(expandedId === id ? null : id);
-  };
+  return (
+    <List className={classes.list}>
+      {lectureList.length
+        ? lectureList.map(lecture => (
+          <LectureListItem
+            key={lecture._id}
+            type={type}
+            lecture={lecture}
+            expand={expandedId === lecture._id}
+            setExpandedId={setExpandedId}
+          />
+        ))
+        : <Typography className={classes.emptyListMessage}>{emptyText}</Typography>}
+    </List>
+  );
+};
 
-  const lectures = lectureList.map(lecture => (
-    <LectureListItem
-      key={lecture._id}
-      type={type}
-      lecture={lecture}
-      expand={expandedId === lecture._id}
-      toggleExpand={toggleExpand}
-    />
-  ));
+export default function LectureList(props) {
+  const classes = useStyles();
 
   return (
     <Paper className={classes.root}>
-      <Container className={classes.titles}>
-        <Typography className={classes.title_1}>학부(과)</Typography>
-        <Typography className={classes.title_2}>과목명</Typography>
-        <Typography className={classes.title_3}>분반</Typography>
-        <Typography className={classes.title_4}>교수명</Typography>
-      </Container>
-      <List className={[classes.list, scrollList ? classes.scrollList : null].join(' ')}>
-        {lectures.length
-          ? lectures
-          : <Typography className={classes.emptyListMessage}>{emptyText}</Typography>}
-      </List>
+      <Titles />
+      <ListBody {...props} />
     </Paper>
   );
 }
 
 const useStyles = makeStyles({
   root: {
+    display: 'flex',
+    flexDirection: 'column',
     padding: '0',
     flexGrow: '1',
     borderRadius: '1em',
+    overflow: 'hidden',
   },
   titles: {
     display: 'flex',
@@ -81,9 +92,6 @@ const useStyles = makeStyles({
   },
   list: {
     padding: '0',
-  },
-  scrollList: {
-    maxHeight: '10em',
     overflow: 'scroll',
   },
   emptyListMessage: {

@@ -21,20 +21,19 @@ export default function SemesterList() {
 
   useEffect(async () => {
     // show update histories
-    const { data: histories } = await requestAPI(API_GET_HISTORIES(), {
+    const { data: histories } = await requestAPI(API_GET_HISTORIES({
       year: selectedYear,
       term: selectedTerm,
       page: 1, // TODO: make it selectable
-    });
+    }));
     setUpdateHistories(histories);
   }, [selectedYear, selectedTerm]);
 
   const updateLectures = () => {
-    requestAPI(API_UPDATE_LECTURES(), {
+    requestAPI(API_UPDATE_LECTURES({
       year: selectedYear,
       term: selectedTerm,
-      // isTest
-    });
+    }));
   };
 
   return (

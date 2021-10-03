@@ -36,13 +36,11 @@ export function useTimetableList() {
     const classes = useStyles();
 
     const onCreate = async () => {
-      const body = {
+      const response = await requestAPI(API_CREATE_TIMETABLE({
         year: 2021,
         term: 'A10',
         name: '시간표',
-      };
-
-      const response = await requestAPI(API_CREATE_TIMETABLE(), body);
+      }));
 
       if (response.status !== StatusCodes.CREATED) {
         alert('시간표 생성에 실패했어요...');
