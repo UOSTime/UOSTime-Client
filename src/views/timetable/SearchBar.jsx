@@ -13,12 +13,11 @@ import {
 import { searchLectureListState } from '@states/Lecture';
 import { semesterState } from '@states/Semester';
 import { requestAPI, API_GET_ALL_LECTURES } from '@utils/api';
-import { convertSemesterToString, convertStringToSemester } from '@utils/semester';
-import { getAllSemesters } from '../../utils/semester';
+import { convertSemesterToString, convertStringToSemester, getAllSemesters } from '@utils/semester';
 
 const setValue = setter => e => setter(e.target.value);
 
-const SemesterOptions = () => {
+const SelectSemester = ({ selectedSemester, onChangeSemester }) => {
   const semesters = getAllSemesters();
   const nSemesters = semesters.length;
 
@@ -37,7 +36,11 @@ const SemesterOptions = () => {
     }
   }
 
-  return <>{semesterOptions.reverse()}</>;
+  return (
+    <Select value={convertSemesterToString(selectedSemester)} onChange={onChangeSemester} variant="outlined">
+      {semesterOptions.reverse()}
+    </Select>
+  );
 };
 
 const getSearchTypeOptions = () => {
@@ -68,6 +71,10 @@ export default function SearchBar() {
   useEffect(() => {
     onSearch();
   }, [selectedSemester, searchType, keyword]);
+
+  const onChangeSemester = e => {
+    setSelectedSemester(convertStringToSemester(e.target.value));
+  };
 
   const onSearch = async () => {
     const trimmedKeyword = keyword.trim();
@@ -100,9 +107,10 @@ export default function SearchBar() {
   return (
     <Container className={classes.root}>
       <FormControl size="small">
-        <Select value={convertSemesterToString(selectedSemester)} onChange={e => setSelectedSemester(convertStringToSemester(e.target.value))} variant="outlined">
-          <SemesterOptions />
-        </Select>
+        <SelectSemester
+          selectedSemester={selectedSemester}
+          onChangeSemester={onChangeSemester}
+        />
       </FormControl>
       <FormControl size="small">
         <Select value={searchType} onChange={setValue(setSearchType)} variant="outlined">

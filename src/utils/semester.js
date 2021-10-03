@@ -27,6 +27,16 @@ export const getTermsAsArray = () => Object
     month,
   }));
 
+const getSemesterValue = (year, term) => `${year}-${term}`;
+
+export const getTermNamebyCode = code => Terms[code]?.name;
+
+export const convertSemesterToString = ({ year, term }) => `${year}-${term}`;
+export const convertStringToSemester = str => {
+  const [year, term] = str.split('-');
+  return { year, term };
+};
+
 // return semesters as array in time order
 export const getAllSemesters = () => {
   const terms = getTermsAsArray();
@@ -40,6 +50,8 @@ export const getAllSemesters = () => {
         semesters.push({
           value: getSemesterValue(year - i, code),
           text: `${year - i}년 ${name}`,
+          year,
+          term: code,
         });
       }
     });
@@ -48,12 +60,4 @@ export const getAllSemesters = () => {
   return semesters;
 };
 
-const getSemesterValue = (year, term) => `${year}-${term}`;
-
-export const getTermNamebyCode = code => Terms[code]?.name;
-
-export const convertSemesterToString = ({ year, term }) => `${year}-${term}`;
-export const convertStringToSemester = str => {
-  const [year, term] = str.split('-');
-  return { year, term };
-};
+export const currentSemester = getAllSemesters().pop();
