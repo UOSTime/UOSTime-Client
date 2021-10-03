@@ -1,5 +1,5 @@
 import React from 'react';
-import { useSetRecoilState } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { StatusCodes } from 'http-status-codes';
 import {
   makeStyles,
@@ -7,11 +7,13 @@ import {
   Typography,
 } from '@material-ui/core';
 import CloseIcon from '@material-ui/icons/Close';
+import { semesterState } from '@states/Semester';
 import { currentTimetableIndexState } from '@states/Timetable';
 import { requestAPI, API_DELETE_TIMETABLE } from '@utils/api';
 import { useTimetableList } from './TimetableCardList';
 
 export default function TimetableCard({ index, timetable }) {
+  const selectedSemester = useRecoilValue(semesterState);
   const setCurrentTimetableIndex = useSetRecoilState(currentTimetableIndexState);
   const [, fetchTimetables] = useTimetableList();
 
@@ -22,8 +24,7 @@ export default function TimetableCard({ index, timetable }) {
   };
 
   const onDelete = async () => {
-    const response = await requestAPI(API_DELETE_TIMETABLE()
-      .setQuery({ year: 2021, term: 'A10' })
+    const response = await requestAPI(API_DELETE_TIMETABLE(selectedSemester)
       .setPath(timetable._id));
 
     if (response.status !== StatusCodes.NO_CONTENT) {

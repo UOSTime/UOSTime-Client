@@ -1,13 +1,15 @@
 import React from 'react';
 import StatusCodes from 'http-status-codes';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import AddIcon from '@material-ui/icons/Add';
 import { Box, Button, makeStyles } from '@material-ui/core';
+import { semesterState } from '@states/Semester';
 import { timetableListState, currentTimetableIndexState } from '@states/Timetable';
 import { requestAPI, API_GET_TIMETABLES, API_CREATE_TIMETABLE } from '@utils/api';
 import TimetableCard from './TimetableCard';
 
 export function useTimetableList() {
+  const selectedSemester = useRecoilValue(semesterState);
   const [timetableList, setTimetableList] = useRecoilState(timetableListState);
   const [
     currentTimetableIndex,
@@ -15,10 +17,7 @@ export function useTimetableList() {
   ] = useRecoilState(currentTimetableIndexState);
 
   const fetchTimetables = async () => {
-    const response = await requestAPI(API_GET_TIMETABLES({
-      year: 2021,
-      term: 'A10',
-    }));
+    const response = await requestAPI(API_GET_TIMETABLES(selectedSemester));
 
     if (!response || response.status !== StatusCodes.OK) {
       alert('시간표를 가져오는데 실패했어요');
@@ -37,8 +36,7 @@ export function useTimetableList() {
 
     const onCreate = async () => {
       const response = await requestAPI(API_CREATE_TIMETABLE({
-        year: 2021,
-        term: 'A10',
+        ...selectedSemester,
         name: '시간표',
       }));
 
