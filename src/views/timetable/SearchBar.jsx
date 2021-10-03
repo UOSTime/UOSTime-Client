@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useSetRecoilState } from 'recoil';
+import { useRecoilState, useSetRecoilState } from 'recoil';
 import { StatusCodes } from 'http-status-codes';
 import {
   Container,
@@ -11,38 +11,33 @@ import {
   Divider,
 } from '@material-ui/core';
 import { searchLectureListState } from '@states/Lecture';
+import { semesterState } from '@states/Semester';
 import { requestAPI, API_GET_ALL_LECTURES } from '@utils/api';
-import { getTermsAsArray, getTermNamebyCode } from '@utils/semester';
-import { getToday } from '@utils/time';
+import { convertSemesterToString, convertStringToSemester } from '@utils/semester';
+import { getAllSemesters } from '../../utils/semester';
 
 const setValue = setter => e => setter(e.target.value);
 
-const getSemesterValue = (year, term) => `${year}-${term}`;
-
-const getSemesterOptions = () => {
-  const terms = getTermsAsArray().reverse();
-  const { year, month } = getToday();
+const SemesterOptions = () => {
+  const semesters = getAllSemesters();
+  const nSemesters = semesters.length;
 
   const semesterOptions = [];
-
-  for (let i = 0; i < 4; i++) {
-    terms.forEach(term => {
-      if (i || month >= term.month) {
-        semesterOptions.push((
-          <MenuItem
-            key={getSemesterValue(year - i, term.code)}
-            value={getSemesterValue(year - i, term.code)}
-          >
-            {`${year - i}년 ${getTermNamebyCode(term.code)}`}
-          </MenuItem>
-        ));
-      }
-    });
-    semesterOptions.push(<Divider key={i} />);
+  for (let i = 0; i < nSemesters; i++) {
+    semesterOptions.push((
+      <MenuItem
+        key={semesters[i].value}
+        value={semesters[i].value}
+      >
+        {semesters[i].text}
+      </MenuItem>
+    ));
+    if (i % 4 === 3 && i !== nSemesters - 1) {
+      semesterOptions.push(<Divider key={`divider-${i}`} />);
+    }
   }
 
-  semesterOptions.pop();
-  return semesterOptions;
+  return <>{semesterOptions.reverse()}</>;
 };
 
 const getSearchTypeOptions = () => {
@@ -64,7 +59,7 @@ const getSearchTypeOptions = () => {
 export default function SearchBar() {
   const setSearchLectureListState = useSetRecoilState(searchLectureListState);
 
-  const [selectedSemester, setSelectedSemester] = useState(getSemesterValue(2021, 'A10')); // TODO: set default value
+  const [selectedSemester, setSelectedSemester] = useRecoilState(semesterState);
   const [searchType, setSearchType] = useState('subject_nm');
   const [keyword, setKeyword] = useState('');
 
@@ -80,9 +75,10 @@ export default function SearchBar() {
     // handle exception: no keyword
     if (!trimmedKeyword) return;
 
+    const { year, term } = selectedSemester;
     const response = await requestAPI(API_GET_ALL_LECTURES({
-      year: 2021,
-      term: 'A10',
+      year,
+      term,
       searchType,
       keyword: trimmedKeyword,
     }));
@@ -104,8 +100,8 @@ export default function SearchBar() {
   return (
     <Container className={classes.root}>
       <FormControl size="small">
-        <Select value={selectedSemester} onChange={setValue(setSelectedSemester)} variant="outlined">
-          {getSemesterOptions()}
+        <Select value={convertSemesterToString(selectedSemester)} onChange={e => setSelectedSemester(convertStringToSemester(e.target.value))} variant="outlined">
+          <SemesterOptions />
         </Select>
       </FormControl>
       <FormControl size="small">

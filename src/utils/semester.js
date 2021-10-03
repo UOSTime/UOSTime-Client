@@ -1,3 +1,5 @@
+import { getToday } from '@utils/time';
+
 const Terms = {
   A10: {
     name: '1학기',
@@ -24,6 +26,29 @@ export const getTermsAsArray = () => Object
     name,
     month,
   }));
+
+// return semesters as array in time order
+export const getAllSemesters = () => {
+  const terms = getTermsAsArray();
+  const { year, month: todayMonth } = getToday();
+
+  const semesters = [];
+
+  for (let i = 3; i >= 0; i--) {
+    terms.forEach(({ code, name, month }) => {
+      if (i || todayMonth >= month) {
+        semesters.push({
+          value: getSemesterValue(year - i, code),
+          text: `${year - i}년 ${name}`,
+        });
+      }
+    });
+  }
+
+  return semesters;
+};
+
+const getSemesterValue = (year, term) => `${year}-${term}`;
 
 export const getTermNamebyCode = code => Terms[code]?.name;
 
