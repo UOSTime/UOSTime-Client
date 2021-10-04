@@ -1,8 +1,14 @@
-import { toPng } from 'html-to-image';
-import React, { useEffect, useState } from 'react';
-import CustomDialog from '@components/CustomDialog';
-import { Box, Button, makeStyles, TextField, Typography } from '@material-ui/core';
-import { TimetableElementID } from './Timetable';
+import { toPng } from "html-to-image";
+import React, { useEffect, useState } from "react";
+import CustomDialog from "@components/CustomDialog";
+import {
+  Box,
+  Button,
+  makeStyles,
+  TextField,
+  Typography,
+} from "@material-ui/core";
+import { TimetableElementID } from "./Timetable";
 
 export default function ShareDialog(props) {
   // props
@@ -13,9 +19,10 @@ export default function ShareDialog(props) {
   const classes = useStyles();
 
   // states
-  const [imageSrc, setImageSrc] = useState('');
+  const [imageSrc, setImageSrc] = useState("");
   const [imageResolutionWidth, setImageResolutionWidth] = useState(screenWidth);
-  const [imageResolutionHeight, setImageResolutionHeight] = useState(screenHeight);
+  const [imageResolutionHeight, setImageResolutionHeight] =
+    useState(screenHeight);
 
   // TODO: use debounce
   // generate timetable image
@@ -27,10 +34,14 @@ export default function ShareDialog(props) {
 
     // get real size of timetable in pixel
     // const beforeWidth = parseInt(window.getComputedStyle(timetableElement).width);
-    const beforeHeight = parseInt(window.getComputedStyle(timetableElement).height);
+    const beforeHeight = parseInt(
+      window.getComputedStyle(timetableElement).height
+    );
 
     // resize timetable (fix height)
-    timetableElement.style.width = `${Math.floor(beforeHeight * (imageResolutionWidth / imageResolutionHeight))}px`;
+    timetableElement.style.width = `${Math.floor(
+      beforeHeight * (imageResolutionWidth / imageResolutionHeight)
+    )}px`;
 
     // configure option for rendering
     const option = {
@@ -42,7 +53,7 @@ export default function ShareDialog(props) {
     const src = await toPng(timetableElement, option);
 
     // revert timetable size
-    timetableElement.style.width = '';
+    timetableElement.style.width = "";
 
     setImageSrc(src);
   }, [open, imageResolutionWidth, imageResolutionHeight]);
@@ -61,8 +72,12 @@ export default function ShareDialog(props) {
         <Box className={classes.controlBox}>
           <Box>
             <Box>
-              <Typography variant="h6" component="h3">이미지 해상도 변경</Typography>
-              <Typography color="textSecondary" variant="body2">기기 해상도: {screenWidth} * {screenHeight}</Typography>
+              <Typography variant="h6" component="h3">
+                이미지 해상도 변경
+              </Typography>
+              <Typography color="textSecondary" variant="body2">
+                기기 해상도: {screenWidth} * {screenHeight}
+              </Typography>
             </Box>
             <Box className={classes.inputBox}>
               <TextField
@@ -70,7 +85,7 @@ export default function ShareDialog(props) {
                 label="너비(width)"
                 variant="standard"
                 value={imageResolutionWidth}
-                onChange={e => setImageResolutionWidth(e.target.value)}
+                onChange={(e) => setImageResolutionWidth(e.target.value)}
                 required
               />
               <TextField
@@ -78,7 +93,7 @@ export default function ShareDialog(props) {
                 label="높이(height)"
                 variant="standard"
                 value={imageResolutionHeight}
-                onChange={e => setImageResolutionHeight(e.target.value)}
+                onChange={(e) => setImageResolutionHeight(e.target.value)}
                 required
               />
             </Box>
@@ -100,64 +115,64 @@ export default function ShareDialog(props) {
   );
 }
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   root: {
-    display: 'flex',
-    alignItems: 'stretch',
-    padding: '1em 0',
-    [theme.breakpoints.down('sm')]: {
-      flexDirection: 'column',
-      maxHeight: '80vh',
+    display: "flex",
+    alignItems: "stretch",
+    padding: "1em 0",
+    [theme.breakpoints.down("sm")]: {
+      flexDirection: "column",
+      maxHeight: "80vh",
     },
-    [theme.breakpoints.up('md')]: {
-      flexDirection: 'row',
+    [theme.breakpoints.up("md")]: {
+      flexDirection: "row",
     },
   },
   image: {
-    objectFit: 'contain',
-    display: 'block',
-    maxWidth: '100%',
-    maxHeight: '100%',
-    margin: 'auto',
-    boxShadow: '0 0.5em 1em rgba(0, 0, 0, .2)',
-    overflow: 'hidden',
-    borderRadius: '0.5em',
-    [theme.breakpoints.down('sm')]: {
-      maxHeight: '40vh',
+    objectFit: "contain",
+    display: "block",
+    maxWidth: "100%",
+    maxHeight: "100%",
+    margin: "auto",
+    boxShadow: "0 0.5em 1em rgba(0, 0, 0, .2)",
+    overflow: "hidden",
+    borderRadius: "0.5em",
+    [theme.breakpoints.down("sm")]: {
+      maxHeight: "40vh",
     },
-    [theme.breakpoints.up('md')]: {
-      maxHeight: '80vh',
-      maxWidth: '60%',
+    [theme.breakpoints.up("md")]: {
+      maxHeight: "80vh",
+      maxWidth: "60%",
     },
   },
   controlBox: {
-    display: 'flex',
-    flexDirection: 'column',
-    [theme.breakpoints.down('sm')]: {
-      width: '100%',
-      marginTop: '3em',
+    display: "flex",
+    flexDirection: "column",
+    [theme.breakpoints.down("sm")]: {
+      width: "100%",
+      marginTop: "3em",
     },
-    [theme.breakpoints.up('md')]: {
-      width: '40%',
-      marginLeft: '1.5em',
+    [theme.breakpoints.up("md")]: {
+      width: "40%",
+      marginLeft: "1.5em",
     },
   },
   inputBox: {
-    display: 'flex',
-    margin: '1em 0',
-    gap: '1em',
-    '& > *': {
-      width: '50%',
+    display: "flex",
+    margin: "1em 0",
+    gap: "1em",
+    "& > *": {
+      width: "50%",
     },
   },
   saveButton: {
-    display: 'block',
-    width: '100%',
-    [theme.breakpoints.down('sm')]: {
-      marginTop: '2em',
+    display: "block",
+    width: "100%",
+    [theme.breakpoints.down("sm")]: {
+      marginTop: "2em",
     },
-    [theme.breakpoints.up('md')]: {
-      marginTop: 'auto',
+    [theme.breakpoints.up("md")]: {
+      marginTop: "auto",
     },
   },
 }));
