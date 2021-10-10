@@ -75,6 +75,7 @@ axiosInstance.interceptors.request.use(
     if (token) {
       config.headers.Authorization = token;
     }
+    config.withCredentials = true;
     return config;
   },
   error => {
@@ -123,6 +124,19 @@ export function getToken() {
 
 export function removeToken() {
   localStorage.removeItem('token');
+}
+
+export function setRefreshToken(refreshToken, options = {}) {
+  const cookie = `refresh_token=${refreshToken}`;
+  const optionString = Object.entries(options).map(([key, value]) => (
+    value === true ? `${key}` : `${key}=${value}`
+  )).join(';');
+
+  document.cookie = `${cookie};${optionString}`;
+}
+
+export function removeRefreshToken() {
+  setRefreshToken('', { 'max-age': -1 });
 }
 
 export function setUserID(userID) {
