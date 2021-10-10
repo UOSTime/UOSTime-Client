@@ -3,6 +3,7 @@
 import axios from 'axios';
 import { StatusCodes } from 'http-status-codes';
 import usePopup from '@components/usePopup';
+import { clearCookie, setCookie } from './cookie';
 
 const { API_URL_BASE } = process.env;
 
@@ -110,6 +111,17 @@ function handleStatus(error) {
   // TODO: Edit here for other status codes
 }
 
+// if access_token expired, refresh the token
+function checkAccessToken() {
+  // get new token from cookie
+  const match = document.cookie.match(/(^| )access_token=([^;]+)/);
+  if (!match) return;
+
+  const token = decodeURIComponent(match[2]);
+  setToken(token);
+  clearCookie('access_token');
+}
+
 export async function requestAPI(config) {
   try {
     if (config.needToken && !getToken()) {
@@ -121,6 +133,8 @@ export async function requestAPI(config) {
     // request API
     delete config.needToken;
     const response = await axiosInstance.request(config);
+
+    checkAccessToken();
 
     // for test
     console.log(response);
@@ -147,16 +161,11 @@ export function removeToken() {
 }
 
 export function setRefreshToken(refreshToken, options = {}) {
-  const cookie = `refresh_token=${refreshToken}`;
-  const optionString = Object.entries(options).map(([key, value]) => (
-    value === true ? `${key}` : `${key}=${value}`
-  )).join(';');
-
-  document.cookie = `${cookie};${optionString}`;
+  setCookie('refresh_token', refreshToken, options);
 }
 
 export function removeRefreshToken() {
-  setRefreshToken('', { 'max-age': -1 });
+  clearCookie('refresh_token');
 }
 
 export function setUserID(userID) {
