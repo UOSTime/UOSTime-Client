@@ -2,13 +2,12 @@ import React, { useEffect, useState } from 'react';
 import { Box, Button, FormControl, InputLabel, MenuItem, Select, TextField } from '@material-ui/core';
 import { API_UPDATE_LECTURES, API_GET_HISTORIES, requestAPI } from '@utils/api';
 import { getUniqueID } from '@utils/id';
-import { getAllTerms } from '@utils/semester';
+import { getTermsAsArray } from '@utils/semester';
 import { getToday } from '@utils/time';
 import CustomTable from '@components/CustomTable';
 
 export default function SemesterList() {
   const today = getToday();
-  const allTerms = getAllTerms();
 
   // id
   const [
@@ -59,11 +58,9 @@ export default function SemesterList() {
               value={selectedTerm}
               onChange={e => setSelectedTerm(e.target.value)}
             >
-              {
-                allTerms.map(({ termCode, termName }) => (
-                  <MenuItem key={termCode} value={termCode}>{termName}</MenuItem>
-                ))
-              }
+              {getTermsAsArray().map(({ code, name }) => (
+                <MenuItem key={code} value={code}>{name}</MenuItem>
+              ))}
             </Select>
           </FormControl>
         </Box>
