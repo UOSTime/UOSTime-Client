@@ -1,7 +1,9 @@
 /* eslint-disable no-console */
 /* eslint-disable no-unused-vars */
 import axios from 'axios';
+import { StatusCodes } from 'http-status-codes';
 import usePopup from '@components/usePopup';
+import { clearCookie, setCookie } from './cookie';
 
 const { API_URL_BASE } = process.env;
 
@@ -75,6 +77,7 @@ axiosInstance.interceptors.request.use(
     if (token) {
       config.headers.Authorization = token;
     }
+    config.withCredentials = true;
     return config;
   },
   error => {
@@ -87,8 +90,37 @@ axiosInstance.interceptors.request.use(
 
 axiosInstance.interceptors.response.use(
   config => config,
-  error => Promise.resolve(error.response),
+  error => {
+    console.error(error.stack);
+    return Promise.reject(error.response);
+  },
 );
+
+function handleStatus(error) {
+  const { status } = error;
+
+  // 401
+  if (status === StatusCodes.UNAUTHORIZED) {
+    // redirect to login page
+    removeToken();
+    removeUserID();
+    removeRefreshToken();
+    window.location.href = '/login';
+  }
+
+  // TODO: Edit here for other status codes
+}
+
+// if access_token expired, refresh the token
+function checkAccessToken() {
+  // get new token from cookie
+  const match = document.cookie.match(/(^| )access_token=([^;]+)/);
+  if (!match) return;
+
+  const token = decodeURIComponent(match[2]);
+  setToken(token);
+  clearCookie('access_token');
+}
 
 export async function requestAPI(config) {
   try {
@@ -102,14 +134,17 @@ export async function requestAPI(config) {
     delete config.needToken;
     const response = await axiosInstance.request(config);
 
+    checkAccessToken();
+
     // for test
     console.log(response);
 
-    // includes 3xx, 4xx responses
+    // includes 2xx responses
     return response;
   } catch (error) {
-    console.error(error);
-    return null;
+    handleStatus(error);
+
+    return error;
   }
 }
 
@@ -123,6 +158,14 @@ export function getToken() {
 
 export function removeToken() {
   localStorage.removeItem('token');
+}
+
+export function setRefreshToken(refreshToken, options = {}) {
+  setCookie('refresh_token', refreshToken, options);
+}
+
+export function removeRefreshToken() {
+  clearCookie('refresh_token');
 }
 
 export function setUserID(userID) {

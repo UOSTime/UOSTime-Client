@@ -6,7 +6,7 @@ import { Button, Box, makeStyles, Container, Typography, Link } from '@material-
 import Loading from '@components/Loading';
 import UosInput from '@components/UosInput';
 import { semesterState } from '@states/Semester';
-import { API_LOGIN, API_GET_SEMESTER, requestAPI, getToken, setToken, removeUserID, setUserID } from '@utils/api';
+import { API_LOGIN, API_GET_SEMESTER, requestAPI, getToken, setToken, setRefreshToken, removeUserID, setUserID } from '@utils/api';
 import { foregroundColor } from '@utils/styles/Colors';
 import useLogoLayoutStyles from '@utils/styles/login/LogoLayout';
 import useLoginLabelStyles from '@utils/styles/login/LoginLabel';
@@ -85,6 +85,7 @@ export function LoginBox() {
     }
 
     setToken(response.data.token);
+    setRefreshToken(response.data.refresh);
     setUserID(response.data.userId);
     await callSemester();
     getSocket();
